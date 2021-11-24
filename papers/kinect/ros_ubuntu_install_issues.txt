@@ -1,0 +1,10 @@
+https://openkinect.org/wiki/Getting_Started
+
+$ sudo apt-get install freenect
+
+$ lsusb|grep 'Xbox'
+Bus 004 Device 002: ID 045e:02c4 Microsoft Corp. Xbox NUI Sensor
+
+$ freenect-glview 
+Kinect camera test
+Number of devices found: 0
