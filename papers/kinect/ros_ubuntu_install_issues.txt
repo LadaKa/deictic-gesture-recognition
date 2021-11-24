@@ -23,3 +23,11 @@ ros@ros-vm:~/libfreenect$ freenect-micview
 Number of devices found: 0
 
 ----------------------------------------------------------------------------------------------------
+Kinect v2 and ros noetic:
+
+https://aur.archlinux.org/packages/ros-noetic-kinect2-registration/
+ => https://github.com/code-iai/iai_kinect2  
+    # ROS Hydro/Indigo in dependecies
+    
+https://github.com/ethz-asl/kinect2-ros
+https://github.com/OpenKinect/libfreenect2#debianubuntu-1404
