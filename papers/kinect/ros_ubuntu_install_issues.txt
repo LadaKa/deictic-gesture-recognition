@@ -8,3 +8,18 @@ Bus 004 Device 002: ID 045e:02c4 Microsoft Corp. Xbox NUI Sensor
 $ freenect-glview 
 Kinect camera test
 Number of devices found: 0
+
+----------------------------------------------------------------------------------------------------
+
+https://answers.ros.org/question/364515/how-to-use-kinect-v1-in-ros-noetic/
+https://aibegins.net/2020/11/22/give-your-next-robot-3d-vision-kinect-v1-with-ros-noetic/
+
+# use 'sudo cp audios.bin /usr/local/share/libfreenect' instead
+
+$ sudo cp src/audios.bin /usr/local/share/libfreenect			
+cp: cannot stat 'src/audios.bin': No such file or directory        
+
+ros@ros-vm:~/libfreenect$ freenect-micview
+Number of devices found: 0
+
+----------------------------------------------------------------------------------------------------
