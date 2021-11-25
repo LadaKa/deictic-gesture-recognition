@@ -29,5 +29,39 @@ https://aur.archlinux.org/packages/ros-noetic-kinect2-registration/
  => https://github.com/code-iai/iai_kinect2  
     # ROS Hydro/Indigo in dependecies
     
+ros@ros-vm:~/libfreenect2/build$ ./bin/Protonect
+
+Version: 0.2.0
+Environment variables: LOGFILE=<protonect.log>
+Usage: ./bin/Protonect [-gpu=<id>] [gl | cl | clkde | cuda | cudakde | cpu] [<device serial>]
+        [-noviewer] [-norgb | -nodepth] [-help] [-version]
+        [-frames <number of frames to process>]
+To pause and unpause: pkill -USR1 Protonect
+[Info] [Freenect2Impl] enumerating devices...
+[Info] [Freenect2Impl] 9 usb devices connected
+[Info] [Freenect2Impl] found valid Kinect v2 @4:5 with serial 009574341947
+[Info] [Freenect2Impl] found 1 devices
+[Error] [OpenGLDepthPacketProcessorImpl] GLFW error 65543 GLX: Failed to create context: GLXBadFBConfig
+[Error] [OpenGLDepthPacketProcessor] Failed to create opengl window.
+
+ros@ros-vm:~/libfreenect2/build$ sudo apt-get install openni2-utils && sudo make install-openni2 && NiViewer2
+
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+openni2-utils is already the newest version (2.2.0.33+dfsg-13build1).
+The following package was automatically installed and is no longer required:
+  libfprint-2-tod1
+Use 'sudo apt autoremove' to remove it.
+0 upgraded, 0 newly installed, 0 to remove and 491 not upgraded.
+[  6%] Built target generate_resources_tool
+[ 72%] Built target freenect2
+[100%] Built target freenect2-openni2
+Error copying directory from "/home/ros/freenect2/lib/OpenNI2/Drivers/" to "/usr/lib/OpenNI2/Drivers/".
+make[3]: *** [CMakeFiles/install-openni2.dir/build.make:57: CMakeFiles/install-openni2] Error 1
+make[2]: *** [CMakeFiles/Makefile2:122: CMakeFiles/install-openni2.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:129: CMakeFiles/install-openni2.dir/rule] Error 2
+make: *** [Makefile:164: install-openni2] Error 2
+    
 https://github.com/ethz-asl/kinect2-ros
 https://github.com/OpenKinect/libfreenect2#debianubuntu-1404
