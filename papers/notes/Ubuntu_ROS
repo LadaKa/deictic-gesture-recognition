@@ -1,0 +1,36 @@
+Ubuntu 20.04 + Win 10:
+
+Cannot connect after hibernation:
+
+1.
+Win 
+	–  reset adapter 
+	-  modified start-up settings (Control Panel: Sound..: Power Setting: Button config -disable 	   quick start) + restart -doesn’t work;
+
+2.
+	- plug to eth 32 – OK.
+
+
+Installation notes:
+
+https://www.ros.org/reps/rep-0003.html#melodic-morenia-may-2018-may-2023
+      
+    • Ubuntu 14 (aka Trusty) == ROS Indigo 		Kinect v2: iai_k2
+    • Ubuntu 16 (aka Xenial) == ROS Kinetic 		Astra
+    • Ubuntu 18 (aka Bionic) == ROS Melodic 		Astra		NUI Track
+    • Ubuntu 20 (aka Focal) == ROS Noetic
+
+https://github.com/orbbec/ros_astra_camera
+This package supports ROS Kinetic and Melodic.
+
+https://github.com/OpenKinect/libfreenect2/
+https://github.com/code-iai/iai_kinect2/tree/0e2c5f63134a076606bb79963406e1d47f2da651
+ROS Hydro/Indigo
+
+https://nuitrack.com/#sensors
+https://cxybb.com/article/qq_23670601/103156261
+
+https://spectrum.library.concordia.ca/id/eprint/986429/1/Singh_MCompSc_S2020.pdf
+ROS Melodic
+
+
