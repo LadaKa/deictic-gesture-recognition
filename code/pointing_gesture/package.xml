@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pointing_gesture</name>
+  <version>0.0.0</version>
+  <description>The pointing_gesture package. Using tutorial from: https://industrial-training-master.readthedocs.io/en/melodic/_source/session1/Creating-a-ROS-Package-and-Node.html </description>
+
+
+  <!-- Is this really required? -->
+  <maintainer email="ladak@todo.todo">ladak</maintainer>
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <exec_depend>roscpp</exec_depend>
+  
+  <export>
+
+  </export>
+</package>
