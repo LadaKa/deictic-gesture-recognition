@@ -39,27 +39,30 @@ namespace pointing_gesture
     {
 
     public:
+
         pointing_gesture_node(std::string name) : _name(name)
         {
             ROS_INFO("%s: Initializing", _name.c_str());
             bool initialized = false;
             last_id_ = -1;
 
-            ros::NodeHandle nodeHandle("~");
-
             // Node handle
+            ros::NodeHandle nodeHandle("~");
 
             // Subscribers  - robot control
 
             // Publishers   - arm joints positions msg
-
-            ROS_INFO("pointing_gesture_node: Advertised Publisher: ..TODO..");
+            pointing_arm_joints_pub_ = nh_.advertise<PointingArmJoints>
+              ("PointingArmJoints", 1); 
+            ROS_INFO("pointing_gesture_node: Advertised Publisher: PointingArmJoints");
         }
+
 
         ~pointing_gesture_node()
         {
             ROS_INFO("pointing_gesture_node shutting down");
         };
+
 
         void runLoop()
         {
@@ -220,7 +223,7 @@ namespace pointing_gesture
             // Create structure for ROS Publisher data
 
 
-            // TODO:    Is arm really pointing? Handle pointing detection using FSA (open hand / grasping)?
+            // TODO:    Is the arm really pointing? Handle pointing detection using FSA (open hand / grasping)?
             PointingArmJoints_<PointingArmJoints> pointing_arm_joints;
             astra_joint_t *joint;
 
@@ -233,12 +236,15 @@ namespace pointing_gesture
             pointing_arm_joints.joint_position_right_wrist.x = ((astra_vector3f_t *)&joint->worldPosition)->z / 1000.0;
             pointing_arm_joints.joint_position_right_wrist.y = ((astra_vector3f_t *)&joint->worldPosition)->x / 1000.0;
             pointing_arm_joints.joint_position_right_wrist.z = ((astra_vector3f_t *)&joint->worldPosition)->y / 1000.0;
+
+            pointing_arm_joints_pub_.publish(pointing_arm_joints);
         }
 
         /////////////// DATA MEMBERS /////////////////////
 
         std::string _name;
         ros::NodeHandle nh_;
+        ros::Publisher pointing_arm_joints_pub_;
         int last_id_; // there will be only one id
     };
 
