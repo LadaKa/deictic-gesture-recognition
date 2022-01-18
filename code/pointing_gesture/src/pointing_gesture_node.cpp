@@ -24,11 +24,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 // TODO:  Set paths correctly.
-#include </home/ladak/Desktop/AstraSDK-v2.1.3-Ubuntu-x86_64/AstraSDK-v2.1.3-94bca0f52e-20210608T062039Z-Ubuntu18.04-x86_64/samples/common/key_handler.h>
-#include </home/ladak/Desktop/AstraSDK-v2.1.3-Ubuntu-x86_64/AstraSDK-v2.1.3-94bca0f52e-20210608T062039Z-Ubuntu18.04-x86_64/include/astra/capi/astra_ctypes.h>
-#include </home/ladak/Desktop/AstraSDK-v2.1.3-Ubuntu-x86_64/AstraSDK-v2.1.3-94bca0f52e-20210608T062039Z-Ubuntu18.04-x86_64/include/astra/capi/streams/body_capi.h>
-#include </home/ladak/Desktop/AstraSDK-v2.1.3-Ubuntu-x86_64/AstraSDK-v2.1.3-94bca0f52e-20210608T062039Z-Ubuntu18.04-x86_64/include/astra_core/capi/astra_types.h>
-#include </home/ladak/Desktop/AstraSDK-v2.1.3-Ubuntu-x86_64/AstraSDK-v2.1.3-94bca0f52e-20210608T062039Z-Ubuntu18.04-x86_64/include/astra_core/capi/astra_core.h>
+#include </home/ladak/Desktop/AstraSDK/samples/common/key_handler.h>
+#include </home/ladak/Desktop/AstraSDK/include/astra/capi/astra_ctypes.h>
+#include </home/ladak/Desktop/AstraSDK/include/astra/capi/streams/body_capi.h>
+#include </home/ladak/Desktop/AstraSDK/include/astra_core/capi/astra_types.h>
+#include </home/ladak/Desktop/AstraSDK/include/astra_core/capi/astra_core.h>
 
 // TODO: create and include msg package (instead of including generated headers)
 
