@@ -1,0 +1,46 @@
+https://github.com/shinselrobots/astra_body_tracker/issues/4
+I was able solve this issue recently, no idea why it does not work anymore:
+
+1.	error while loading shared libraries:
+	- add to the LD_LIBRARY_PATH dir with libastra_core.so 	-OK
+
+2. 	error: no class template named ‘rebind’ in ‘class ..:	-??	
+	no idea how to solve it:        
+             	https://github.com/oneapi-src/oneTBB/issues/383       
+		- -CMAKE_CXX_FLAGS=-DTBB_ALLOCATOR_TRAITS_BROKEN
+		… doesn’t work.  
+
+
+I can use some old build from trash (commited as catkin_ws.src);
+this is output of its astra_body_tracker_node:
+
+
+ladak@ladak-ThinkStation-P330:~/catkin_ws$ echo $LD_LIBRARY_PATH
+/home/ladak/catkin_ws/devel/lib:/opt/ros/noetic/lib:/home/ladak/Desktop/AstraSDK/lib
+
+ladak@ladak-ThinkStation-P330:~/catkin_ws$ rosrun astra_body_tracker astra_body_tracker_node
+[ INFO] [1643658432.015042937]: /astra_body_tracker: Initializing
+[ INFO] [1643658432.016554493]: astra_body_tracker: Advertised Publisher: body_tracker/pose, skeleton, marker
+Warning: USB events thread - failed to set priority. This might cause loss of data...
+2022-01-31 20:47:12,179 ERROR [astra] Body Tracking Error: 0x50000a09 Invalid Orbbec Body Tracking license. Please purchase Orbbec Body Tracking License.
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+
+Floor plane: [0.082859, 0.987165, 0.136526, 660.656921]
+Floor mask: width: 640 height: 480 bottom center value: 0
+
+^Cquitting...
+
+[ INFO] [1643658481.986636084]: astra_body_tracker_node shutting down
