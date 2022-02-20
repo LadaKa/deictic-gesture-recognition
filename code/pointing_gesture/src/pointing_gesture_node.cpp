@@ -19,7 +19,7 @@
 
 // Orbbec Astra SDK
 
-#include <astra/capi/astra.h>
+#include </home/ladak/Desktop/AstraSDK/include/astra/capi/astra.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -34,6 +34,7 @@
 
 // Publish custom message
 #include "PointingArmJoints.h"
+#include "BodyTracker.h"
 
 #define KEY_JOINT_TO_TRACK ASTRA_JOINT_SHOULDER_SPINE
 
@@ -65,40 +66,7 @@ public:
         ROS_INFO("pointing_gesture_node: Advertised Publisher: PointingArmJoints");
     }
 
-    //////////////////////////////////////////////////////////
-    // Modified Orbec Astra sample code / Shinsel Robots code
-
-    /*   void output_floor(astra_bodyframe_t bodyFrame)
-    {
-        astra_floor_info_t floorInfo;
-
-        astra_status_t rc = astra_bodyframe_floor_info(bodyFrame, &floorInfo);
-        if (rc != ASTRA_STATUS_SUCCESS)
-        {
-            printf("Error %d in astra_bodyframe_floor_info()\n", rc);
-            return;
-        }
-
-        const astra_bool_t floorDetected = floorInfo.floorDetected;
-        const astra_plane_t *floorPlane = &floorInfo.floorPlane;
-        const astra_floormask_t *floorMask = &floorInfo.floorMask;
-
-        if (floorDetected != ASTRA_FALSE)
-        {
-            printf("Floor plane: [%f, %f, %f, %f]\n",
-                   floorPlane->a,
-                   floorPlane->b,
-                   floorPlane->c,
-                   floorPlane->d);
-
-            const int32_t bottomCenterIndex = floorMask->width / 2 + floorMask->width * (floorMask->height - 1);
-            printf("Floor mask: width: %d height: %d bottom center value: %d\n",
-                   floorMask->width,
-                   floorMask->height,
-                   floorMask->data[bottomCenterIndex]);
-        }
-    }
-*/
+  
     // TODO: simplify & refactor
     void output_body(astra_bodyframe_t bodyFrame)
     {
@@ -207,16 +175,18 @@ public:
         astra_reader_get_bodystream(reader, &bodyStream);
 
         astra_stream_start(bodyStream);
-
+	    ROS_INFO_STREAM("Before loop");
         do
         {
             astra_update();
 
             astra_reader_frame_t frame;
-            astra_status_t rc = astra_reader_open_frame(reader, 2000, &frame);   // 200 -timeout
-
+            astra_status_t rc = astra_reader_open_frame(reader, 0, &frame); 
+	        
             if (rc == ASTRA_STATUS_SUCCESS)
             {
+             	std::string state = get_state_as_string(rc);
+             	ROS_INFO_STREAM(state);
                 astra_bodyframe_t bodyFrame;
                 astra_frame_get_bodyframe(frame, &bodyFrame);
 
@@ -229,8 +199,8 @@ public:
             }
             else
             {
-                std::string state = get_state_as_string(rc);
-
+               
+		        std::string state = get_state_as_string(rc);
                 ROS_INFO_STREAM(state);
             }
 
@@ -283,7 +253,7 @@ std::string get_state_as_string(astra_status_t status)
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "pointing_gesture");
-    ROS_INFO("Initializing node.");
+    ROS_INFO("Main");
     PointingGestureNode node(ros::this_node::getName());
     node.runLoop();
     return 0;

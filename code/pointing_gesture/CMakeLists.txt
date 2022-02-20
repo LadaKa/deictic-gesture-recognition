@@ -114,12 +114,8 @@ generate_messages(
 
 ###################################
 ## catkin specific configuration ##
-###################################
-## The catkin_package macro generates cmake config files for your package
-## Declare things to be passed to dependent projects
-## INCLUDE_DIRS: uncomment this if your package contains header files
-## LIBRARIES: libraries you create in this project that dependent projects also need
-## CATKIN_DEPENDS: catkin_packages dependent projects also need
+################################### 
+#  geometry_msgs
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   CATKIN_DEPENDS 
@@ -159,6 +155,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/pointing_gesture_node.cpp)
+
+## add_executable(${PROJECT_NAME}_node src/test_timeout_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -229,3 +227,4 @@ target_link_libraries(${PROJECT_NAME}_node
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
