@@ -237,15 +237,25 @@ public:
         leftHandPose,
         rightHandPose);
   }
-/*
-  void output_bodies(astra_bodyframe_t bodyFrame)
+
+ void output_bodies(astra_bodyframe_t bodyFrame)
   {
     int i;
     astra_body_list_t bodyList;
     const astra_status_t rc = astra_bodyframe_body_list(bodyFrame, &bodyList);
     if (rc != ASTRA_STATUS_SUCCESS)
     {
-        printf("Error %d in astra_bodyframe_body_list()\n", rc);pointing_gesture::
+        printf("Error %d in astra_bodyframe_body_list()\n", rc);
+        return;
+    }
+
+    for(i = 0; i < bodyList.count; ++i)
+    {
+      astra_body_t* body = &bodyList.bodies[i];
+
+      // Pixels in the body mask with the same value as bodyId are
+      // from the same body.
+      int bodyId = (int)body->id; // astra_body_id_t 
 
       // Tracking status
       // NOT_TRACKING = 0
@@ -253,7 +263,7 @@ public:
       // TRACKING_STARTED = 2
       // TRACKING = 3
 
-      astra_body_status_t bodyStatus = body->status;
+      int bodyStatus = body->status;
       if (bodyStatus == ASTRA_BODY_STATUS_TRACKING_STARTED)
       {
           printf("Body Id: %d Status: Tracking started\n", bodyId);
@@ -350,8 +360,6 @@ public:
 
       ///////////////////////////////////////////////////////////////
       // 3D position of person
-
-      // *** POSITION 3D ***
       // THIS IS THE MOST RELIABLE TRACKING POINT, so we use it for person position in 3D!
       joint = &body->joints[KEY_JOINT_TO_TRACK];
       position_data.position3d.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
@@ -494,7 +502,8 @@ public:
     } // for each body seen
 
   }
-*/
+
+
   void PublishMarker(int id, float x, float y, float z, float color_r, float color_g, float color_b)
   {
     // Display marker for RVIZ to show where robot thinks person is

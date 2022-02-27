@@ -92,8 +92,10 @@ struct BodyTracker_
    typedef int32_t _gender_type;
   _gender_type gender;
 
-   typedef std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other >  _name_type;
-  _name_type name;
+  // typedef std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other >  _name_type;
+  //_name_type name;
+
+   std::string name;
 
    typedef  ::geometry_msgs::Point32_<ContainerAllocator>  _position2d_type;
   _position2d_type position2d;
@@ -329,8 +331,8 @@ struct Printer< ::pointing_gesture::BodyTracker_<ContainerAllocator> >
     Printer<int32_t>::stream(s, indent + "  ", v.age);
     s << indent << "gender: ";
     Printer<int32_t>::stream(s, indent + "  ", v.gender);
-    s << indent << "name: ";
-    Printer<std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other > >::stream(s, indent + "  ", v.name);
+    //s << indent << "name: ";
+    //Printer<std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other > >::stream(s, indent + "  ", v.name);
     s << indent << "position2d: ";
     s << std::endl;
     Printer< ::geometry_msgs::Point32_<ContainerAllocator> >::stream(s, indent + "  ", v.position2d);
