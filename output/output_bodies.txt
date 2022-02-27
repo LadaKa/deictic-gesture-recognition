@@ -1,0 +1,22 @@
+
+Body Id: 41 Status: Tracking
+Body 41 CenterOfMass (-35.324043, -119.273697, 1032.016968)
+    Joint Tracking Enabled: True     Hand Pose Recognition Enabled: True
+Astra: 2D Tracking for ID 41 :   px: 0.2942 py: 0.2486
+    x: -0.0207 y: 0.0565 z: 0
+          Head:Body 41 Joint 0 status 2 @ world (-2.9, 151.4, 1115.6) depth (318.5, 162.6)
+          Neck:Body 41 Joint 18 status 2 @ world (-49.9, 56.0, 1091.9) depth (293.9, 210.7)
+     Spine Top:Body 41 Joint 1 status 2 @ world (-50.1, -16.7, 1109.1) depth (294.2, 248.6)
+     Spine Mid:Body 41 Joint 8 status 2 @ world (-50.6, -233.9, 1160.3) depth (295.1, 355.0)
+    Spine Base:Body 41 Joint 9 status 2 @ world (-53.6, -404.5, 1100.0) depth (292.2, 449.7)
+ Left Shoulder:Body 41 Joint 2 status 2 @ world (-112.8, -38.4, 967.1) depth (253.5, 262.6)
+    Left Elbow:Body 41 Joint 3 status 2 @ world (-3.5, -258.7, 934.5) depth (317.8, 397.9)
+     Left Hand:Body 41 Joint 4 status 2 @ world (-213.0, -236.6, 1106.3) depth (210.2, 362.0)
+Right Shoulder:Body 41 Joint 5 status 2 @ world (2.0, -12.3, 1237.0) depth (320.9, 245.7)
+   Right Elbow:Body 41 Joint 6 status 2 @ world (65.1, -169.9, 1418.0) depth (346.2, 308.3)
+    Right Hand:Body 41 Joint 7 status 2 @ world (274.2, -321.0, 1503.7) depth (424.0, 361.7)
+Body 41 Left hand pose: 0 Right hand pose: 0
+SPINE TOP: x= 44, y= -2, z= -1 inches
+----------------------------
+
+

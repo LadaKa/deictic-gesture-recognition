@@ -1,0 +1,39 @@
+header: 
+  seq: 4929
+  stamp: 
+    secs: 1645984013
+    nsecs: 636208575
+  frame_id: "astra_camera_link"
+ns: "astra_body_tracker"
+id: 6
+type: 2
+action: 0
+pose: 
+  position: 
+    x: 1.1860851049423218
+    y: -0.004322336986660957
+    z: -0.38833725452423096
+  orientation: 
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+scale: 
+  x: 0.1
+  y: 0.1
+  z: 0.1
+color: 
+  r: 1.0
+  g: 0.0
+  b: 0.0
+  a: 1.0
+lifetime: 
+  secs: 1
+  nsecs:         0
+frame_locked: False
+points: []
+colors: []
+text: ''
+mesh_resource: ''
+mesh_use_embedded_materials: False
+

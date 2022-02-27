@@ -238,6 +238,7 @@ public:
         rightHandPose);
   }
 
+
  void output_bodies(astra_bodyframe_t bodyFrame)
   {
     int i;
@@ -552,13 +553,14 @@ public:
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {
-    output_floor(bodyFrame);
+    //output_floor(bodyFrame);
 
-    output_body_mask(bodyFrame);
+    //output_body_mask(bodyFrame);
 
-    output_bodyframe_info(bodyFrame);
+   
+   // output_bodyframe_info(bodyFrame);
 
-    //output_bodies(bodyFrame);
+    output_bodies(bodyFrame);
   }
 
   void runLoop()
