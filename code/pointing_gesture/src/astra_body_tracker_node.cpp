@@ -80,13 +80,6 @@ public:
     marker_pub_ = nh_.advertise<visualization_msgs::Marker>
       ("body_tracker/marker", 1);
 
-
-/*    body_tracking_pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>
-      ("body_tracker/pose", 1); // NOTE: We only provide to POSITION not full pose
-
-    body_tracking_data_pub_ = nh_.advertise<body_tracker_msgs::BodyTracker>
-      ("body_tracker/skeleton", 1);
-*/
     ROS_INFO("astra_body_tracker: Advertised Publisher: body_tracker/pose, skeleton, marker");
 
   }
@@ -99,83 +92,14 @@ public:
 
 
   //////////////////////////////////////////////////////////
-  // Modified Orbec Astra sample code
+  /* 
+    Modified Orbec Astra sample code
 
-  void output_floor(astra_bodyframe_t bodyFrame)
-  {
-    astra_floor_info_t floorInfo;
+    Removed:      void output_floor(astra_bodyframe_t bodyFrame)
+                  void output_body_mask(astra_bodyframe_t bodyFrame)
+                  void output_bodyframe_info(astra_bodyframe_t bodyFrame)
 
-    astra_status_t rc = astra_bodyframe_floor_info(bodyFrame, &floorInfo);
-    if (rc != ASTRA_STATUS_SUCCESS)
-    {
-      printf("Error %d in astra_bodyframe_floor_info()\n", rc);
-      return;
-    }
-
-    const astra_bool_t floorDetected = floorInfo.floorDetected;
-    const astra_plane_t* floorPlane = &floorInfo.floorPlane;
-    const astra_floormask_t* floorMask = &floorInfo.floorMask;
-
-    if (floorDetected != ASTRA_FALSE)
-    {
-      printf("Floor plane: [%f, %f, %f, %f]\n",
-             floorPlane->a,
-             floorPlane->b,
-             floorPlane->c,
-             floorPlane->d);
-
-      const int32_t bottomCenterIndex = floorMask->width / 2 + floorMask->width * (floorMask->height - 1);
-      printf("Floor mask: width: %d height: %d bottom center value: %d\n",
-            floorMask->width,
-            floorMask->height,
-            floorMask->data[bottomCenterIndex]);
-    }
-  }
-
-  void output_body_mask(astra_bodyframe_t bodyFrame)
-  {
-    astra_bodymask_t bodyMask;
-
-    const astra_status_t rc = astra_bodyframe_bodymask(bodyFrame, &bodyMask);
-    if (rc != ASTRA_STATUS_SUCCESS)
-    {
-      printf("Error %d in astra_bodyframe_bodymask()\n", rc);
-      return;
-    }
-
-    /*
-    const int32_t centerIndex = bodyMask.width / 2 + bodyMask.width * bodyMask.height / 2;
-    printf("Body mask: width: %d height: %d center value: %d\n",
-        bodyMask.width,
-        bodyMask.height,
-        bodyMask.data[centerIndex]);
-    */
-  }
-
-  void output_bodyframe_info(astra_bodyframe_t bodyFrame)
-  {
-    astra_bodyframe_info_t info;
-
-    const astra_status_t rc = astra_bodyframe_info(bodyFrame, &info);
-    if (rc != ASTRA_STATUS_SUCCESS)
-    {
-      printf("Error %d in astra_bodyframe_info()\n", rc);
-      return;
-    }
-
-    // width and height of floor mask, body mask, and the size of depth image
-    // that joint depth position is relative to.
-    const int32_t width = info.width;
-    const int32_t height = info.height;
-
-    /*
-    printf("BodyFrame info: Width: %d Height: %d\n",
-        width,
-        height);
-   */
-  }
-
-
+  */
 
   void output_joint(std::string joint_name, const int32_t bodyId, const astra_joint_t* joint)
   {
@@ -510,10 +434,6 @@ public:
     // Display marker for RVIZ to show where robot thinks person is
     // For Markers info, see http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
 
-    // ROS_INFO("DBG: PublishMarker called");
-    //if( id != 1)
-    //  printf ("DBG PublishMarker called for %f, %f, %f\n", x,y,z);
-
     visualization_msgs::Marker marker;
     marker.header.frame_id = "astra_camera_link"; // "base_link";
     marker.header.stamp = ros::Time::now();
@@ -553,13 +473,7 @@ public:
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {
-    //output_floor(bodyFrame);
-
-    //output_body_mask(bodyFrame);
-
-   
-   // output_bodyframe_info(bodyFrame);
-
+    // TBA:   methods to get some reference points 
     output_bodies(bodyFrame);
   }
 
