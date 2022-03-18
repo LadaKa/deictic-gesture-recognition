@@ -86,7 +86,7 @@ public:
 
   ~astra_body_tracker_node()
   {
-    ROS_INFO("astra_body_tracker_node shutting down");
+    ROS_INFO("astra_body_tracker_node shutting down"); 
   }
 
 
@@ -325,7 +325,7 @@ public:
       joint = &body->joints[ASTRA_JOINT_MID_SPINE];
       output_joint("Spine Mid", bodyId, joint );
       skeleton_data.joint_position_spine_mid.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_spine_mid.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
+      skeleton_data.joint_position_spine_mid.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;  
       skeleton_data.joint_position_spine_mid.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
 
       joint = &body->joints[ASTRA_JOINT_BASE_SPINE];
@@ -382,40 +382,92 @@ public:
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
 
 
-      PublishMarker(
+      PublishCubeMarker(
         2, // ID
         skeleton_data.centerOfMass.x, // Distance to person = ROS X
         skeleton_data.centerOfMass.y, // side to side = ROS Y
         skeleton_data.centerOfMass.z, // Height = ROS Z
         1.0, 0.0, 1.0 ); // r,g,b
 
-      PublishMarker(
+
+      PublishCubeMarker(
         3, // ID
         skeleton_data.joint_position_head.x,
         skeleton_data.joint_position_head.y,
         skeleton_data.joint_position_head.z,
-        0.7, 0.7, 0.7 ); // r,g,b
+        0.0, 0.5, 0.5 ); // r,g,b
 
-      PublishMarker(
+
+      // spine:
+
+      PublishCubeMarker(
         4, // ID
         skeleton_data.joint_position_spine_top.x,
         skeleton_data.joint_position_spine_top.y,
         skeleton_data.joint_position_spine_top.z,
-        0.0, 0.0, 1.0 ); // r,g,b
+        0.0, 1.0, 0.3 ); // r,g,b
 
-      PublishMarker(
+      PublishCubeMarker(
         5, // ID
         skeleton_data.joint_position_spine_mid.x,
         skeleton_data.joint_position_spine_mid.y,
         skeleton_data.joint_position_spine_mid.z,
-        0.0, 1.0, 0.0 ); // r,g,b
+        0.0, 1.0, 0.2 ); // r,g,b
 
-      PublishMarker(
+      PublishCubeMarker(
         6, // ID
         skeleton_data.joint_position_spine_bottom.x,
         skeleton_data.joint_position_spine_bottom.y,
         skeleton_data.joint_position_spine_bottom.z,
+        0.0, 1.0, 0.1 ); // r,g,b
+
+
+      // left arm:
+
+      PublishSphereMarker(
+        7, // ID
+        skeleton_data.joint_position_left_shoulder.x,
+        skeleton_data.joint_position_left_shoulder.y,
+        skeleton_data.joint_position_left_shoulder.z,
         1.0, 0.0, 0.0 ); // r,g,b
+
+      PublishSphereMarker(
+        8, // ID
+        skeleton_data.joint_position_left_elbow.x,
+        skeleton_data.joint_position_left_elbow.y,
+        skeleton_data.joint_position_left_elbow.z,
+        0.9, 0.0, 0.1 ); // r,g,b
+
+      PublishSphereMarker(
+        9, // ID
+        skeleton_data.joint_position_left_hand.x,
+        skeleton_data.joint_position_left_hand.y,
+        skeleton_data.joint_position_left_hand.z,
+        0.8, 0.0, 0.2 ); // r,g,b
+
+
+      // rigth arm:
+
+      PublishSphereMarker(
+        10, // ID
+        skeleton_data.joint_position_right_elbow.x,
+        skeleton_data.joint_position_right_elbow.y,
+        skeleton_data.joint_position_right_elbow.z,
+        0.0, 0.0, 1.0 ); // r,g,b
+
+      PublishSphereMarker(
+        11, // ID
+        skeleton_data.joint_position_right_hand.x,
+        skeleton_data.joint_position_right_hand.y,
+        skeleton_data.joint_position_right_hand.z,
+        0.1, 0.0, 0.9 ); // r,g,b
+
+      PublishSphereMarker(
+        12, // ID
+        skeleton_data.joint_position_right_hand.x,
+        skeleton_data.joint_position_right_hand.y,
+        skeleton_data.joint_position_right_hand.z,
+        0.2, 0.0, 0.8 ); // r,g,b
 
       printf("SPINE TOP: x=%3.0f, y=%3.0f, z=%3.0f inches\n",
         skeleton_data.joint_position_spine_top.x * 39.3,
@@ -429,7 +481,21 @@ public:
   }
 
 
-  void PublishMarker(int id, float x, float y, float z, float color_r, float color_g, float color_b)
+  void PublishCubeMarker(
+    int id, float x, float y, float z, float color_r, float color_g, float color_b)
+  {
+    PublishMarker(id, x, y, z, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
+  }
+
+  void PublishSphereMarker(
+  int id, float x, float y, float z, float color_r, float color_g, float color_b)
+  {
+    PublishMarker(id, x, y, z, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
+  }
+
+
+  void PublishMarker(
+    int id, float x, float y, float z, float color_r, float color_g, float color_b, uint32_t shape)
   {
     // Display marker for RVIZ to show where robot thinks person is
     // For Markers info, see http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
@@ -443,7 +509,6 @@ public:
     marker.ns = "astra_body_tracker";
     marker.id = id; // This must be id unique for each marker
 
-    uint32_t shape = visualization_msgs::Marker::SPHERE;
     marker.type = shape;
 
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
