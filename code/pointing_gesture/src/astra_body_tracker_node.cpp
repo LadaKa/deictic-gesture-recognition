@@ -299,180 +299,67 @@ public:
       skeleton_data.body_id = bodyId;
       skeleton_data.tracking_status = bodyStatus;
 
-      /// TODO skeleton_data.centerOfMass.x = centerOfMass->z;
-      /// skeleton_data.centerOfMass.y = centerOfMass->x;
-      /// skeleton_data.centerOfMass.z = centerOfMass->y;
+      /// TODO:
+      /// create ASTRA_CENTRE_OF_MASS and SetJointPositionByWorldPosition(.., ASTRA_CENTRE_OF_MASS, ..)
 
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_HEAD, skeleton_data.joint_position_head);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_NECK, skeleton_data.joint_position_neck);
+      
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_SHOULDER_SPINE, skeleton_data.joint_position_spine_top);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_MID_SPINE, skeleton_data.joint_position_spine_mid);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_BASE_SPINE, skeleton_data.joint_position_spine_bottom);
 
-      joint = &body->joints[ASTRA_JOINT_HEAD];
-      output_joint("Head", bodyId, joint );
-      skeleton_data.joint_position_head.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_head.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_head.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_SHOULDER, skeleton_data.joint_position_left_shoulder);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_ELBOW, skeleton_data.joint_position_left_elbow);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_HAND, skeleton_data.joint_position_left_hand);
+     
 
-      joint = &body->joints[ASTRA_JOINT_NECK];
-      output_joint("Neck", bodyId, joint );
-      skeleton_data.joint_position_neck.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_neck.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_neck.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_SHOULDER, skeleton_data.joint_position_right_shoulder);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_ELBOW, skeleton_data.joint_position_right_elbow);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_HAND, skeleton_data.joint_position_right_hand);
 
-      joint = &body->joints[ASTRA_JOINT_SHOULDER_SPINE];
-      output_joint("Spine Top", bodyId, joint );
-      skeleton_data.joint_position_spine_top.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_spine_top.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_spine_top.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
+      /// TODO: 
+      /*
+      HAND GRIP:
+          0 ~ open
+          1 ~ grasping ... this starts the pointing gesture processing
 
-      joint = &body->joints[ASTRA_JOINT_MID_SPINE];
-      output_joint("Spine Mid", bodyId, joint );
-      skeleton_data.joint_position_spine_mid.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_spine_mid.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;  
-      skeleton_data.joint_position_spine_mid.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
+          output_hand_poses(body);
+          const astra_handpose_info_t* handPoses = &body->handPoses;
 
-      joint = &body->joints[ASTRA_JOINT_BASE_SPINE];
-      output_joint("Spine Base", bodyId, joint );
-      skeleton_data.joint_position_spine_bottom.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_spine_bottom.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_spine_bottom.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      joint = &body->joints[ASTRA_JOINT_LEFT_SHOULDER];
-      output_joint("Left Shoulder", bodyId, joint );
-      skeleton_data.joint_position_left_shoulder.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_left_shoulder.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_left_shoulder.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      joint = &body->joints[ASTRA_JOINT_LEFT_ELBOW];
-      output_joint("Left Elbow", bodyId, joint );
-      skeleton_data.joint_position_left_elbow.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_left_elbow.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_left_elbow.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      joint = &body->joints[ASTRA_JOINT_LEFT_HAND];
-      output_joint("Left Hand", bodyId, joint );
-      skeleton_data.joint_position_left_hand.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_left_hand.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_left_hand.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      joint = &body->joints[ASTRA_JOINT_RIGHT_SHOULDER];
-      output_joint("Right Shoulder", bodyId, joint );
-      skeleton_data.joint_position_right_shoulder.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_right_shoulder.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_right_shoulder.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      joint = &body->joints[ASTRA_JOINT_RIGHT_ELBOW];
-      output_joint("Right Elbow", bodyId, joint );
-      skeleton_data.joint_position_right_elbow.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_right_elbow.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_right_elbow.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      joint = &body->joints[ASTRA_JOINT_RIGHT_HAND];
-      output_joint("Right Hand", bodyId, joint );
-      skeleton_data.joint_position_right_hand.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0;
-      skeleton_data.joint_position_right_hand.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
-      skeleton_data.joint_position_right_hand.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
-
-      // Is hand open (0) or grasping (1)?
-      output_hand_poses(body);
-      const astra_handpose_info_t* handPoses = &body->handPoses;
-      // We just publish "1" if either hand has any gesture detected
-      skeleton_data.gesture = (handPoses->rightHand + handPoses->leftHand);
+          We just publish "1" if either hand has any gesture detected
+          skeleton_data.gesture = (handPoses->rightHand + handPoses->leftHand);
+      */
 
       ////////////////////////////////////////////////////
       // Publish everything
       body_tracking_position_pub_.publish(position_data); // position data
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
 
-
+      /*
       PublishCubeMarker(
-        2, // ID
-        skeleton_data.centerOfMass.x, // Distance to person = ROS X
-        skeleton_data.centerOfMass.y, // side to side = ROS Y
-        skeleton_data.centerOfMass.z, // Height = ROS Z
-        1.0, 0.0, 1.0 ); // r,g,b
+        2,                          // ID
+        skeleton_data.centerOfMass, // Distance to person = ROS X, side to side = ROS Y, Height = ROS Z
+        0.5, 0.5, 0.5 );            // r,g,b
+      */
 
-
-      PublishCubeMarker(
-        3, // ID
-        skeleton_data.joint_position_head.x,
-        skeleton_data.joint_position_head.y,
-        skeleton_data.joint_position_head.z,
-        0.0, 0.5, 0.5 ); // r,g,b
-
+      // head    
+      PublishCubeMarker(3, skeleton_data.joint_position_head, 0.9, 0.1, 0.1); 
 
       // spine:
-
-      PublishCubeMarker(
-        4, // ID
-        skeleton_data.joint_position_spine_top.x,
-        skeleton_data.joint_position_spine_top.y,
-        skeleton_data.joint_position_spine_top.z,
-        0.0, 1.0, 0.3 ); // r,g,b
-
-      PublishCubeMarker(
-        5, // ID
-        skeleton_data.joint_position_spine_mid.x,
-        skeleton_data.joint_position_spine_mid.y,
-        skeleton_data.joint_position_spine_mid.z,
-        0.0, 1.0, 0.2 ); // r,g,b
-
-      PublishCubeMarker(
-        6, // ID
-        skeleton_data.joint_position_spine_bottom.x,
-        skeleton_data.joint_position_spine_bottom.y,
-        skeleton_data.joint_position_spine_bottom.z,
-        0.0, 1.0, 0.1 ); // r,g,b
-
+      PublishCubeMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.3); 
+      PublishCubeMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.3); 
+      PublishCubeMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.3); 
 
       // left arm:
-
-      PublishSphereMarker(
-        7, // ID
-        skeleton_data.joint_position_left_shoulder.x,
-        skeleton_data.joint_position_left_shoulder.y,
-        skeleton_data.joint_position_left_shoulder.z,
-        1.0, 0.0, 0.0 ); // r,g,b
-
-      PublishSphereMarker(
-        8, // ID
-        skeleton_data.joint_position_left_elbow.x,
-        skeleton_data.joint_position_left_elbow.y,
-        skeleton_data.joint_position_left_elbow.z,
-        0.9, 0.0, 0.1 ); // r,g,b
-
-      PublishSphereMarker(
-        9, // ID
-        skeleton_data.joint_position_left_hand.x,
-        skeleton_data.joint_position_left_hand.y,
-        skeleton_data.joint_position_left_hand.z,
-        0.8, 0.0, 0.2 ); // r,g,b
-
+      PublishSphereMarker(7, skeleton_data.joint_position_left_shoulder, 0.5, 0.1, 0.1); 
+      PublishSphereMarker(8, skeleton_data.joint_position_left_elbow, 0.5, 0.1, 0.1); 
+      PublishSphereMarker(9, skeleton_data.joint_position_left_hand, 0.5, 0.1, 0.1); 
 
       // rigth arm:
-
-      PublishSphereMarker(
-        10, // ID
-        skeleton_data.joint_position_right_elbow.x,
-        skeleton_data.joint_position_right_elbow.y,
-        skeleton_data.joint_position_right_elbow.z,
-        0.0, 0.0, 1.0 ); // r,g,b
-
-      PublishSphereMarker(
-        11, // ID
-        skeleton_data.joint_position_right_hand.x,
-        skeleton_data.joint_position_right_hand.y,
-        skeleton_data.joint_position_right_hand.z,
-        0.1, 0.0, 0.9 ); // r,g,b
-
-      PublishSphereMarker(
-        12, // ID
-        skeleton_data.joint_position_right_hand.x,
-        skeleton_data.joint_position_right_hand.y,
-        skeleton_data.joint_position_right_hand.z,
-        0.2, 0.0, 0.8 ); // r,g,b
-
-      printf("SPINE TOP: x=%3.0f, y=%3.0f, z=%3.0f inches\n",
-        skeleton_data.joint_position_spine_top.x * 39.3,
-        skeleton_data.joint_position_spine_top.y * 39.3,
-        skeleton_data.joint_position_spine_top.z * 39.3);
+      PublishSphereMarker(10, skeleton_data.joint_position_right_elbow, 0.1, 0.1, 0.5); 
+      PublishSphereMarker(11, skeleton_data.joint_position_right_hand, 0.1, 0.1, 0.5);
+      PublishSphereMarker(12, skeleton_data.joint_position_right_hand, 0.1, 0.1, 0.5);
 
       printf("----------------------------\n\n");
 
@@ -482,20 +369,23 @@ public:
 
 
   void PublishCubeMarker(
-    int id, float x, float y, float z, float color_r, float color_g, float color_b)
+    int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
+    float color_r, float color_g, float color_b)
   {
-    PublishMarker(id, x, y, z, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
+    PublishMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
   }
 
   void PublishSphereMarker(
-  int id, float x, float y, float z, float color_r, float color_g, float color_b)
+    int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
+    float color_r, float color_g, float color_b)
   {
-    PublishMarker(id, x, y, z, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
+    PublishMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
   }
 
-
   void PublishMarker(
-    int id, float x, float y, float z, float color_r, float color_g, float color_b, uint32_t shape)
+    int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
+    float color_r, float color_g, float color_b, 
+    uint32_t shape)
   {
     // Display marker for RVIZ to show where robot thinks person is
     // For Markers info, see http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
@@ -526,15 +416,28 @@ public:
     marker.scale.y = 0.1;
     marker.scale.z = 0.1;  
 
-    marker.pose.position.x = x;
-    marker.pose.position.y = y;
-    marker.pose.position.z = z;
+    marker.pose.position.x = position.x;
+    marker.pose.position.y = position.y;
+    marker.pose.position.z = position.z;
 
 
     //ROS_INFO("DBG: Publishing Marker");
     marker_pub_.publish(marker);
 
   }
+
+
+  void SetJointPositionByWorldPosition(
+    astra_body_t* body,
+    _astra_joint_type joint_type,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> joint_position)
+  {     
+      astra_joint_t* joint = &body->joints[joint_type];
+      joint_position.x = ((astra_vector3f_t*)&joint->worldPosition)->z / 1000.0; // why so weird?
+      joint_position.y = ((astra_vector3f_t*)&joint->worldPosition)->x / 1000.0;
+      joint_position.z = ((astra_vector3f_t*)&joint->worldPosition)->y / 1000.0;
+  }
+
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {
