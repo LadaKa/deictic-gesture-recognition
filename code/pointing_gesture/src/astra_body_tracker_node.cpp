@@ -336,20 +336,23 @@ public:
       body_tracking_position_pub_.publish(position_data); // position data
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
 
+
       /*
-      PublishCubeMarker(
+      Skeleton joints:
+
+      PublishSphereMarker(
         2,                          // ID
         skeleton_data.centerOfMass, // Distance to person = ROS X, side to side = ROS Y, Height = ROS Z
         0.5, 0.5, 0.5 );            // r,g,b
       */
 
-      // head    
-      PublishCubeMarker(3, skeleton_data.joint_position_head, 0.9, 0.1, 0.1); 
+      // head:   
+      PublishSphereMarker(3, skeleton_data.joint_position_head, 0.9, 0.1, 0.1); 
 
       // spine:
-      PublishCubeMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.3); 
-      PublishCubeMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.3); 
-      PublishCubeMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.3); 
+      PublishSphereMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.3); 
+      PublishSphereMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.3); 
+      PublishSphereMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.3); 
 
       // left arm:
       PublishSphereMarker(7, skeleton_data.joint_position_left_shoulder, 0.5, 0.1, 0.1); 
@@ -361,29 +364,66 @@ public:
       PublishSphereMarker(11, skeleton_data.joint_position_right_hand, 0.1, 0.1, 0.5);
       PublishSphereMarker(12, skeleton_data.joint_position_right_hand, 0.1, 0.1, 0.5);
 
+      /*
+      Skeleton links:
+
+      */
+      
+      // spine:
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> spinePositions[]
+        {
+          skeleton_data.joint_position_head,
+          skeleton_data.joint_position_spine_top,
+          skeleton_data.joint_position_spine_mid,
+          skeleton_data.joint_position_spine_bottom
+        };
+      PublishLinesMarkers(13, spinePositions, 0.3, 0.3, 0.3 );
+
+
+      // left arm:
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> leftArmPositions[]
+        {
+          skeleton_data.joint_position_left_shoulder,
+          skeleton_data.joint_position_left_elbow,
+          skeleton_data.joint_position_left_hand
+        };
+      PublishLinesMarkers(14, leftArmPositions, 0.3, 0.3, 0.3 );
+
+      // right arm:
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> rightArmPositions[]
+        {
+          skeleton_data.joint_position_right_shoulder,
+          skeleton_data.joint_position_right_elbow,
+          skeleton_data.joint_position_right_hand
+        };
+      PublishLinesMarkers(14, rightArmPositions, 0.3, 0.3, 0.3 );
+
+
       printf("----------------------------\n\n");
 
     } // for each body seen
 
   }
 
-
-  void PublishCubeMarker(
+  // cube marker for objects
+  void PublishCubeMarker( 
     int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
     float color_r, float color_g, float color_b)
   {
-    PublishMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
+    PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
   }
 
+  // sphere marker for skeleton joints
   void PublishSphereMarker(
     int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
     float color_r, float color_g, float color_b)
   {
-    PublishMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
+    PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
   }
 
-  void PublishMarker(
-    int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
+  void PublishPointMarker(
+    int id, 
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> position, 
     float color_r, float color_g, float color_b, 
     uint32_t shape)
   {
@@ -426,6 +466,33 @@ public:
 
   }
 
+
+  void PublishLinesMarkers(
+    int id, 
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> positions[], 
+    float color_r, float color_g, float color_b
+  )
+  {
+      visualization_msgs::Marker line_list;
+      line_list.type = visualization_msgs::Marker::LINE_LIST;
+      line_list.id = id; // This must be id unique for each marker
+      line_list.scale.x = 0.1;
+      line_list.color.r = color_r;
+      line_list.color.g = color_g;
+      line_list.color.b = color_b;
+
+      for (int i = 0; i < sizeof(positions); i++)
+      {
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> position = positions[i];
+        geometry_msgs::Point point;
+        point.x = position.x;
+        point.y = position.y;
+        point.z = position.z;
+        line_list.points.push_back(point);
+      }
+
+      marker_pub_.publish(line_list);
+  }
 
   void SetJointPositionByWorldPosition(
     astra_body_t* body,
