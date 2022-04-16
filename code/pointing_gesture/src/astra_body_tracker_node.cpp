@@ -141,18 +141,18 @@ public:
       astra_body_t *body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
-      printBodyStatus(bodyId, bodyStatus);
-      printBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
-      
+      PrintBodyStatus(bodyId, bodyStatus);
+      PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
+
       // THIS IS THE MOST RELIABLE TRACKING POINT, so we use it for person position in 3D!
       astra_joint_t *keyJoint = &body->joints[KEY_JOINT_TO_TRACK];
 
       pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> position_data;
-      set2DPositionDataByKeyJoint(bodyId, bodyStatus, keyJoint, position_data);
+      Set2DPositionDataByKeyJoint(bodyId, bodyStatus, keyJoint, position_data);
 
       ///////////////////////////////////////////////////////////////
       // 3D position of person
-      
+
       position_data.position3d.x = ((astra_vector3f_t *)&keyJoint->worldPosition)->z / 1000.0;
       position_data.position3d.y = ((astra_vector3f_t *)&keyJoint->worldPosition)->x / 1000.0;
       position_data.position3d.z = ((astra_vector3f_t *)&keyJoint->worldPosition)->y / 1000.0;
@@ -165,22 +165,24 @@ public:
       skeleton_data.body_id = bodyId;
       skeleton_data.tracking_status = bodyStatus;
 
+      PrintJointPositionDebugInfo("HEAD before conversion: ", skeleton_data.joint_position_head);
       SetJointPositionByWorldPosition(body, ASTRA_JOINT_HEAD, skeleton_data.joint_position_head);
-
+      PrintJointPositionDebugInfo("HEAD after conversion: ", skeleton_data.joint_position_head);
 
       ////////////////////////////////////////////////////
       // Publish everything
       body_tracking_position_pub_.publish(position_data); // position data
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
 
+      /*
       geometry_msgs::Point32_<pointing_gesture::Skeleton> testPose;
       testPose.x = 1;
       testPose.y = 1;
       testPose.z = 1;
 
       PublishCubeMarker(3, testPose, 0.9, 0.1, 0.1);
-
-    } 
+      */
+    }
   }
 
   // cube marker for objects
@@ -238,9 +240,8 @@ public:
     marker.pose.position.y = position.y;
     marker.pose.position.z = position.z;
 
-    std::string info = "DBG: Publishing Marker: " + std::to_string(position.x) + "-" + std::to_string(position.y) + "-" + std::to_string(position.z);
-    ROS_INFO_STREAM(info);
     marker_pub_.publish(marker);
+    PrintJointPositionDebugInfo("PublishPointMarker", position);
   }
 
   void PublishLinesMarkers(
@@ -253,21 +254,9 @@ public:
     line_list.id = id; // This must be id unique for each marker
     line_list.scale.x = 0.1;
     line_list.color.r = color_r;
-    line_list.color.g = color_g;
-    line_list.color.b = color_b;
-
-    for (int i = 0; i < sizeof(positions); i++)
-    {
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position = positions[i];
-      geometry_msgs::Point point;
-      point.x = position.x;
-      point.y = position.y;
-      point.z = position.z;
-      line_list.points.push_back(point);
-    }
-
-    marker_pub_.publish(line_list);
+    line_list.color.g = color_g; 
   }
+
 
   void SetJointPositionByWorldPosition(
       astra_body_t *body,
@@ -279,10 +268,9 @@ public:
     joint_position.y = ((astra_vector3f_t *)&joint->worldPosition)->x / 1000.0;
     joint_position.z = ((astra_vector3f_t *)&joint->worldPosition)->y / 1000.0;
 
-    std::string info = "DBG: SetJointPosition IN: " + std::to_string(joint_position.x) + "-" + std::to_string(joint_position.y) + "-" + std::to_string(joint_position.z);
-
-    ROS_INFO_STREAM(info);
+    PrintJointPositionDebugInfo("SetJointPositionByWorldPosition", joint_position);
   }
+
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {
@@ -290,7 +278,8 @@ public:
     output_bodies(bodyFrame);
   }
 
-  void printBodyStatus(
+
+  void PrintBodyStatus(
       int bodyId,
       int bodyStatus)
   {
@@ -318,7 +307,8 @@ public:
     }
   }
 
-  void printBasicTrackingInfo(
+
+  void PrintBasicTrackingInfo(
       int bodyId,
       astra_body_tracking_feature_flags_t features,
       astra_vector3f_t *centerOfMass)
@@ -341,7 +331,21 @@ public:
              handPoseRecognitionEnabled ? "True" : "False");
   }
 
-  void set2DPositionDataByKeyJoint(
+
+  void PrintJointPositionDebugInfo( 
+      std::string header,
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> joint_position)
+  {
+    std::string info =
+        header + ":" 
+        + std::to_string(joint_position.x) + "; " 
+        + std::to_string(joint_position.y) + "; " 
+        + std::to_string(joint_position.z);
+    ROS_INFO_STREAM(info);
+  }
+
+
+  void Set2DPositionDataByKeyJoint(
       int bodyId,
       int bodyStatus,
       astra_joint_t *keyJoint,
@@ -382,6 +386,7 @@ public:
               << " z: " << position_data.position2d.z
               << std::endl;
   }
+
 
   void runLoop()
   {
