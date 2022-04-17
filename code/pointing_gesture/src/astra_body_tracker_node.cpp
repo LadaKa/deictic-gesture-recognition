@@ -138,7 +138,7 @@ public:
 
     for (i = 0; i < bodyList.count; ++i)
     {
-      astra_body_t *body = &bodyList.bodies[i];
+      astra_body_t* body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
       PrintBodyStatus(bodyId, bodyStatus);
@@ -160,28 +160,19 @@ public:
       ///////////////////////////////////////////////////////////////
       // Skeleton data - published in skeleton message
 
-      /// skeleton_data.frame_id = "astra_camera_link"; // "base_link";
+      /// skeleton_data.frame_id = "astra_camera_link"; // "base_link";  // not sure about this
       pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data;
       skeleton_data.body_id = bodyId;
       skeleton_data.tracking_status = bodyStatus;
 
-      PrintJointPositionDebugInfo("HEAD before conversion: ", skeleton_data.joint_position_head);
+      //  This is working now:
       SetJointPositionByWorldPosition(body, ASTRA_JOINT_HEAD, skeleton_data.joint_position_head);
-      PrintJointPositionDebugInfo("HEAD after conversion: ", skeleton_data.joint_position_head);
+      PublishCubeMarker(3, skeleton_data.joint_position_head, 0.1, 0.1, 0.9);
 
       ////////////////////////////////////////////////////
       // Publish everything
       body_tracking_position_pub_.publish(position_data); // position data
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
-
-      /*
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> testPose;
-      testPose.x = 1;
-      testPose.y = 1;
-      testPose.z = 1;
-
-      PublishCubeMarker(3, testPose, 0.9, 0.1, 0.1);
-      */
     }
   }
 
@@ -261,9 +252,10 @@ public:
   void SetJointPositionByWorldPosition(
       astra_body_t *body,
       _astra_joint_type joint_type,
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> joint_position)
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> &joint_position)
   {
     astra_joint_t *joint = &body->joints[joint_type];
+    PrintJointPositionDebugInfo("SetJointPositionByWorldPosition before div", joint_position);
     joint_position.x = ((astra_vector3f_t *)&joint->worldPosition)->z / 1000.0; // why so weird?
     joint_position.y = ((astra_vector3f_t *)&joint->worldPosition)->x / 1000.0;
     joint_position.z = ((astra_vector3f_t *)&joint->worldPosition)->y / 1000.0;
