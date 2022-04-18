@@ -138,7 +138,7 @@ public:
 
     for (i = 0; i < bodyList.count; ++i)
     {
-      astra_body_t* body = &bodyList.bodies[i];
+      astra_body_t *body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
       PrintBodyStatus(bodyId, bodyStatus);
@@ -152,7 +152,7 @@ public:
 
       ///////////////////////////////////////////////////////////////
       // 3D position of person
-
+      // TODO:
       position_data.position3d.x = ((astra_vector3f_t *)&keyJoint->worldPosition)->z / 1000.0;
       position_data.position3d.y = ((astra_vector3f_t *)&keyJoint->worldPosition)->x / 1000.0;
       position_data.position3d.z = ((astra_vector3f_t *)&keyJoint->worldPosition)->y / 1000.0;
@@ -165,10 +165,64 @@ public:
       skeleton_data.body_id = bodyId;
       skeleton_data.tracking_status = bodyStatus;
 
-      //  This is working now:
+      //  Skeleton joints
       SetJointPositionByWorldPosition(body, ASTRA_JOINT_HEAD, skeleton_data.joint_position_head);
-      PublishCubeMarker(3, skeleton_data.joint_position_head, 0.1, 0.1, 0.9);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_NECK, skeleton_data.joint_position_neck);
 
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_SHOULDER_SPINE, skeleton_data.joint_position_spine_top);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_MID_SPINE, skeleton_data.joint_position_spine_mid);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_BASE_SPINE, skeleton_data.joint_position_spine_bottom);
+
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_SHOULDER, skeleton_data.joint_position_left_shoulder);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_ELBOW, skeleton_data.joint_position_left_elbow);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_HAND, skeleton_data.joint_position_left_hand);
+
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_SHOULDER, skeleton_data.joint_position_right_shoulder);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_ELBOW, skeleton_data.joint_position_right_elbow);
+      SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_HAND, skeleton_data.joint_position_right_hand);
+
+      // head:
+      PublishSphereMarker(3, skeleton_data.joint_position_head, 0.9, 0.1, 0.1);
+
+      // spine:
+      PublishSphereMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.3);
+      PublishSphereMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.3);
+      PublishSphereMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.3);
+
+      // left arm:
+      PublishSphereMarker(7, skeleton_data.joint_position_left_shoulder, 0.5, 0.1, 0.1);
+      PublishSphereMarker(8, skeleton_data.joint_position_left_elbow, 0.5, 0.1, 0.1);
+      PublishSphereMarker(9, skeleton_data.joint_position_left_hand, 0.5, 0.1, 0.1);
+
+      // rigth arm:
+      PublishSphereMarker(10, skeleton_data.joint_position_right_shoulder, 0.1, 0.1, 0.5);
+      PublishSphereMarker(11, skeleton_data.joint_position_right_elbow, 0.1, 0.1, 0.5);
+      PublishSphereMarker(12, skeleton_data.joint_position_right_hand, 0.1, 0.1, 0.5);
+
+      // Skeleton
+
+      // spine:
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> spinePositions[]{
+          skeleton_data.joint_position_head,
+         // skeleton_data.joint_position_spine_top,
+       //   skeleton_data.joint_position_spine_mid,
+          skeleton_data.joint_position_spine_bottom};
+      PublishLinesMarkers(13, spinePositions, 0.9, 0.1, 0.1);
+/*
+      // left arm:
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> leftArmPositions[]{
+          skeleton_data.joint_position_left_shoulder,
+          skeleton_data.joint_position_left_elbow,
+          skeleton_data.joint_position_left_hand};
+      PublishLinesMarkers(14, leftArmPositions, 0.3, 0.3, 0.3);
+
+      // right arm:
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> rightArmPositions[]{
+          skeleton_data.joint_position_right_shoulder,
+          skeleton_data.joint_position_right_elbow,
+          skeleton_data.joint_position_right_hand};
+      PublishLinesMarkers(14, rightArmPositions, 0.3, 0.3, 0.3);
+*/
       ////////////////////////////////////////////////////
       // Publish everything
       body_tracking_position_pub_.publish(position_data); // position data
@@ -243,11 +297,33 @@ public:
     visualization_msgs::Marker line_list;
     line_list.type = visualization_msgs::Marker::LINE_LIST;
     line_list.id = id; // This must be id unique for each marker
+    line_list.header.frame_id = "astra_camera_link"; 
+    line_list.header.stamp = ros::Time::now();
+    line_list.ns = "astra_body_tracker";
+    line_list.lifetime = ros::Duration(1.0); // seconds
+    line_list.action = visualization_msgs::Marker::ADD;
     line_list.scale.x = 0.1;
     line_list.color.r = color_r;
-    line_list.color.g = color_g; 
-  }
+    line_list.color.g = color_g;
+    line_list.color.b = color_b;
 
+    line_list.color.a = 0.5;
+
+    // for (int i = 0; i < sizeof(positions); i++)
+    for (int i = 0; i < 2; i++)
+    {
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position = positions[i];
+
+      geometry_msgs::Point p;
+      p.x = position.x;
+      p.y = position.y;
+      p.z = position.z;
+
+      line_list.points.push_back(p);
+    }
+
+    marker_pub_.publish(line_list);
+  }
 
   void SetJointPositionByWorldPosition(
       astra_body_t *body,
@@ -255,21 +331,16 @@ public:
       geometry_msgs::Point32_<pointing_gesture::Skeleton> &joint_position)
   {
     astra_joint_t *joint = &body->joints[joint_type];
-    PrintJointPositionDebugInfo("SetJointPositionByWorldPosition before div", joint_position);
     joint_position.x = ((astra_vector3f_t *)&joint->worldPosition)->z / 1000.0; // why so weird?
     joint_position.y = ((astra_vector3f_t *)&joint->worldPosition)->x / 1000.0;
     joint_position.z = ((astra_vector3f_t *)&joint->worldPosition)->y / 1000.0;
-
-    PrintJointPositionDebugInfo("SetJointPositionByWorldPosition", joint_position);
   }
-
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {
     // TBA:   methods to get some reference points
     output_bodies(bodyFrame);
   }
-
 
   void PrintBodyStatus(
       int bodyId,
@@ -299,7 +370,6 @@ public:
     }
   }
 
-
   void PrintBasicTrackingInfo(
       int bodyId,
       astra_body_tracking_feature_flags_t features,
@@ -323,19 +393,14 @@ public:
              handPoseRecognitionEnabled ? "True" : "False");
   }
 
-
-  void PrintJointPositionDebugInfo( 
+  void PrintJointPositionDebugInfo(
       std::string header,
       geometry_msgs::Point32_<pointing_gesture::Skeleton> joint_position)
   {
     std::string info =
-        header + ":" 
-        + std::to_string(joint_position.x) + "; " 
-        + std::to_string(joint_position.y) + "; " 
-        + std::to_string(joint_position.z);
+        header + ":" + std::to_string(joint_position.x) + "; " + std::to_string(joint_position.y) + "; " + std::to_string(joint_position.z);
     ROS_INFO_STREAM(info);
   }
-
 
   void Set2DPositionDataByKeyJoint(
       int bodyId,
@@ -378,7 +443,6 @@ public:
               << " z: " << position_data.position2d.z
               << std::endl;
   }
-
 
   void runLoop()
   {
