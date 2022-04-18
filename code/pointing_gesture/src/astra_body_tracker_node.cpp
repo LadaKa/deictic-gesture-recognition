@@ -141,8 +141,8 @@ public:
       astra_body_t *body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
-      PrintBodyStatus(bodyId, bodyStatus);
-      PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
+      //PrintBodyStatus(bodyId, bodyStatus);
+      //PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
 
       // THIS IS THE MOST RELIABLE TRACKING POINT, so we use it for person position in 3D!
       astra_joint_t *keyJoint = &body->joints[KEY_JOINT_TO_TRACK];
@@ -182,12 +182,12 @@ public:
       SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_HAND, skeleton_data.joint_position_right_hand);
 
       // head:
-      PublishSphereMarker(3, skeleton_data.joint_position_head, 0.9, 0.1, 0.1);
+      PublishSphereMarker(3, skeleton_data.joint_position_head, 0.3, 0.3, 0.6);
 
       // spine:
-      PublishSphereMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.3);
-      PublishSphereMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.3);
-      PublishSphereMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.3);
+      PublishSphereMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.4);
+      PublishSphereMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.4);
+      PublishSphereMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.4);
 
       // left arm:
       PublishSphereMarker(7, skeleton_data.joint_position_left_shoulder, 0.5, 0.1, 0.1);
@@ -204,27 +204,27 @@ public:
       // spine:
       geometry_msgs::Point32_<pointing_gesture::Skeleton> spinePositions[]{
           skeleton_data.joint_position_head,
-         // skeleton_data.joint_position_spine_top,
-       //   skeleton_data.joint_position_spine_mid,
+          skeleton_data.joint_position_spine_top,
+          skeleton_data.joint_position_spine_mid,
           skeleton_data.joint_position_spine_bottom};
-      PublishLinesMarkers(13, spinePositions, 0.9, 0.1, 0.1);
-/*
+      PublishLinesMarkers(13, spinePositions, 4, 0.4, 0.4, 0.4);
+
       // left arm:
       geometry_msgs::Point32_<pointing_gesture::Skeleton> leftArmPositions[]{
           skeleton_data.joint_position_left_shoulder,
           skeleton_data.joint_position_left_elbow,
           skeleton_data.joint_position_left_hand};
-      PublishLinesMarkers(14, leftArmPositions, 0.3, 0.3, 0.3);
+      PublishLinesMarkers(14, leftArmPositions, 3, 0.4, 0.4, 0.4);
 
       // right arm:
       geometry_msgs::Point32_<pointing_gesture::Skeleton> rightArmPositions[]{
           skeleton_data.joint_position_right_shoulder,
           skeleton_data.joint_position_right_elbow,
           skeleton_data.joint_position_right_hand};
-      PublishLinesMarkers(14, rightArmPositions, 0.3, 0.3, 0.3);
-*/
+      PublishLinesMarkers(15, rightArmPositions, 3, 0.4, 0.4, 0.4);
+
       ////////////////////////////////////////////////////
-      // Publish everything
+      // Publish messages
       body_tracking_position_pub_.publish(position_data); // position data
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
     }
@@ -246,6 +246,7 @@ public:
     PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
   }
 
+  // TODO: refactor -> rViz markers as class; markers setting for all types as separate method
   void PublishPointMarker(
       int id,
       geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
@@ -277,9 +278,9 @@ public:
     marker.pose.orientation.z = 0.0;
     marker.pose.orientation.w = 1.0;
 
-    marker.scale.x = 0.1; // size of marker in meters
-    marker.scale.y = 0.1;
-    marker.scale.z = 0.1;
+    marker.scale.x = 0.07; // size of marker in meters
+    marker.scale.y = 0.07;
+    marker.scale.z = 0.07;
 
     marker.pose.position.x = position.x;
     marker.pose.position.y = position.y;
@@ -289,9 +290,11 @@ public:
     PrintJointPositionDebugInfo("PublishPointMarker", position);
   }
 
+  //  TODO: code properly
   void PublishLinesMarkers(
       int id,
       geometry_msgs::Point32_<pointing_gesture::Skeleton> positions[],
+      int positions_count,
       float color_r, float color_g, float color_b)
   {
     visualization_msgs::Marker line_list;
@@ -302,24 +305,45 @@ public:
     line_list.ns = "astra_body_tracker";
     line_list.lifetime = ros::Duration(1.0); // seconds
     line_list.action = visualization_msgs::Marker::ADD;
-    line_list.scale.x = 0.1;
+
+    line_list.scale.x = 0.05;
     line_list.color.r = color_r;
     line_list.color.g = color_g;
     line_list.color.b = color_b;
-
     line_list.color.a = 0.5;
 
-    // for (int i = 0; i < sizeof(positions); i++)
-    for (int i = 0; i < 2; i++)
+    /*
+    line_list.pose.orientation.x = 0.0;
+    line_list.pose.orientation.y = 0.0;
+    line_list.pose.orientation.z = 0.0;
+    line_list.pose.orientation.w = 1.0;
+
+    line_list.pose.position.x = positions[0].x;
+    line_list.pose.position.y = positions[0].y;
+    line_list.pose.position.z = positions[0].z;
+    */
+   
+    for (int i = 0; i < positions_count - 1; i++)
     {
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position = positions[i];
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position0 = positions[i];
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position1 = positions[i + 1];
 
-      geometry_msgs::Point p;
-      p.x = position.x;
-      p.y = position.y;
-      p.z = position.z;
+      geometry_msgs::Point p0;
+      p0.x = position0.x;
+      p0.y = position0.y;
+      p0.z = position0.z;
 
-      line_list.points.push_back(p);
+      geometry_msgs::Point p1;
+      p1.x = position1.x;
+      p1.y = position1.y;
+      p1.z = position1.z;
+
+      line_list.points.push_back(p0);
+      line_list.points.push_back(p1);
+
+      ROS_INFO_STREAM(std::to_string(i));
+      PrintJointPositionDebugInfo("x", position0);
+      PrintJointPositionDebugInfo("x", position0);
     }
 
     marker_pub_.publish(line_list);
