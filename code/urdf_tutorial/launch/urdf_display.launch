@@ -12,4 +12,22 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
+
+  <!-- pcl_object_detection_node -->
+ 
+  <node pkg="pcl_object_detection" type="pcl_object_detection_node" name="pcl_object_detection_node" output="screen">
+
+    <param name="target_frame" value="base_link"/>
+    <param name="transform_tolerance" value="0.01"/>
+
+    <!-- PICK WHICH CAMERA TO USE:
+    ASTRA CAMERA:
+    <param name="depth_topic" value="/astra_camera/depth/points"/>
+    REALSENSE CAMERA IN HEAD:
+    <param name="depth_topic" value="/camera/depth_cloud"/>
+    -->
+    <param name="depth_topic" value="/astra_camera/depth/points"/>
+ 
+  </node>
+
 </launch>

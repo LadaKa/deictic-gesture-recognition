@@ -156,12 +156,13 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) :
   depth_cloud_sub_ = nh_.subscribe 
     (depth_topic_, 1, &PclObjectDetection::cloud_cb, this);
 
+   ROS_INFO("PclObjectDetection: Initializing completed.");
 
 }
 
 void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input_cloud_msg)
 {
-  // ROS_INFO("PclObjectDetection: cloud_cb...");
+  ROS_INFO("PclObjectDetection: cloud_cb...");
 
   input_cloud_frame_ = input_cloud_msg->header.frame_id; // TF Frame of the point cloud
   // std::cout << "DEBUG Cloud Frame = [" << input_cloud_frame_ << "]" << std::endl;
@@ -258,57 +259,6 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
     extract.setNegative (false);
     extract.filter (*cloud_plane_p);
     //std::cout << "PointCloud representing the planar component [" << i << "] : " << cloud_plane_p->width * cloud_plane_p->height << " data points." << std::endl;
-
-
-  // TODO?  Try using Hull to better segment the plane?
-//#define DO_HULL
-#ifdef DO_HULL
-
-    if( (cloud_plane_p->width > 0) && (cloud_plane_p->height > 0) )
-    {
-      pcl::PointCloud<pcl::PointXYZ>::Ptr objects(new 
-          pcl::PointCloud<pcl::PointXYZ>);
-      pcl::PointCloud<pcl::PointXYZ>::Ptr convexHull(new 
-          pcl::PointCloud<pcl::PointXYZ>);
-
-      // Retrieve the convex hull.
-	    pcl::ConvexHull<pcl::PointXYZ> hull;
-	    hull.setInputCloud(cloud_plane_p);
-	    // Make sure that the resulting hull is bidimensional.
-	    hull.setDimension(2);
-	    hull.reconstruct(*convexHull);
-
-	    // Redundant check.
-	    if (hull.getDimension() == 2)
-	    {
-		    // Prism object.
-		    pcl::ExtractPolygonalPrismData<pcl::PointXYZ> prism;
-		    prism.setInputCloud(downsampled_XYZ);
-		    prism.setInputPlanarHull(convexHull);
-		    // First parameter: minimum Z value. Set to 0, segments objects lying on the plane (can be negative).
-		    // Second parameter: maximum Z value, set to 10cm. Tune it according to the height of the objects you expect.
-		    prism.setHeightLimits(-0.1f, 0.03f);
-		    pcl::PointIndices::Ptr objectIndices(new pcl::PointIndices);
-
-		    prism.segment(*objectIndices);
-
-		    // Get and show all points retrieved by the hull.
-		    extract.setIndices(objectIndices);
-		    extract.filter(*objects);
-		    //pcl::visualization::CloudViewer viewerObjects("Objects on table");
-		    //viewerObjects.showCloud(objects);
-		
-        sensor_msgs::PointCloud2 obj_output;
-        pcl::PCLPointCloud2 obj_tmp_cloud;
-        pcl::toPCLPointCloud2(*objects, obj_tmp_cloud);
-        pcl_conversions::fromPCL(obj_tmp_cloud, obj_output);
-		    pub_objects.publish (obj_output); // Publish the data
-		
-	    }
-	    else std::cout << "The chosen hull is not planar." << std::endl;
-    }
-#endif // DO_HULL
-
 
     if(i < 5)
     {
@@ -632,7 +582,7 @@ void PclObjectDetection::PublishMarkerBox(
   // Display marker for RVIZ to show where robot thinks person is
   // For Markers info, see http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
 
-  // ROS_INFO("DBG: PublishMarkerBox called");
+   ROS_INFO("DBG: PublishMarkerBox called");
   //if( id != 1)
   // printf ("DBG PublishMarkerBox called for %f, %f, %f\n", x,y,z);
 
