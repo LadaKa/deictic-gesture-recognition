@@ -56,7 +56,7 @@ public:
   astra_body_tracker_node(std::string name) : _name(name)
   {
     ROS_INFO("Hallo Spaceboy!");
-    ROS_INFO("%s: Initializing", _name.c_str());
+    ROS_INFO("%s: Initializing node", _name.c_str());
     bool initialized = false;
     last_id_ = -1;
 
@@ -471,7 +471,13 @@ public:
   void runLoop()
   {
     set_key_handler();
-    astra_initialize();
+    
+    //  2022-04-23 18:46:05,946 ERROR [orbbec.ni.device_streamset] 
+    //  failed to open device: 	Could not open "2bc5/0401@1/13": Failed to set USB interface!
+
+    //  initialization cannot be skipped -> rc = 7 
+    astra_initialize(); 
+
     const char *licenseString = "<INSERT LICENSE KEY HERE>";
     orbbec_body_tracking_set_license(licenseString);
 
@@ -485,11 +491,10 @@ public:
     astra_reader_get_bodystream(reader, &bodyStream);
 
     astra_stream_start(bodyStream);
-
     do
     {
+      //  read skeleton data
       astra_update();
-
       astra_reader_frame_t frame;
       astra_status_t rc = astra_reader_open_frame(reader, 0, &frame);
 
@@ -500,16 +505,15 @@ public:
 
         astra_frame_index_t frameIndex;
         astra_bodyframe_get_frameindex(bodyFrame, &frameIndex);
-        // printf("Frame index: %d\n", frameIndex);
 
         output_bodyframe(bodyFrame);
-
-        // printf("----------------------------\n");
-
         astra_reader_close_frame(&frame);
       }
 
-      ros::spinOnce(); // ROS
+      //  read depth data 
+
+
+      ros::spinOnce(); 
 
     } while (shouldContinue);
 
