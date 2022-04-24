@@ -1,6 +1,7 @@
 
 <launch>
 
+  <!-- urdf + rViz  -->
   <arg name="model" default="$(find urdf_tutorial)/urdf/robot_0.urdf"/>
   <arg name="gui" default="true" />
   <arg name="rvizconfig" default="$(find urdf_tutorial)/rviz/urdf.rviz" />
@@ -11,5 +12,26 @@
   <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+
+  <!-- TODO: this will be part of main launch file -->
+
+  <!-- pcl_object_detection_node -->
+  <node pkg="pcl_object_detection" type="pcl_object_detection_node" name="pcl_object_detection_node" output="screen">
+
+    <param name="target_frame" value="base_link"/>
+    <param name="transform_tolerance" value="0.01"/>
+
+    <!-- PICK WHICH CAMERA TO USE:
+    ASTRA CAMERA:
+    <param name="depth_topic" value="/astra_camera/depth/points"/>
+    REALSENSE CAMERA IN HEAD:
+    <param name="depth_topic" value="/camera/depth_cloud"/>
+    -->
+    <param name="depth_topic" value="/camera/depth/points"/>
+  </node>
+
+  <!-- launch astra camera (topics: camera/...) -->
+  <!--include file="$(find astra_camera)/launch/astra.launch" /-->
 
 </launch>
