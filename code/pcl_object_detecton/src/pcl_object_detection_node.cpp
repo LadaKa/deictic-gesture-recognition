@@ -415,21 +415,21 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
 
         if(maxPt.z > 0.120)
         {
-          std::cout << " FAIL: Object too tall" << std::endl;
-          ++j;
-          continue;
+          std::cout << " FAIL: Object too tall: " << "maxPt.z=" << maxPt.z << std::endl;
+        //  ++j;
+          //continue;
         }
         else if(bb_size.z < 0.020)
         {
-          //std::cout << " FAIL: Object too short" << std::endl;
-          ++j;
-          continue;
+          std::cout << " FAIL: Object too short: " << "bb_size.z=" << bb_size.z<< std::endl;
+        //  ++j;
+          //continue;
         }
         else if(bb_size.z > 0.090)
         {
-          //std::cout << " FAIL: Object too tall.  " << std::endl;
-          ++j;
-          continue;
+          std::cout << " FAIL: Object too tall: bb_size.z " << std::endl;
+         // ++j;
+         // continue;
         }
         /*
         else if(minPt.z > 0.12)
@@ -466,66 +466,66 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
           if(j == 0)
           {
             pub_cluster0.publish (cloud_rotated_msg);   // Publish the data cluster cloud
-            /*
+            
             PclObjectDetection::PublishMarkerBox(       // Publish the bounding box as a marker
               target_frame_,                       // Transform Frame from camera to robot base
               j,                                        // Marker ID
               obj_center.x, obj_center.y, obj_center.z, // Object Center 
               bb_size.x, bb_size.y, bb_size.z,          // Object Size
               1.0, 0.0, 0.0 ); // Red
-            */                   // r,g,b - different for each marker
+                             // r,g,b - different for each marker
           }
           else if(j == 1)
           {
             pub_cluster1.publish (cloud_rotated_msg); 
 
-            /*
+            
             PclObjectDetection::PublishMarkerBox(     
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
               bb_size.x, bb_size.y, bb_size.z,            
               0.5, 0.0, 0.5 ); // Dark Purple
-            */
+            
           }
           else if(j == 2)
           {
             pub_cluster2.publish (cloud_rotated_msg); 
 
-            /*
+            
             PclObjectDetection::PublishMarkerBox(     
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
               bb_size.x, bb_size.y, bb_size.z,            
               1.0, 0.0, 1.0 ); // Light Purple
-            */
+            
           }
           else if(j == 3)
           {
             pub_cluster3.publish (cloud_rotated_msg); 
 
-            /*
+            
             PclObjectDetection::PublishMarkerBox(     
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
               bb_size.x, bb_size.y, bb_size.z,            
               1.0, 1.0, 0.0 ); // Yellow
-            */
+            
           }
           else if(j == 4)
           {
             pub_cluster4.publish (cloud_rotated_msg); 
 
-            /*
+            
             PclObjectDetection::PublishMarkerBox(     
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
               bb_size.x, bb_size.y, bb_size.z,            
               0.0, 1.0, 1.0 ); // Aqua
-            */
+            
           }
         }       
             
