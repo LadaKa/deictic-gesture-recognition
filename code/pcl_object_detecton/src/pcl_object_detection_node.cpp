@@ -6,6 +6,7 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <visualization_msgs/Marker.h>
+#include <std_msgs/String.h>
 
 // PCL specific includes
 #include <sensor_msgs/PointCloud2.h>
@@ -61,6 +62,7 @@ private:
         float size_x, float size_y, float size_z, 
         float color_r, float color_g, float color_b);
 
+  void PublishDetectionDoneMessage();
 
   // CONSTANTS
 
@@ -104,6 +106,8 @@ private:
   ros::Publisher pub_objects;
   ros::Publisher marker_pub_;
 
+  ros::Publisher detection_done_pub;
+
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -143,6 +147,8 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) :
   pub_remaining = nh_.advertise<sensor_msgs::PointCloud2> ("pcl_object_detection/remaining", 1);
   pub_objects = nh_.advertise<sensor_msgs::PointCloud2> ("pcl_object_detection/objects", 1);
 
+  detection_done_pub = nh_.advertise<std_msgs::String>("pcl_object_detection/detection_done", 1);
+
   // Create a ROS publisher for the output model coefficients
   //pub = nh_.advertise<pcl_msgs::ModelCoefficients> ("pcl_object_detection/segment_plane", 1);
 
@@ -150,13 +156,12 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) :
   marker_pub_ = nh_.advertise<visualization_msgs::Marker>
     ("pcl_object_detection/marker", 1);
 
-
   // SUBSCRIBERS
   // Create a ROS subscriber for the input point cloud
   depth_cloud_sub_ = nh_.subscribe 
     (depth_topic_, 1, &PclObjectDetection::cloud_cb, this);
 
-   ROS_INFO("PclObjectDetection: Initializing completed.");
+  ROS_INFO("PclObjectDetection: Initializing completed.");
 
 }
 
@@ -526,6 +531,8 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
               bb_size.x, bb_size.y, bb_size.z,            
               0.0, 1.0, 1.0 ); // Aqua
             
+            //  TODO: remove listeners or stop all this stuff
+            PublishDetectionDoneMessage();
           }
         }       
             
@@ -621,7 +628,17 @@ void PclObjectDetection::PublishMarkerBox(
 
 }
 
-
+//  Publish message to signal that detection is done.
+//  Main node will terminate the ros_astra_node to enable start new camera stream.
+void PclObjectDetection::PublishDetectionDoneMessage()
+{
+  std_msgs::String detection_done_msg;
+   // TODO: 'bool message' should be sufficient;  
+   // or maybe send integer ~ count of detected objects (so far it's constant number)
+  detection_done_msg.data = "Pcl cloud detection DONE";
+  detection_done_pub.publish(detection_done_msg);
+  ROS_INFO("Published msg [Pcl cloud detection DONE]");
+}
 
 
 int main (int argc, char** argv)
