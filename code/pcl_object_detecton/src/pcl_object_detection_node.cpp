@@ -52,16 +52,20 @@ class PclObjectDetection
 {
 public:
   PclObjectDetection(ros::NodeHandle n);
+  static void RunLoop();        // TODO: get rid of all static stuff
+  static bool detection_done;
+
 
 private:
 
   // FUNCTIONS
-  void cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg);
-  void PublishMarkerBox(
+  
+  void Cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg);
+  visualization_msgs::Marker CreateMarkerBox(
         std::string frame_id, int id, float x, float y, float z, 
         float size_x, float size_y, float size_z, 
         float color_r, float color_g, float color_b);
-
+  void PublishMarkerBox(visualization_msgs::Marker marker_box);
   void PublishDetectionDoneMessage();
 
   // CONSTANTS
@@ -69,7 +73,6 @@ private:
   const char*   DEFAULT_TARGET_FRAME = "base_link";     // TF frame for sensors
   const double  DEFAULT_TF_TOLERANCE = 0.05;            // TF latency tolerance
   const char*   DEFAULT_DEPTH_TOPIC = "/camera/depth";  
-  //const char*   DEFAULT_COLOR_TOPIC = "/camera/color";  
 
 
   // VARIABLES
@@ -81,11 +84,11 @@ private:
   std::string                     target_frame_;
   double                          tf_tolerance_;
   std::string                     depth_topic_;
-  //std::string                     color_topic_;
 
-
+  visualization_msgs::Marker published_markers[5];
+  
   // SUBSCRIBERS
-  ros::Subscriber depth_cloud_sub_;
+  ros::Subscriber* depth_cloud_sub_;
 
   // PUBLISHERS
   ros::Publisher pub_cluster0;
@@ -158,14 +161,14 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) :
 
   // SUBSCRIBERS
   // Create a ROS subscriber for the input point cloud
-  depth_cloud_sub_ = nh_.subscribe 
-    (depth_topic_, 1, &PclObjectDetection::cloud_cb, this);
+  *depth_cloud_sub_ = nh_.subscribe 
+    (depth_topic_, 1, &PclObjectDetection::Cloud_cb, this);
 
   ROS_INFO("PclObjectDetection: Initializing completed.");
 
 }
 
-void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input_cloud_msg)
+void PclObjectDetection::Cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input_cloud_msg)
 {
   ROS_INFO("PclObjectDetection: cloud_cb...");
 
@@ -465,27 +468,27 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
           nearest_obj_bb_size = bb_size; 
           nearest_obj_center =  obj_center;                
         }
-         
+        // TODO: refactor this block
         if(j < 5)
         {
           if(j == 0)
           {
-            pub_cluster0.publish (cloud_rotated_msg);   // Publish the data cluster cloud
-            
-            PclObjectDetection::PublishMarkerBox(       // Publish the bounding box as a marker
-              target_frame_,                       // Transform Frame from camera to robot base
+            pub_cluster0.publish(cloud_rotated_msg);    // Publish the data cluster cloud
+
+            published_markers[j]=PclObjectDetection::CreateMarkerBox(      
+              target_frame_,                            // Transform Frame from camera to robot base
               j,                                        // Marker ID
               obj_center.x, obj_center.y, obj_center.z, // Object Center 
               bb_size.x, bb_size.y, bb_size.z,          // Object Size
-              1.0, 0.0, 0.0 ); // Red
-                             // r,g,b - different for each marker
+              1.0, 0.0, 0.0 );                          // Red
+                                                        // r,g,b - different for each marker
           }
           else if(j == 1)
           {
             pub_cluster1.publish (cloud_rotated_msg); 
 
             
-            PclObjectDetection::PublishMarkerBox(     
+            published_markers[j]=PclObjectDetection::CreateMarkerBox(      
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
@@ -498,7 +501,7 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
             pub_cluster2.publish (cloud_rotated_msg); 
 
             
-            PclObjectDetection::PublishMarkerBox(     
+            published_markers[j]=PclObjectDetection::CreateMarkerBox(  
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
@@ -511,7 +514,7 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
             pub_cluster3.publish (cloud_rotated_msg); 
 
             
-            PclObjectDetection::PublishMarkerBox(     
+            published_markers[j]=PclObjectDetection::CreateMarkerBox(  
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
@@ -524,14 +527,16 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
             pub_cluster4.publish (cloud_rotated_msg); 
 
             
-            PclObjectDetection::PublishMarkerBox(     
+            published_markers[j]=PclObjectDetection::CreateMarkerBox(  
               target_frame_,    
               j, 
               obj_center.x, obj_center.y, obj_center.z,   
               bb_size.x, bb_size.y, bb_size.z,            
               0.0, 1.0, 1.0 ); // Aqua
             
-            //  TODO: remove listeners or stop all this stuff
+            //  TODO: move to some separate method
+            detection_done = true;
+            delete depth_cloud_sub_;
             PublishDetectionDoneMessage();
           }
         }       
@@ -552,13 +557,15 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
     
       pub_nearest_object.publish (nearest_object_cloud_msg);
 
-
-      PclObjectDetection::PublishMarkerBox(     
+      
+      visualization_msgs::Marker nearest_object_marker = PclObjectDetection::CreateMarkerBox(  
         target_frame_,    
         10, 
         nearest_obj_center.x, nearest_obj_center.y, nearest_obj_center.z,   
         nearest_obj_bb_size.x, nearest_obj_bb_size.y, nearest_obj_bb_size.z,            
         0.0, 1.0, 0.0 ); // Green
+
+        PclObjectDetection::PublishMarkerBox(nearest_object_marker);
 
         std::cout << "NEAREST OBJECT: index: " 
           << nearest_object_index
@@ -580,8 +587,7 @@ void PclObjectDetection::cloud_cb (const sensor_msgs::PointCloud2ConstPtr& input
   
 } // cloud_cb
 
-
-void PclObjectDetection::PublishMarkerBox(
+visualization_msgs::Marker PclObjectDetection::CreateMarkerBox(
       std::string frame_id, int id, float x, float y, float z, 
       float size_x, float size_y, float size_z, 
       float color_r, float color_g, float color_b)
@@ -623,9 +629,13 @@ void PclObjectDetection::PublishMarkerBox(
   marker.pose.position.y = y;
   marker.pose.position.z = z;
 
-  // ROS_INFO("DBG: Publishing Marker");
-  marker_pub_.publish(marker);
+  return marker;
+}
 
+void PclObjectDetection::PublishMarkerBox(
+      visualization_msgs::Marker marker_box)
+{
+  marker_pub_.publish(marker_box);
 }
 
 //  Publish message to signal that detection is done.
@@ -635,11 +645,23 @@ void PclObjectDetection::PublishDetectionDoneMessage()
   std_msgs::String detection_done_msg;
    // TODO: 'bool message' should be sufficient;  
    // or maybe send integer ~ count of detected objects (so far it's constant number)
-  detection_done_msg.data = "Pcl cloud detection DONE";
+  detection_done_msg.data = "Pcl object detection DONE";
   detection_done_pub.publish(detection_done_msg);
-  ROS_INFO("Published msg [Pcl cloud detection DONE]");
+  ROS_INFO("Published msg [Pcl object detection DONE]");
 }
 
+void PclObjectDetection::RunLoop()
+{
+  do
+  {
+    ros::spinOnce(); 
+    if (PclObjectDetection::detection_done)
+    {
+      //publish all markers
+    }
+  } while (true);  // TODO: key handler 
+  
+}
 
 int main (int argc, char** argv)
 {
@@ -648,9 +670,11 @@ int main (int argc, char** argv)
   ros::init(argc, argv, "pcl_object_detection");
 
   ros::NodeHandle n;
-  //ros::NodeHandle n("~");  
+  
   PclObjectDetection pcl_object_detection_node(n);
-  ros::spin();
+
+  PclObjectDetection::detection_done = false;
+  PclObjectDetection::RunLoop();
   return 0;
 
 }
