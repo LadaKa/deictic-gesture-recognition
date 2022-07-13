@@ -155,8 +155,9 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 
-#add_executable(${PROJECT_NAME}_node src/pointing_gesture_node.cpp)
-add_executable(${PROJECT_NAME}_node src/astra_body_tracker_node.cpp)
+#set(SOURCES src/astra_body_tracker_node.cpp)
+#add_executable({PROJECT_NAME}_node ${SOURCES}) 
+add_executable(${PROJECT_NAME}_node src/RVizLineMarker.cpp src/astra_body_tracker_node.cpp)
 
 ## add_executable(${PROJECT_NAME}_node src/test_timeout_node.cpp)
 
