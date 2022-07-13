@@ -48,7 +48,129 @@
 #include <visualization_msgs/Marker.h>
 
 #define KEY_JOINT_TO_TRACK ASTRA_JOINT_SHOULDER_SPINE
-//#define M_PI                  3.1415926535897931
+
+class RVizPointMarker
+{
+private:
+  visualization_msgs::Marker marker;
+
+  void SetMarkerProperties(
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
+      float r, float g, float b,
+      uint32_t shape)
+  {
+    marker.type = shape;
+
+    marker.action = visualization_msgs::Marker::ADD;
+
+    marker.color.r = r;
+    marker.color.g = g;
+    marker.color.b = b;
+    marker.color.a = 1.0;
+
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+
+    marker.scale.x = 0.07; // size of marker in meters
+    marker.scale.y = 0.07;
+    marker.scale.z = 0.07;
+
+    marker.pose.position.x = position.x;
+    marker.pose.position.y = position.y;
+    marker.pose.position.z = position.z;
+  }
+
+public:
+  RVizPointMarker(
+      int id,
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
+      float r, float g, float b,
+      uint32_t shape)
+  {
+    marker.ns = "astra_body_tracker";
+    marker.id = id;
+
+    marker.header.frame_id = "astra_camera_link"; // "base_link";
+    marker.header.stamp = ros::Time::now();
+    marker.lifetime = ros::Duration(1.0); // seconds
+
+    SetMarkerProperties(position, r, g, b, shape);
+  };
+
+  visualization_msgs::Marker GetMarker()
+  {
+    return marker;
+  }
+};
+
+class RVizLineMarker
+{
+private:
+  visualization_msgs::Marker line_list;
+
+  void SetLineListProperties(
+      int id,
+      float r, float g, float b)
+  {
+    line_list.type = visualization_msgs::Marker::LINE_LIST;
+    line_list.id = id;
+
+    line_list.header.frame_id = "astra_camera_link";
+    line_list.header.stamp = ros::Time::now();
+    line_list.ns = "astra_body_tracker";
+    line_list.lifetime = ros::Duration(1.0); // seconds
+    line_list.action = visualization_msgs::Marker::ADD;
+
+    line_list.scale.x = 0.05;
+
+    line_list.color.r = r;
+    line_list.color.g = g;
+    line_list.color.b = b;
+    line_list.color.a = 0.5;
+  }
+
+  void SetLineListPoints(
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> positions[],
+      int positions_count)
+  {
+    for (int i = 0; i < positions_count - 1; i++)
+    {
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position0 = positions[i];
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> position1 = positions[i + 1];
+
+      geometry_msgs::Point p0;
+      p0.x = position0.x;
+      p0.y = position0.y;
+      p0.z = position0.z;
+
+      geometry_msgs::Point p1;
+      p1.x = position1.x;
+      p1.y = position1.y;
+      p1.z = position1.z;
+
+      line_list.points.push_back(p0);
+      line_list.points.push_back(p1);
+    }
+  }
+
+public:
+  RVizLineMarker(
+      int id,
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> positions[],
+      int positions_count,
+      float r, float g, float b)
+  {
+    SetLineListProperties(id, r, g, b);
+    SetLineListPoints(positions, positions_count);
+  };
+
+  visualization_msgs::Marker GetLineList()
+  {
+    return line_list;
+  }
+};
 
 class astra_body_tracker_node
 {
@@ -59,7 +181,6 @@ public:
     ROS_INFO("%s: Initializing node", _name.c_str());
     bool initialized = false;
     last_id_ = -1;
-
     ros::NodeHandle nodeHandle("~");
     nodeHandle.param<std::string>("myparm1", myparm1_, "mydefault");
 
@@ -68,7 +189,7 @@ public:
     // 2D: x,y in camera frame.   3D: x,y,z in world coordinates
     body_tracking_position_pub_ = nh_.advertise<pointing_gesture::BodyTracker>("body_tracker/position", 1);
 
-    // Publish tracked person upper body skeleton for advanced uses
+    // Tracked person upper body skeleton
     body_tracking_skeleton_pub_ = nh_.advertise<pointing_gesture::Skeleton>("body_tracker/skeleton", 1);
 
     // Publish markers to show where robot thinks person is in RViz
@@ -141,8 +262,8 @@ public:
       astra_body_t *body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
-      //PrintBodyStatus(bodyId, bodyStatus);
-      //PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
+      // PrintBodyStatus(bodyId, bodyStatus);
+      // PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
 
       // THIS IS THE MOST RELIABLE TRACKING POINT, so we use it for person position in 3D!
       astra_joint_t *keyJoint = &body->joints[KEY_JOINT_TO_TRACK];
@@ -246,7 +367,6 @@ public:
     PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
   }
 
-  // TODO: refactor -> rViz markers as class; markers setting for all types as separate method
   void PublishPointMarker(
       int id,
       geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
@@ -256,36 +376,8 @@ public:
     // Display marker for RVIZ to show where robot thinks person is
     // For Markers info, see http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
 
-    visualization_msgs::Marker marker;
-    marker.header.frame_id = "astra_camera_link"; // "base_link";
-    marker.header.stamp = ros::Time::now();
-    marker.lifetime = ros::Duration(1.0); // seconds
-
-    // Any marker sent with the same namespace and id will overwrite the old one
-    marker.ns = "astra_body_tracker";
-    marker.id = id; // This must be id unique for each marker
-
-    marker.type = shape;
-
-    // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
-    marker.action = visualization_msgs::Marker::ADD;
-    marker.color.r = color_r;
-    marker.color.g = color_g;
-    marker.color.b = color_b;
-    marker.color.a = 1.0;
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
-    marker.pose.orientation.w = 1.0;
-
-    marker.scale.x = 0.07; // size of marker in meters
-    marker.scale.y = 0.07;
-    marker.scale.z = 0.07;
-
-    marker.pose.position.x = position.x;
-    marker.pose.position.y = position.y;
-    marker.pose.position.z = position.z;
-
+    RVizPointMarker rVizPointMarker(id, position, color_r, color_g, color_b, shape);
+    visualization_msgs::Marker marker = rVizPointMarker.GetMarker();
     marker_pub_.publish(marker);
     PrintJointPositionDebugInfo("PublishPointMarker", position);
   }
@@ -297,54 +389,12 @@ public:
       int positions_count,
       float color_r, float color_g, float color_b)
   {
-    visualization_msgs::Marker line_list;
-    line_list.type = visualization_msgs::Marker::LINE_LIST;
-    line_list.id = id; // This must be id unique for each marker
-    line_list.header.frame_id = "astra_camera_link"; 
-    line_list.header.stamp = ros::Time::now();
-    line_list.ns = "astra_body_tracker";
-    line_list.lifetime = ros::Duration(1.0); // seconds
-    line_list.action = visualization_msgs::Marker::ADD;
-
-    line_list.scale.x = 0.05;
-    line_list.color.r = color_r;
-    line_list.color.g = color_g;
-    line_list.color.b = color_b;
-    line_list.color.a = 0.5;
-
-    /*
-    line_list.pose.orientation.x = 0.0;
-    line_list.pose.orientation.y = 0.0;
-    line_list.pose.orientation.z = 0.0;
-    line_list.pose.orientation.w = 1.0;
-
-    line_list.pose.position.x = positions[0].x;
-    line_list.pose.position.y = positions[0].y;
-    line_list.pose.position.z = positions[0].z;
-    */
-   
-    for (int i = 0; i < positions_count - 1; i++)
-    {
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position0 = positions[i];
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position1 = positions[i + 1];
-
-      geometry_msgs::Point p0;
-      p0.x = position0.x;
-      p0.y = position0.y;
-      p0.z = position0.z;
-
-      geometry_msgs::Point p1;
-      p1.x = position1.x;
-      p1.y = position1.y;
-      p1.z = position1.z;
-
-      line_list.points.push_back(p0);
-      line_list.points.push_back(p1);
-
-      ROS_INFO_STREAM(std::to_string(i));
-      PrintJointPositionDebugInfo("x", position0);
-      PrintJointPositionDebugInfo("x", position0);
-    }
+    RVizLineMarker rVizLineMarker(
+      id, 
+      positions, 
+      positions_count, 
+      color_r, color_g, color_b);
+    visualization_msgs::Marker line_list = rVizLineMarker.GetLineList();
 
     marker_pub_.publish(line_list);
   }
@@ -471,12 +521,12 @@ public:
   void runLoop()
   {
     set_key_handler();
-    
-    //  2022-04-23 18:46:05,946 ERROR [orbbec.ni.device_streamset] 
+
+    //  2022-04-23 18:46:05,946 ERROR [orbbec.ni.device_streamset]
     //  failed to open device: 	Could not open "2bc5/0401@1/13": Failed to set USB interface!
 
-    //  initialization cannot be skipped -> rc = 7 
-    astra_initialize(); 
+    //  initialization cannot be skipped -> rc = 7
+    astra_initialize();
 
     const char *licenseString = "<INSERT LICENSE KEY HERE>";
     orbbec_body_tracking_set_license(licenseString);
@@ -510,10 +560,9 @@ public:
         astra_reader_close_frame(&frame);
       }
 
-      //  read depth data 
+      //  read depth data
 
-
-      ros::spinOnce(); 
+      ros::spinOnce();
 
     } while (shouldContinue);
 
@@ -543,6 +592,5 @@ int main(int argc, char *argv[])
   astra_body_tracker_node node(ros::this_node::getName());
   node.runLoop();
   // ros::spin();
-
   return 0;
 }
