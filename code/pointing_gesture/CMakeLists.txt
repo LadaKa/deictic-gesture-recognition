@@ -157,7 +157,7 @@ include_directories(
 
 #set(SOURCES src/astra_body_tracker_node.cpp)
 #add_executable({PROJECT_NAME}_node ${SOURCES}) 
-add_executable(${PROJECT_NAME}_node src/RVizLineMarker.cpp src/astra_body_tracker_node.cpp)
+add_executable(${PROJECT_NAME}_node src/RVizLineMarker.cpp src/RVizPointMarker.cpp src/astra_body_tracker_node.cpp)
 
 ## add_executable(${PROJECT_NAME}_node src/test_timeout_node.cpp)
 
