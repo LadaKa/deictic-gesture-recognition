@@ -27,24 +27,25 @@
    Publishes 3d markers for selected joints.  Visible as markers in RVIZ
 
 */
-#include "ros/ros.h"
+
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
 #include <sstream>
-#include "ros/console.h"
 #include <string>
-#include "geometry_msgs/PoseStamped.h"
 
-// For Orbbec Astra SDK
+// ros
+#include "ros/ros.h"
+#include "ros/console.h"
+
+// Orbbec Astra SDK
 #include <astra/capi/astra.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <key_handler.h>
 
-#include "BodyTracker.h" // Publish custom message
-
-#include <visualization_msgs/Marker.h>
+// custom message
+#include "BodyTracker.h"
 
 #include "RVizLineMarker.h"
 #include "RVizPointMarker.h"
@@ -269,10 +270,10 @@ public:
       float color_r, float color_g, float color_b)
   {
     RVizLineMarker rVizLineMarker(
-      id, 
-      positions, 
-      positions_count, 
-      color_r, color_g, color_b);
+        id,
+        positions,
+        positions_count,
+        color_r, color_g, color_b);
     visualization_msgs::Marker line_list = rVizLineMarker.GetLineList();
 
     marker_pub_.publish(line_list);

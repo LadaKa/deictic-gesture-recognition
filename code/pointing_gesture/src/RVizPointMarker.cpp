@@ -1,16 +1,14 @@
 #include "geometry_msgs/PoseStamped.h"
 #include <visualization_msgs/Marker.h>
-#include "Skeleton.h"    // Publish custom message
+#include "Skeleton.h"
 
 #include "RVizPointMarker.h"
 
-
-
-  void RVizPointMarker::SetMarkerProperties(
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
-      float r, float g, float b,
-      uint32_t shape)
-  {
+void RVizPointMarker::SetMarkerProperties(
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
+    float r, float g, float b,
+    uint32_t shape)
+{
     marker.type = shape;
 
     marker.action = visualization_msgs::Marker::ADD;
@@ -32,15 +30,14 @@
     marker.pose.position.x = position.x;
     marker.pose.position.y = position.y;
     marker.pose.position.z = position.z;
-  }
+}
 
-
-  RVizPointMarker::RVizPointMarker(
-      int id,
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
-      float r, float g, float b,
-      uint32_t shape)
-  {
+RVizPointMarker::RVizPointMarker(
+    int id,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
+    float r, float g, float b,
+    uint32_t shape)
+{
     marker.ns = "astra_body_tracker";
     marker.id = id;
 
@@ -49,9 +46,9 @@
     marker.lifetime = ros::Duration(1.0); // seconds
 
     RVizPointMarker::SetMarkerProperties(position, r, g, b, shape);
-  };
+};
 
-  visualization_msgs::Marker RVizPointMarker::GetMarker()
-  {
+visualization_msgs::Marker RVizPointMarker::GetMarker()
+{
     return marker;
-  };
+};
