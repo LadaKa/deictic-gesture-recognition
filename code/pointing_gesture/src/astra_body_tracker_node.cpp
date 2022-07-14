@@ -47,10 +47,12 @@
 // custom message
 #include "BodyTracker.h"
 
+#include "TrackedPerson.h"
+
 #include "RVizLineMarker.h"
 #include "RVizPointMarker.h"
 
-#define KEY_JOINT_TO_TRACK ASTRA_JOINT_SHOULDER_SPINE
+
 
 class astra_body_tracker_node
 {
@@ -142,6 +144,10 @@ public:
       astra_body_t *body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
+      TrackedPerson person(body);
+      /*
+      int bodyId = (int)body->id;
+      int bodyStatus = body->status;
       // PrintBodyStatus(bodyId, bodyStatus);
       // PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
 
@@ -157,7 +163,7 @@ public:
       position_data.position3d.x = ((astra_vector3f_t *)&keyJoint->worldPosition)->z / 1000.0;
       position_data.position3d.y = ((astra_vector3f_t *)&keyJoint->worldPosition)->x / 1000.0;
       position_data.position3d.z = ((astra_vector3f_t *)&keyJoint->worldPosition)->y / 1000.0;
-
+*/
       ///////////////////////////////////////////////////////////////
       // Skeleton data - published in skeleton message
 
@@ -225,9 +231,12 @@ public:
       PublishLinesMarkers(15, rightArmPositions, 3, 0.4, 0.4, 0.4);
 
       ////////////////////////////////////////////////////
+
+      // TODO
+
       // Publish messages
-      body_tracking_position_pub_.publish(position_data); // position data
-      body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
+  //    body_tracking_position_pub_.publish(position_data); // position data
+  //    body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
     }
   }
 
