@@ -47,10 +47,11 @@
 // custom message
 #include "BodyTracker.h"
 
-#include "TrackedPerson.h"
-
 #include "RVizLineMarker.h"
 #include "RVizPointMarker.h"
+
+#include "TrackedPerson.h"
+#include "TrackedSkeleton.h"
 
 
 
@@ -145,32 +146,18 @@ public:
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
       TrackedPerson person(body);
-      /*
-      int bodyId = (int)body->id;
-      int bodyStatus = body->status;
+     
       // PrintBodyStatus(bodyId, bodyStatus);
       // PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
 
-      // THIS IS THE MOST RELIABLE TRACKING POINT, so we use it for person position in 3D!
-      astra_joint_t *keyJoint = &body->joints[KEY_JOINT_TO_TRACK];
-
-      pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> position_data;
-      Set2DPositionDataByKeyJoint(bodyId, bodyStatus, keyJoint, position_data);
-
-      ///////////////////////////////////////////////////////////////
-      // 3D position of person
-      // TODO:
-      position_data.position3d.x = ((astra_vector3f_t *)&keyJoint->worldPosition)->z / 1000.0;
-      position_data.position3d.y = ((astra_vector3f_t *)&keyJoint->worldPosition)->x / 1000.0;
-      position_data.position3d.z = ((astra_vector3f_t *)&keyJoint->worldPosition)->y / 1000.0;
-*/
-      ///////////////////////////////////////////////////////////////
       // Skeleton data - published in skeleton message
 
       /// skeleton_data.frame_id = "astra_camera_link"; // "base_link";  // not sure about this
       pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data;
       skeleton_data.body_id = bodyId;
       skeleton_data.tracking_status = bodyStatus;
+
+      TrackedSkeleton trackedSkeleton();//body);
 
       //  Skeleton joints
       SetJointPositionByWorldPosition(body, ASTRA_JOINT_HEAD, skeleton_data.joint_position_head);
@@ -365,48 +352,7 @@ public:
     ROS_INFO_STREAM(info);
   }
 
-  void Set2DPositionDataByKeyJoint(
-      int bodyId,
-      int bodyStatus,
-      astra_joint_t *keyJoint,
-      pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> &position_data)
-  {
-
-    position_data.body_id = bodyId;
-    position_data.tracking_status = bodyStatus;
-    position_data.gesture = -1;
-
-    // 2D position for camera servo tracking
-    const float ASTRA_MINI_FOV_X = 1.047200;  // (60 degrees horizontal)
-    const float ASTRA_MINI_FOV_Y = -0.863938; // (49.5 degrees vertical)
-
-    // Convert projection to radians
-    // Astra proj is 0.0 (right) --> 0.628 (left)
-    //           and 0.0 (top)   --> 0.628 (botom)
-    // TODO: TUNE THESE VALUSE AS NEEDED FOR YOUR CAMERA AND APPLICATION!
-
-    float projection_x = ((astra_vector2f_t *)&keyJoint->depthPosition)->x / 1000.0;
-    float projection_y = ((astra_vector2f_t *)&keyJoint->depthPosition)->y / 1000.0;
-
-    position_data.position2d.x = (projection_x - 0.314) * ASTRA_MINI_FOV_X;
-    position_data.position2d.y = (projection_y - 0.314) * ASTRA_MINI_FOV_Y;
-    position_data.position2d.z = 0.0;
-
-    std::cout << std::setprecision(4) << std::setw(7)
-              << "Astra: "
-              << "2D Tracking for ID "
-              << bodyId << " :  "
-              << " px: " << projection_x
-              << " py: " << projection_y
-              << std::endl;
-
-    std::cout << std::setprecision(4) << std::setw(7)
-              << " x: " << position_data.position2d.x
-              << " y: " << position_data.position2d.y
-              << " z: " << position_data.position2d.z
-              << std::endl;
-  }
-
+  
   void runLoop()
   {
     set_key_handler();

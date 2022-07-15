@@ -7,14 +7,15 @@
 class TrackedPerson
 {
 private:
-    
-    
+    void Set2DPositionDataByKeyJoint(
+        int bodyId,
+        int bodyStatus,
+        astra_joint_t *keyJoint,
+        pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> &position_data);
 
 public:
     TrackedPerson(
-        astra_body_t* body
-    );
-
+        astra_body_t *body);
 };
 
 #endif

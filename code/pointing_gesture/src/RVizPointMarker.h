@@ -1,6 +1,8 @@
 #ifndef RVIZPOINTMARKER_H
 #define RVIZPOINTMARKER_H
 
+
+
 class RVizPointMarker
 {
 private:
