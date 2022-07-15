@@ -15,6 +15,8 @@ private:
         _astra_joint_type joint_type,
         geometry_msgs::Point32_<pointing_gesture::Skeleton> &joint_position);
 
+    void SetJointPositions(astra_body_t *body);
+
 public:
     TrackedSkeleton(astra_body_t *body);
 };
