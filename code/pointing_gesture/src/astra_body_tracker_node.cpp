@@ -34,7 +34,7 @@
 #include <string>
 
 // ros
-#include "ros/ros.h"
+
 #include "ros/console.h"
 
 // Orbbec Astra SDK
@@ -49,6 +49,7 @@
 
 #include "RVizLineMarker.h"
 #include "RVizPointMarker.h"
+#include "RVizPublisher.h"
 
 #include "TrackedPerson.h"
 #include "TrackedSkeleton.h"
@@ -158,56 +159,11 @@ public:
       skeleton_data.tracking_status = bodyStatus;
 
       TrackedSkeleton trackedSkeleton(body);
+      RVizPublisher rVizPublisher(marker_pub_);
+      rVizPublisher.PublishSkeleton(trackedSkeleton.GetSkeleton());
 
-      // head:
-      PublishSphereMarker(3, skeleton_data.joint_position_head, 0.3, 0.3, 0.6);
-
-      // spine:
-      PublishSphereMarker(4, skeleton_data.joint_position_spine_top, 0.3, 0.3, 0.4);
-      PublishSphereMarker(5, skeleton_data.joint_position_spine_mid, 0.3, 0.3, 0.4);
-      PublishSphereMarker(6, skeleton_data.joint_position_spine_bottom, 0.3, 0.3, 0.4);
-
-      // left arm:
-      PublishSphereMarker(7, skeleton_data.joint_position_left_shoulder, 0.5, 0.1, 0.1);
-      PublishSphereMarker(8, skeleton_data.joint_position_left_elbow, 0.5, 0.1, 0.1);
-      PublishSphereMarker(9, skeleton_data.joint_position_left_hand, 0.5, 0.1, 0.1);
-
-      // rigth arm:
-      PublishSphereMarker(10, skeleton_data.joint_position_right_shoulder, 0.1, 0.1, 0.5);
-      PublishSphereMarker(11, skeleton_data.joint_position_right_elbow, 0.1, 0.1, 0.5);
-      PublishSphereMarker(12, skeleton_data.joint_position_right_hand, 0.1, 0.1, 0.5);
-
-      // Skeleton
-
-      // spine:
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> spinePositions[]{
-          skeleton_data.joint_position_head,
-          skeleton_data.joint_position_spine_top,
-          skeleton_data.joint_position_spine_mid,
-          skeleton_data.joint_position_spine_bottom};
-      PublishLinesMarkers(13, spinePositions, 4, 0.4, 0.4, 0.4);
-
-      // left arm:
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> leftArmPositions[]{
-          skeleton_data.joint_position_left_shoulder,
-          skeleton_data.joint_position_left_elbow,
-          skeleton_data.joint_position_left_hand};
-      PublishLinesMarkers(14, leftArmPositions, 3, 0.4, 0.4, 0.4);
-
-      // right arm:
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> rightArmPositions[]{
-          skeleton_data.joint_position_right_shoulder,
-          skeleton_data.joint_position_right_elbow,
-          skeleton_data.joint_position_right_hand};
-      PublishLinesMarkers(15, rightArmPositions, 3, 0.4, 0.4, 0.4);
-
-      ////////////////////////////////////////////////////
-
-      // TODO
-
-      // Publish messages
-  //    body_tracking_position_pub_.publish(position_data); // position data
-  //    body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
+      body_tracking_position_pub_.publish(position_data); // position data
+      body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
     }
   }
 
@@ -216,7 +172,7 @@ public:
       int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
       float color_r, float color_g, float color_b)
   {
-    PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
+    //PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
   }
 
   // sphere marker for skeleton joints
@@ -224,51 +180,9 @@ public:
       int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
       float color_r, float color_g, float color_b)
   {
-    PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
+    //PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
   }
 
-  void PublishPointMarker(
-      int id,
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
-      float color_r, float color_g, float color_b,
-      uint32_t shape)
-  {
-    // Display marker for RVIZ to show where robot thinks person is
-    // For Markers info, see http://wiki.ros.org/rviz/Tutorials/Markers%3A%20Basic%20Shapes
-
-    RVizPointMarker rVizPointMarker(id, position, color_r, color_g, color_b, shape);
-    visualization_msgs::Marker marker = rVizPointMarker.GetMarker();
-    marker_pub_.publish(marker);
-    PrintJointPositionDebugInfo("PublishPointMarker", position);
-  }
-
-  //  TODO: code properly
-  void PublishLinesMarkers(
-      int id,
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> positions[],
-      int positions_count,
-      float color_r, float color_g, float color_b)
-  {
-    RVizLineMarker rVizLineMarker(
-        id,
-        positions,
-        positions_count,
-        color_r, color_g, color_b);
-    visualization_msgs::Marker line_list = rVizLineMarker.GetLineList();
-
-    marker_pub_.publish(line_list);
-  }
-
-  void SetJointPositionByWorldPosition(
-      astra_body_t *body,
-      _astra_joint_type joint_type,
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> &joint_position)
-  {
-    astra_joint_t *joint = &body->joints[joint_type];
-    joint_position.x = ((astra_vector3f_t *)&joint->worldPosition)->z / 1000.0; // why so weird?
-    joint_position.y = ((astra_vector3f_t *)&joint->worldPosition)->x / 1000.0;
-    joint_position.z = ((astra_vector3f_t *)&joint->worldPosition)->y / 1000.0;
-  }
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {

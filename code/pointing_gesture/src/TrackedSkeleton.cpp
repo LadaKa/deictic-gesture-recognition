@@ -38,3 +38,8 @@ TrackedSkeleton::TrackedSkeleton(astra_body_t *body)
   TrackedSkeleton::skeleton_data.tracking_status = body->status;
   TrackedSkeleton::SetJointPositions(body);
 }
+
+pointing_gesture::Skeleton_<pointing_gesture::Skeleton> TrackedSkeleton::GetSkeleton()
+{
+    return TrackedSkeleton::skeleton_data;
+}

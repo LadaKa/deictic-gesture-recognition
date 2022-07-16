@@ -160,6 +160,7 @@ include_directories(
 add_executable(${PROJECT_NAME}_node 
  src/RVizLineMarker.cpp 
  src/RVizPointMarker.cpp 
+ src/RVizPublisher.cpp 
  src/TrackedPerson.cpp 
  src/TrackedSkeleton.cpp 
  src/astra_body_tracker_node.cpp)

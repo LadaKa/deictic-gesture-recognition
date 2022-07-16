@@ -6,8 +6,7 @@
 void TrackedPerson::Set2DPositionDataByKeyJoint(
     int bodyId,
     int bodyStatus,
-    astra_joint_t *keyJoint,
-    pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> &position_data)
+    astra_joint_t *keyJoint)
 {
 
     position_data.body_id = bodyId;
@@ -49,16 +48,18 @@ TrackedPerson::TrackedPerson(astra_body_t *body)
 {
     int bodyId = (int)body->id;
     int bodyStatus = body->status;
+
     // THIS IS THE MOST RELIABLE TRACKING POINT, so we use it for person position in 3D!
     astra_joint_t *keyJoint = &body->joints[KEY_JOINT_TO_TRACK];
 
-    pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> position_data;
-    TrackedPerson::Set2DPositionDataByKeyJoint(bodyId, bodyStatus, keyJoint, position_data);
-
-    ///////////////////////////////////////////////////////////////
-    // 3D position of person
-    // TODO:
+    TrackedPerson::Set2DPositionDataByKeyJoint(bodyId, bodyStatus, keyJoint);
+    
     position_data.position3d.x = ((astra_vector3f_t *)&keyJoint->worldPosition)->z / 1000.0;
     position_data.position3d.y = ((astra_vector3f_t *)&keyJoint->worldPosition)->x / 1000.0;
     position_data.position3d.z = ((astra_vector3f_t *)&keyJoint->worldPosition)->y / 1000.0;
+}
+
+pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> TrackedPerson::GetPositionData()
+{
+    return TrackedPerson::position_data;
 }
