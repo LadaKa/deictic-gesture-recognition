@@ -146,43 +146,20 @@ public:
       astra_body_t *body = &bodyList.bodies[i];
       int bodyId = (int)body->id;
       int bodyStatus = body->status;
+
+      // person position
       TrackedPerson person(body);
-     
-      // PrintBodyStatus(bodyId, bodyStatus);
-      // PrintBasicTrackingInfo(bodyId, body->features, &body->centerOfMass);
+      body_tracking_position_pub_.publish(person.GetPositionData()); 
 
-      // Skeleton data - published in skeleton message
-
-      /// skeleton_data.frame_id = "astra_camera_link"; // "base_link";  // not sure about this
-      pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data;
-      skeleton_data.body_id = bodyId;
-      skeleton_data.tracking_status = bodyStatus;
-
+      // full skeleton data of person
       TrackedSkeleton trackedSkeleton(body);
-      RVizPublisher rVizPublisher(marker_pub_);
-      rVizPublisher.PublishSkeleton(trackedSkeleton.GetSkeleton());
-
-      body_tracking_position_pub_.publish(position_data); // position data
+      pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data = trackedSkeleton.GetSkeleton();
       body_tracking_skeleton_pub_.publish(skeleton_data); // full skeleton data
+
+      RVizPublisher rVizPublisher(marker_pub_);
+      rVizPublisher.PublishSkeleton(skeleton_data);
     }
   }
-
-  // cube marker for objects
-  void PublishCubeMarker(
-      int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
-      float color_r, float color_g, float color_b)
-  {
-    //PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::CUBE);
-  }
-
-  // sphere marker for skeleton joints
-  void PublishSphereMarker(
-      int id, geometry_msgs::Point32_<pointing_gesture::Skeleton> position,
-      float color_r, float color_g, float color_b)
-  {
-    //PublishPointMarker(id, position, color_r, color_g, color_b, visualization_msgs::Marker::SPHERE);
-  }
-
 
   void output_bodyframe(astra_bodyframe_t bodyFrame)
   {
