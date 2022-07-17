@@ -163,6 +163,7 @@ add_executable(${PROJECT_NAME}_node
  src/RVizPublisher.cpp 
  src/TrackedPerson.cpp 
  src/TrackedSkeleton.cpp 
+ src/OutputUtils.cpp
  src/astra_body_tracker_node.cpp)
 
 ## add_executable(${PROJECT_NAME}_node src/test_timeout_node.cpp)

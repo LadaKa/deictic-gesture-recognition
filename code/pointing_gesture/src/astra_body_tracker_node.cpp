@@ -34,7 +34,6 @@
 #include <string>
 
 // ros
-
 #include "ros/console.h"
 
 // Orbbec Astra SDK
@@ -47,14 +46,17 @@
 // custom message
 #include "BodyTracker.h"
 
+// rViz utils
 #include "RVizLineMarker.h"
 #include "RVizPointMarker.h"
 #include "RVizPublisher.h"
 
+// console output
+#include "OutputUtils.h"
+
+// basic tracked objects
 #include "TrackedPerson.h"
 #include "TrackedSkeleton.h"
-
-
 
 class astra_body_tracker_node
 {
@@ -64,7 +66,7 @@ public:
     ROS_INFO("Hallo Spaceboy!");
     ROS_INFO("%s: Initializing node", _name.c_str());
     bool initialized = false;
-    last_id_ = -1;
+
     ros::NodeHandle nodeHandle("~");
     nodeHandle.param<std::string>("myparm1", myparm1_, "mydefault");
 
@@ -87,52 +89,8 @@ public:
     ROS_INFO("astra_body_tracker_node shutting down");
   }
 
-  //////////////////////////////////////////////////////////
-  /*
-    Modified Orbec Astra sample code and Shinsel Robotics code
-
-    Removed:      void output_floor(astra_bodyframe_t bodyFrame)
-                  void output_body_mask(astra_bodyframe_t bodyFrame)
-                  void output_bodyframe_info(astra_bodyframe_t bodyFrame)
-
-  */
-
-  void output_joint(std::string joint_name, const int32_t bodyId, const astra_joint_t *joint)
-  {
-
-    printf("%14s:", joint_name.c_str());
-
-    // jointType is one of ASTRA_JOINT_* which exists for each joint type
-    const astra_joint_type_t jointType = joint->type;
-
-    // jointStatus is one of:
-
-    // ASTRA_JOINT_STATUS_NOT_TRACKED = 0,
-    // ASTRA_JOINT_STATUS_LOW_CONFIDENCE = 1,
-    // ASTRA_JOINT_STATUS_TRACKED = 2,
-    const astra_joint_status_t jointStatus = joint->status;
-
-    const astra_vector3f_t *worldPos = &joint->worldPosition;
-
-    // depthPosition is in pixels from 0 to width and 0 to height
-    // where width and height are member of astra_bodyframe_info_t
-    // which is obtained from astra_bodyframe_info().
-    const astra_vector2f_t *depthPos = &joint->depthPosition;
-
-    printf("Body %u Joint %d status %d @ world (%.1f, %.1f, %.1f) depth (%.1f, %.1f)\n",
-           bodyId,
-           jointType,
-           jointStatus,
-           worldPos->x,
-           worldPos->y,
-           worldPos->z,
-           depthPos->x,
-           depthPos->y);
-  }
-
   void output_bodies(astra_bodyframe_t bodyFrame)
   {
-    int i;
     astra_body_list_t bodyList;
     const astra_status_t rc = astra_bodyframe_body_list(bodyFrame, &bodyList);
     if (rc != ASTRA_STATUS_SUCCESS)
@@ -141,15 +99,13 @@ public:
       return;
     }
 
-    for (i = 0; i < bodyList.count; ++i)
+    for (int i = 0; i < bodyList.count; ++i)
     {
       astra_body_t *body = &bodyList.bodies[i];
-      int bodyId = (int)body->id;
-      int bodyStatus = body->status;
 
       // person position
       TrackedPerson person(body);
-      body_tracking_position_pub_.publish(person.GetPositionData()); 
+      body_tracking_position_pub_.publish(person.GetPositionData());
 
       // full skeleton data of person
       TrackedSkeleton trackedSkeleton(body);
@@ -161,73 +117,17 @@ public:
     }
   }
 
-  void output_bodyframe(astra_bodyframe_t bodyFrame)
+  void output_frame(astra_bodyframe_t bodyFrame)
   {
-    // TBA:   methods to get some reference points
+    /*
+      TBA:  methods to get some reference points:
+
+            void output_floor(astra_bodyframe_t bodyFrame)
+            void output_body_mask(astra_bodyframe_t bodyFrame)
+    */
     output_bodies(bodyFrame);
   }
 
-  void PrintBodyStatus(
-      int bodyId,
-      int bodyStatus)
-  {
-    // Tracking status
-    // NOT_TRACKING = 0
-    // TRACKING_LOST = 1
-    // TRACKING_STARTED = 2
-    // TRACKING = 3
-
-    if (bodyStatus == ASTRA_BODY_STATUS_TRACKING_STARTED)
-    {
-      printf("Body Id: %d Status: Tracking started\n", bodyId);
-    }
-    else if (bodyStatus == ASTRA_BODY_STATUS_TRACKING)
-    {
-      printf("Body Id: %d Status: Tracking\n", bodyId);
-    }
-    else if (bodyStatus == ASTRA_BODY_STATUS_LOST)
-    {
-      printf("Body %u Status: Tracking lost.\n", bodyId);
-    }
-    else // bodyStatus == ASTRA_BODY_STATUS_NOT_TRACKING
-    {
-      printf("Body Id: %d Status: Not Tracking\n", bodyId);
-    }
-  }
-
-  void PrintBasicTrackingInfo(
-      int bodyId,
-      astra_body_tracking_feature_flags_t features,
-      astra_vector3f_t *centerOfMass)
-  {
-    if (bodyId != last_id_)
-    {
-      ROS_INFO("%s: detected person ID %d", _name.c_str(), bodyId);
-      last_id_ = bodyId;
-    }
-
-    const bool jointTrackingEnabled =
-        (features & ASTRA_BODY_TRACKING_JOINTS) == ASTRA_BODY_TRACKING_JOINTS;
-    const bool handPoseRecognitionEnabled =
-        (features & ASTRA_BODY_TRACKING_HAND_POSES) == ASTRA_BODY_TRACKING_HAND_POSES;
-
-    ROS_INFO("Body %d CenterOfMass (%f, %f, %f)\n",
-             bodyId, centerOfMass->x, centerOfMass->y, centerOfMass->z);
-    ROS_INFO("    Joint Tracking Enabled: %s     Hand Pose Recognition Enabled: %s\n",
-             jointTrackingEnabled ? "True" : "False",
-             handPoseRecognitionEnabled ? "True" : "False");
-  }
-
-  void PrintJointPositionDebugInfo(
-      std::string header,
-      geometry_msgs::Point32_<pointing_gesture::Skeleton> joint_position)
-  {
-    std::string info =
-        header + ":" + std::to_string(joint_position.x) + "; " + std::to_string(joint_position.y) + "; " + std::to_string(joint_position.z);
-    ROS_INFO_STREAM(info);
-  }
-
-  
   void runLoop()
   {
     set_key_handler();
@@ -266,11 +166,12 @@ public:
         astra_frame_index_t frameIndex;
         astra_bodyframe_get_frameindex(bodyFrame, &frameIndex);
 
-        output_bodyframe(bodyFrame);
+        output_frame(bodyFrame);
         astra_reader_close_frame(&frame);
       }
 
-      //  read depth data
+      //  read depth data if needed
+      //  ...
 
       ros::spinOnce();
 
@@ -288,7 +189,6 @@ private:
   std::string _name;
   ros::NodeHandle nh_;
   std::string myparm1_;
-  int last_id_;
 
   ros::Publisher body_tracking_position_pub_;
   ros::Publisher body_tracking_skeleton_pub_;
@@ -301,6 +201,5 @@ int main(int argc, char *argv[])
   ros::init(argc, argv, "astra_body_tracker");
   astra_body_tracker_node node(ros::this_node::getName());
   node.runLoop();
-  // ros::spin();
   return 0;
 }
