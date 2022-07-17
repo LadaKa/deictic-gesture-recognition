@@ -9,7 +9,7 @@ void RVizLineMarker::SetLineListProperties(
     line_list.type = visualization_msgs::Marker::LINE_LIST;
     line_list.id = id;
 
-    line_list.header.frame_id = "astra_camera_link";
+    line_list.header.frame_id = "camera_link";
     line_list.header.stamp = ros::Time::now();
     line_list.ns = "astra_body_tracker";
     line_list.lifetime = ros::Duration(1.0); // seconds

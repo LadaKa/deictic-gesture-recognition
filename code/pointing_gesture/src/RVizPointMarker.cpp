@@ -41,7 +41,7 @@ RVizPointMarker::RVizPointMarker(
     marker.ns = "astra_body_tracker";
     marker.id = id;
 
-    marker.header.frame_id = "astra_camera_link"; // "base_link";
+    marker.header.frame_id = "camera_link"; // "base_link";
     marker.header.stamp = ros::Time::now();
     marker.lifetime = ros::Duration(1.0); // seconds
 
