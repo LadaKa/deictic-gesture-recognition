@@ -24,13 +24,7 @@ public:
 
     ros::Publisher pub_marker;
 
-    PointCloudPublishers(
-        ros::Publisher publisher_voxel,
-        ros::Publisher publisher_nearest_object,
-        ros::Publisher publisher_remaining,
-        ros::Publisher publisher_objects,
-        ros::Publisher publisher_marker
-    );
+    PointCloudPublishers();
 
     void SetClustersPublishers(
         ros::Publisher pub_cluster0,
@@ -44,6 +38,14 @@ public:
         ros::Publisher pub_plane1,
         ros::Publisher pub_plane2,
         ros::Publisher pub_plane3);
+
+    void SetOtherPublishers(
+        ros::Publisher publisher_voxel,
+        ros::Publisher publisher_nearest_object,
+        ros::Publisher publisher_remaining,
+        ros::Publisher publisher_objects,
+        ros::Publisher publisher_marker
+    );
 
     void PublishClusterMessage(
         int index, 

@@ -1,18 +1,6 @@
 #include "PointCloudPublishers.h"
 
-PointCloudPublishers::PointCloudPublishers(
-    ros::Publisher publisher_voxel,
-    ros::Publisher publisher_nearest_object,
-    ros::Publisher publisher_remaining,
-    ros::Publisher publisher_objects,
-    ros::Publisher publisher_marker)
-{
-    PointCloudPublishers::pub_voxel = publisher_voxel;
-    PointCloudPublishers::pub_nearest_object = publisher_nearest_object;
-    PointCloudPublishers::pub_remaining = publisher_remaining;
-    PointCloudPublishers::pub_objects = publisher_objects;
-    PointCloudPublishers::pub_marker = publisher_marker;
-};
+PointCloudPublishers::PointCloudPublishers(){};
 
 void PointCloudPublishers::SetClustersPublishers(
     ros::Publisher pub_cluster0,
@@ -39,6 +27,20 @@ void PointCloudPublishers::SetPlanesPublishers(
     PointCloudPublishers::pub_planes[2] = pub_plane2;
     PointCloudPublishers::pub_planes[3] = pub_plane3;
 }
+
+void PointCloudPublishers::SetOtherPublishers(
+    ros::Publisher publisher_voxel,
+    ros::Publisher publisher_nearest_object,
+    ros::Publisher publisher_remaining,
+    ros::Publisher publisher_objects,
+    ros::Publisher publisher_marker)
+{
+    PointCloudPublishers::pub_voxel = publisher_voxel;
+    PointCloudPublishers::pub_nearest_object = publisher_nearest_object;
+    PointCloudPublishers::pub_remaining = publisher_remaining;
+    PointCloudPublishers::pub_objects = publisher_objects;
+    PointCloudPublishers::pub_marker = publisher_marker;
+};
 
 void PointCloudPublishers::PublishClusterMessage(
     int index,

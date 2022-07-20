@@ -9,12 +9,9 @@
 // PCL specific includes
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
-//#include <pcl/conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
-//#include <pcl/io/pcd_io.h>
-//#include <pcl/point_types.h>
 #include <pcl/common/common.h>
 
 #include <pcl/sample_consensus/model_types.h>
@@ -45,7 +42,6 @@
 #include "ObjectDetection.h"
 #include "PointCloudPublishers.h"
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
 class PclObjectDetection
 {
 public:
@@ -64,7 +60,6 @@ private:
   const char *DEFAULT_TARGET_FRAME = "base_link"; // TF frame for sensors
   const double DEFAULT_TF_TOLERANCE = 0.05;       // TF latency tolerance
   const char *DEFAULT_DEPTH_TOPIC = "/camera/depth";
-  // const char*   DEFAULT_COLOR_TOPIC = "/camera/color";
 
   // VARIABLES
   ros::NodeHandle nh_;
@@ -92,11 +87,13 @@ private:
   ros::Publisher pub2;
   ros::Publisher pub3;
   ros::Publisher pub4;
-  ros::Publisher pub5;
+  ros::Publisher pub_voxel;
 
   ros::Publisher pub_remaining;
   ros::Publisher pub_objects;
-  ros::Publisher marker_pub_;
+  ros::Publisher marker_pub;
+
+  PointCloudPublishers publishers;
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -113,7 +110,6 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   private_nh_.param<std::string>("target_frame", target_frame_, DEFAULT_TARGET_FRAME);
   private_nh_.param<double>("transform_tolerance", tf_tolerance_, DEFAULT_TF_TOLERANCE);
   private_nh_.param<std::string>("depth_topic", depth_topic_, DEFAULT_DEPTH_TOPIC);
-  // private_nh_.param<std::string>("color_topic", color_topic_, DEFAULT_COLOR_TOPIC);
 
   // PUBLISHERS
   // Create a ROS publisher for the output point cloud
@@ -128,17 +124,22 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   pub1 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/plane1", 1);
   pub2 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/plane2", 1);
   pub3 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/plane3", 1);
-  pub4 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/plane4", 1);
-  pub5 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/voxel_output", 1);
+  // pub4 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/plane4", 1);
+
+  pub_voxel = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/voxel_output", 1);
 
   pub_remaining = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/remaining", 1);
   pub_objects = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/objects", 1);
 
-  // Create a ROS publisher for the output model coefficients
-  // pub = nh_.advertise<pcl_msgs::ModelCoefficients> ("pcl_object_detection/segment_plane", 1);
-
   // Publish markers to show where robot thinks object is in RViz
-  marker_pub_ = nh_.advertise<visualization_msgs::Marker>("pcl_object_detection/marker", 1);
+  marker_pub = nh_.advertise<visualization_msgs::Marker>("pcl_object_detection/marker", 1);
+  
+  publishers.SetClustersPublishers(
+    pub_cluster0, pub_cluster1, pub_cluster2, pub_cluster3, pub_cluster4);
+  publishers.SetPlanesPublishers(
+    pub0, pub1, pub2, pub3);
+  publishers.SetOtherPublishers(
+    pub_voxel,pub_nearest_object, pub_remaining, pub_objects, marker_pub);
 
   // SUBSCRIBERS
   // Create a ROS subscriber for the input point cloud
@@ -151,8 +152,8 @@ void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_
 {
   ROS_INFO("PclObjectDetection: cloud_cb...");
   input_cloud_frame_ = input_cloud_msg->header.frame_id; // TF Frame of the point cloud
-  ObjectDetection objectDetection();
-  //  TODO
+  ObjectDetection objectDetection;
+  objectDetection.SetPublishers(publishers);
 }
 
 int main(int argc, char **argv)
