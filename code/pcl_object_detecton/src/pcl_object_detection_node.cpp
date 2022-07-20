@@ -43,7 +43,7 @@
 // NOTE: you must install TF2 Sensor Messages: sudo apt-get install ros-kinetic-tf2-sensor-msgs
 
 #include "ObjectDetection.h"
-#include "PointCloudPublishers.h";
+#include "PointCloudPublishers.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 class PclObjectDetection
