@@ -24,7 +24,7 @@ public:
 
     ros::Publisher pub_marker;
 
-    PointCloudPublishers();
+     PointCloudPublishers();
 
     void SetClustersPublishers(
         ros::Publisher pub_cluster0,
@@ -49,7 +49,7 @@ public:
 
     void PublishClusterMessage(
         int index, 
-        sensor_msgs::PointCloud2 message);
+        sensor_msgs::PointCloud2Ptr message);
 
     void PublishPlaneMessage(
         int index, 

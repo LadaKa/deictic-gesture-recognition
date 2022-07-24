@@ -8,6 +8,7 @@
 #include "tf/transform_listener.h"
 #include "tf/message_filter.h"
 #include <sensor_msgs/PointCloud2.h>
+#include <pcl/point_types.h>
 
 #include "PointCloudPublishers.h"
 
@@ -15,8 +16,16 @@ class ObjectDetection
 {
 private:
     PointCloudPublishers publishers;
+    tf2_ros::Buffer tf2_; 
+    tf2_ros::TransformListener tfListener_;
+
+    void CheckObjectSize(
+        pcl::PointXYZ maxPt,
+        pcl::PointXYZ bb_size);
 
 public:
+    ObjectDetection();
+
     void SetPublishers(PointCloudPublishers pcPublishers);
 
     void PublishMarkerBox(
@@ -26,9 +35,8 @@ public:
         float size_x, float size_y, float size_z,
         float color_r, float color_g, float color_b);
 
-    void ProcessPointCloud(
+    bool Detect(
         const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg,
-        tf2_ros::Buffer tf2_,
         std::string target_frame,
         double tf_tolerance);
 };

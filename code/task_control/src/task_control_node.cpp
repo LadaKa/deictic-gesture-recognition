@@ -24,10 +24,13 @@ public:
         ros::NodeHandle nh) : _nh(nh)
     {
         sub_object_detection_done = nh.subscribe(
-            "object_detection_done", 1, &task_control_node::object_detection_done_cb, this);
+            "pcl_object_detection/object_detection_done",
+             1, 
+             &task_control_node::object_detection_done_cb, this);
 
         pub_stop_object_detection_stream = _nh.advertise<std_msgs::Empty>(
-            "stop_object_detection_stream", 1);
+            "stop_object_detection_stream",
+             1);
     }
 };
 

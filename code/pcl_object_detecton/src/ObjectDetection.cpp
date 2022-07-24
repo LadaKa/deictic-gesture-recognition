@@ -19,6 +19,10 @@
 
 #include "RVizMarkerBox.h"
 
+ObjectDetection::ObjectDetection(): 
+    tfListener_(ObjectDetection::tf2_)
+{};
+
 void ObjectDetection::SetPublishers(PointCloudPublishers pcPublishers)
 {
     ObjectDetection::publishers = pcPublishers;
@@ -41,9 +45,8 @@ void ObjectDetection::PublishMarkerBox(
     publishers.pub_marker.publish(marker);
 }
 
-void ObjectDetection::ProcessPointCloud(
+bool ObjectDetection::Detect(
     const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg,
-    tf2_ros::Buffer tf2_,
     std::string target_frame,
     double tf_tolerance)
 {
@@ -133,7 +136,7 @@ void ObjectDetection::ProcessPointCloud(
             pcl::toPCLPointCloud2(*cloud_plane_p, tmp_cloud);
             pcl_conversions::fromPCL(tmp_cloud, output);
 
-            publishers.PublishClusterMessage(i, output);
+            publishers.PublishPlaneMessage(i, output);
         }
 
         // Create the filtering object
@@ -151,6 +154,8 @@ void ObjectDetection::ProcessPointCloud(
     publishers.pub_remaining.publish(output);
 
     // Look for object Clusters
+
+    bool objectsDetected = false;
 
     if ((downsampled_XYZ->width > 0) && (downsampled_XYZ->height > 0))
     {
@@ -175,6 +180,13 @@ void ObjectDetection::ProcessPointCloud(
         int nearest_object_index = -1;
         float nearest_object_weighted_distance = 10000.0;
         pcl::PointXYZ nearest_obj_minPt, nearest_obj_maxPt, nearest_obj_bb_size, nearest_obj_center;
+
+        // Clusters
+
+        float marker_r = 0.0;
+        float marker_g = 1.0;
+        float marker_b = 1.0;
+
 
         int j = 0;
         for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
@@ -240,40 +252,8 @@ void ObjectDetection::ProcessPointCloud(
                   << ", top: " << maxPt.z
                   << ", bottom: " << minPt.z;
                 */
-
-                // TODO DAVES:  instead of bb size, try using min and max values
-                // need to fix ground plane to auto-adjust so it sits on the ground.
-                // for close up objects just see the top of the object, so it has small
-                // height from bottom to top, but big height from floor.
-
-                if (maxPt.z > 0.120)
-                {
-                    std::cout << " FAIL: Object too tall: "
-                              << "maxPt.z=" << maxPt.z << std::endl;
-                    //  ++j;
-                    // continue;
-                }
-                else if (bb_size.z < 0.020)
-                {
-                    std::cout << " FAIL: Object too short: "
-                              << "bb_size.z=" << bb_size.z << std::endl;
-                    //  ++j;
-                    // continue;
-                }
-                else if (bb_size.z > 0.090)
-                {
-                    std::cout << " FAIL: Object too tall: bb_size.z " << std::endl;
-                    // ++j;
-                    // continue;
-                }
-                /*
-                else if(minPt.z > 0.12)
-                {
-                  std::cout << " FAIL: Bottom of Object too high.  min Z = " << minPt.z << std::endl;
-                  ++j;
-                  continue;
-                }
-                */
+                
+                // CheckObjectSize if needed
 
                 // std::cout << " PASS" << std::endl;
                 const int PICKUP_ZONE_MAX_Y = 400; // mm from center of robot
@@ -297,63 +277,22 @@ void ObjectDetection::ProcessPointCloud(
 
                 if (j < 5)
                 {
-                    if (j == 0)
-                    {
-                        // TODO
-                        //pub_cluster0.publish(cloud_rotated_msg); // Publish the data cluster cloud
-
-                        ObjectDetection::PublishMarkerBox(         // Publish the bounding box as a marker
-                            target_frame,                            // Transform Frame from camera to robot base
+                    ObjectDetection::PublishMarkerBox(            // Publish the bounding box as a marker
+                            target_frame,                             // Transform Frame from camera to robot base
                             j,                                        // Marker ID
                             obj_center.x, obj_center.y, obj_center.z, // Object Center
                             bb_size.x, bb_size.y, bb_size.z,          // Object Size
-                            1.0, 0.0, 0.0);                           // Red
-                                                                      // r,g,b - different for each marker
-                    }
-                    else if (j == 1)
-                    {
-                        //pub_cluster1.publish(cloud_rotated_msg);
+                            marker_r, marker_g, marker_b); 
 
-                        ObjectDetection::PublishMarkerBox(
-                            target_frame,
-                            j,
-                            obj_center.x, obj_center.y, obj_center.z,
-                            bb_size.x, bb_size.y, bb_size.z,
-                            0.5, 0.0, 0.5); // Dark Purple
-                    }
-                    else if (j == 2)
-                    {
-                        //pub_cluster2.publish(cloud_rotated_msg);
+                    marker_r = marker_r + 0.1;
+                    marker_g = marker_g - 0.1;
 
-                        ObjectDetection::PublishMarkerBox(
-                            target_frame,
-                            j,
-                            obj_center.x, obj_center.y, obj_center.z,
-                            bb_size.x, bb_size.y, bb_size.z,
-                            1.0, 0.0, 1.0); // Light Purple
-                    }
-                    else if (j == 3)
-                    {
-                        //pub_cluster3.publish(cloud_rotated_msg);
-
-                        ObjectDetection::PublishMarkerBox(
-                            target_frame,
-                            j,
-                            obj_center.x, obj_center.y, obj_center.z,
-                            bb_size.x, bb_size.y, bb_size.z,
-                            1.0, 1.0, 0.0); // Yellow
-                    }
-                    else if (j == 4)
-                    {
-                        //pub_cluster4.publish(cloud_rotated_msg);
-
-                        ObjectDetection::PublishMarkerBox(
-                            target_frame,
-                            j,
-                            obj_center.x, obj_center.y, obj_center.z,
-                            bb_size.x, bb_size.y, bb_size.z,
-                            0.0, 1.0, 1.0); // Aqua
-                    }
+                    publishers.PublishClusterMessage(j, cloud_rotated_msg);
+                }
+                else 
+                {
+                    objectsDetected = true;
+                    break;
                 }
             }
             catch (tf2::TransformException &ex)
@@ -394,5 +333,45 @@ void ObjectDetection::ProcessPointCloud(
                       << std::endl;
         }
     }
-
+    return objectsDetected;
 } // cloud_cb
+
+void ObjectDetection::CheckObjectSize(
+    pcl::PointXYZ maxPt, 
+    pcl::PointXYZ bb_size)
+{
+
+    // TODO DAVES:  instead of bb size, try using min and max values
+    // need to fix ground plane to auto-adjust so it sits on the ground.
+    // for close up objects just see the top of the object, so it has small
+    // height from bottom to top, but big height from floor.
+
+    if (maxPt.z > 0.120)
+    {
+        std::cout << " FAIL: Object too tall: "
+                  << "maxPt.z=" << maxPt.z << std::endl;
+        //  ++j;
+        // continue;
+    }
+    else if (bb_size.z < 0.020)
+    {
+        std::cout << " FAIL: Object too short: "
+                  << "bb_size.z=" << bb_size.z << std::endl;
+        //  ++j;
+        // continue;
+    }
+    else if (bb_size.z > 0.090)
+    {
+        std::cout << " FAIL: Object too tall: bb_size.z " << std::endl;
+        // ++j;
+        // continue;
+    }
+    /*
+    else if(minPt.z > 0.12)
+    {
+      std::cout << " FAIL: Bottom of Object too high.  min Z = " << minPt.z << std::endl;
+      ++j;
+      continue;
+    }
+    */
+}

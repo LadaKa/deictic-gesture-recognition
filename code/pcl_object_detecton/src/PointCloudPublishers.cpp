@@ -44,7 +44,7 @@ void PointCloudPublishers::SetOtherPublishers(
 
 void PointCloudPublishers::PublishClusterMessage(
     int index,
-    sensor_msgs::PointCloud2 message)
+    sensor_msgs::PointCloud2Ptr message)
 {
     PointCloudPublishers::pub_clusters[index].publish(message);
 }
