@@ -317,7 +317,7 @@ bool ObjectDetection::Detect(
                 nearest_obj_bb_size.x, nearest_obj_bb_size.y, nearest_obj_bb_size.z,
                 0.0, 1.0, 0.0); // Green
 
-            std::cout << "NEAREST OBJECT: index: "
+          /*  std::cout << "NEAREST OBJECT: index: "
                       << nearest_object_index
                       << ",  Center x: " << nearest_obj_center.x
                       << ", y: " << nearest_obj_center.y
@@ -330,7 +330,7 @@ bool ObjectDetection::Detect(
                       << ", maxPt.x: " << nearest_obj_maxPt.x
                       << ", minPt.z: " << nearest_obj_minPt.z
                       << ", maxPt.z: " << nearest_obj_maxPt.z
-                      << std::endl;
+                      << std::endl;*/
         }
     }
     return objectsDetected;

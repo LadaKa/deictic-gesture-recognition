@@ -59,7 +59,7 @@ private:
 
   const char *DEFAULT_TARGET_FRAME = "base_link"; // TF frame for sensors
   const double DEFAULT_TF_TOLERANCE = 0.05;       // TF latency tolerance
-  const char *DEFAULT_DEPTH_TOPIC = "/camera/depth";
+  const char *DEFAULT_DEPTH_TOPIC = "/depth";
 
   // VARIABLES
   ros::NodeHandle nh_;
@@ -142,8 +142,10 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   publishers.SetOtherPublishers(
       pub_voxel, pub_nearest_object, pub_remaining, pub_objects, marker_pub_);
 
+
+ // ugly hotfix for ros_astra_camera termination
   pub_object_detection_done = nh_.advertise<std_msgs::Empty>(
-        "pcl_object_detection/object_detection_done", 1);
+        "camera/object_detection_done", 1);
 
   // SUBSCRIBERS
   // Create a ROS subscriber for the input point cloud
