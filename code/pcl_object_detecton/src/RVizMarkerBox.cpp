@@ -14,7 +14,7 @@ RVizMarkerBox::RVizMarkerBox(
 {
     marker.header.frame_id = frame_id; // input_cloud_frame_; //"camera_depth_frame"; //"base_link";
     marker.header.stamp = ros::Time::now();
-    marker.lifetime = ros::Duration(3.0); // seconds
+    marker.lifetime = ros::Duration(1); // seconds
     marker.ns = "pcl_object_detection";
     marker.id = id; 
 

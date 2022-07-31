@@ -70,7 +70,9 @@ private:
   std::string target_frame_;
   double tf_tolerance_;
   std::string depth_topic_;
-
+  bool objectsDetected = false;
+  ObjectDetection objectDetection;
+  
   // SUBSCRIBERS
   ros::Subscriber depth_cloud_sub_;
 
@@ -156,15 +158,23 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
 
 void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg)
 {
+  if (objectsDetected)
+  {
+    objectDetection.PublishObjectsMarkers();
+    return;
+  }
+    
   ROS_INFO("PclObjectDetection: cloud_cb...");
   input_cloud_frame_ = input_cloud_msg->header.frame_id; 
-  ObjectDetection objectDetection;
+  
   objectDetection.SetPublishers(publishers);
 
-  if (objectDetection.Detect(
+  objectsDetected = objectDetection.Detect(
           input_cloud_msg,
           target_frame_,
-          tf_tolerance_))
+          tf_tolerance_);
+
+  if (objectsDetected)
   {
     ROS_INFO("PclObjectDetection: Objects detected.");
     std_msgs::Empty empty_msg;

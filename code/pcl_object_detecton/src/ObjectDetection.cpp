@@ -28,7 +28,7 @@ void ObjectDetection::SetPublishers(PointCloudPublishers pcPublishers)
     ObjectDetection::publishers = pcPublishers;
 }
 
-void ObjectDetection::PublishMarkerBox(
+void ObjectDetection::AddMarkerBox(
     std::string frame_id,
     int id,
     float x, float y, float z,
@@ -42,7 +42,17 @@ void ObjectDetection::PublishMarkerBox(
         size_x, size_y, size_z,
         color_r, color_g, color_b);
     visualization_msgs::Marker marker = rVizMarkerBox.GetMarker();
-    publishers.pub_marker.publish(marker);
+    ObjectDetection::objects_markers[id] = marker;
+
+    
+}
+
+void ObjectDetection::PublishObjectsMarkers()
+{
+    for (int i = 0; i < 3; i++) // const
+    {
+        publishers.pub_marker.publish(objects_markers[i]);
+    }
 }
 
 bool ObjectDetection::Detect(
@@ -274,32 +284,28 @@ bool ObjectDetection::Detect(
                     nearest_obj_center = obj_center;
                 }
 
-                if (j < 5)
+                if (j < 3)
                 {
-                    ObjectDetection::PublishMarkerBox(            // Publish the bounding box as a marker
+                    std::cout << "Checking object " << j << std::endl;
+                    
+                    if (CheckObjectSize(maxPt, bb_size))
+                    {
+                        marker_r = marker_r + 0.2;
+                        marker_g = marker_g - 0.2;
+
+                        ObjectDetection::AddMarkerBox(            // Publish the bounding box as a marker
                             target_frame,                             // Transform Frame from camera to robot base
                             j,                                        // Marker ID
                             obj_center.x, obj_center.y, obj_center.z, // Object Center
                             bb_size.x, bb_size.y, bb_size.z,          // Object Size
                             marker_r, marker_g, marker_b); 
 
-                    std::cout << "Checking object " << j << std::endl;
-                    
-                    if (CheckObjectSize(maxPt, bb_size))
-                    {
-                        marker_r = marker_r + 0.1;
-                        marker_g = marker_g - 0.1;
+
+                        publishers.PublishClusterMessage(j, cloud_rotated_msg);
+                                      
                     }
                     else
-                    {
-                        marker_r = 0;
-                        marker_g = 0;
-                        marker_b = 0;
-                    }
-
-                    
-
-                    publishers.PublishClusterMessage(j, cloud_rotated_msg);
+                        j--; //!!
                 }
                 else 
                 {
@@ -322,12 +328,13 @@ bool ObjectDetection::Detect(
 
             publishers.pub_nearest_object.publish(nearest_object_cloud_msg);
 
-            ObjectDetection::PublishMarkerBox(
+           /* ObjectDetection::AddMarkerBox(
                 target_frame,
                 10,
                 nearest_obj_center.x, nearest_obj_center.y, nearest_obj_center.z,
                 nearest_obj_bb_size.x, nearest_obj_bb_size.y, nearest_obj_bb_size.z,
                 0.0, 1.0, 0.0); // Green
+           */
 
           /*  std::cout << "NEAREST OBJECT: index: "
                       << nearest_object_index
@@ -352,54 +359,32 @@ bool ObjectDetection::CheckObjectSize(
     pcl::PointXYZ maxPt, 
     pcl::PointXYZ bb_size)
 {
-    /*
-        [ INFO] [1659280555.968155197]: PclObjectDetection: Objects detected.
-        [ INFO] [1659280555.982301495]: PclObjectDetection: cloud_cb...
-        
-        Checking object 0
-        FAIL: Object too tall: bb_size.z=0.389858
-        
-        Checking object 1
-        FAIL: Object too tall: bb_size.z=0.428071
-        
-        Checking object 2
-        FAIL: Object too tall: bb_size.z=0.31507
-        
-        Checking object 3
-        FAIL: Object too tall: bb_size.z=0.353116
 
-        Checking object 4
-        FAIL: Object too tall: maxPt.z=0.462698
-        FAIL: Object too tall: bb_size.z=0.825325
-
-        Checking object 5
-        FAIL: Object too tall: bb_size.z=0.249753
-
-    */
+    if (maxPt.z > 0.1)
+    {
+        //std::cout << " FAIL: Object too tall: "
+        //          << "maxPt.z=" << maxPt.z << std::endl;
+        return false;
+    }
+    if (maxPt.y < 2.0)
+    {
+        
+        return false;
+    }
+    if (bb_size.z > 0.20)
+    {
+        //std::cout << " FAIL: Object too tall: "
+        //          << "bb_size.z=" << bb_size.z << std::endl;
+                  return false;
+    }
 
     std::cout << " Max points: "
                 << maxPt.x << " "
                 << maxPt.y << " "
                 << maxPt.z << " "
                 << std::endl;
-
-    if (maxPt.z > 0.1)
-    {
-        std::cout << " FAIL: Object too tall: "
-                  << "maxPt.z=" << maxPt.z << std::endl;
-        return false;
-    }
-    if (bb_size.z < 0.020)
-    {
-        std::cout << " FAIL: Object too short: "
-                  << "bb_size.z=" << bb_size.z << std::endl;
-    }
-    if (bb_size.z > 0.090)
-    {
-        std::cout << " FAIL: Object too tall: "
-                  << "bb_size.z=" << bb_size.z << std::endl;
-    }
     return true;
+
     /*
     else if(minPt.z > 0.12)
     {
