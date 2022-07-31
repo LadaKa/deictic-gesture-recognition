@@ -65,16 +65,17 @@ class astra_body_tracker_node
 public:
   astra_body_tracker_node(std::string name) : _name(name)
   {
-    ROS_INFO("Hallo Spaceboy!");
-    ROS_INFO("%s: Initializing node", _name.c_str());
+    ROS_INFO("ASTRA_BODY_TRACKER: %s: Initializing node", _name.c_str());
     bool initialized = false;
 
     ros::NodeHandle nodeHandle("~");
     nodeHandle.param<std::string>("myparm1", myparm1_, "mydefault");
 
     // SUBSCRIBERS
+    
+    // hotfix for ros_astra_camera
     sub_object_detection_done = nh_.subscribe(
-        "object_detection_done",
+        "camera/object_detection_done",
         1,
         &astra_body_tracker_node::object_detection_done_cb, this);
 
@@ -89,12 +90,12 @@ public:
     // Publish markers to show where robot thinks person is in RViz
     marker_pub_ = nh_.advertise<visualization_msgs::Marker>("body_tracker/marker", 1);
 
-    ROS_INFO("astra_body_tracker: Advertised Publisher: body_tracker/pose, skeleton, marker");
+    ROS_INFO("ASTRA_BODY_TRACKER: Advertised Publisher: body_tracker/pose, skeleton, marker");
   }
 
   ~astra_body_tracker_node()
   {
-    ROS_INFO("astra_body_tracker_node shutting down");
+    ROS_INFO("ASTRA_BODY_TRACKER: node shutting down");
   }
 
   void output_bodies(astra_bodyframe_t bodyFrame)
@@ -127,12 +128,12 @@ public:
 
   void output_frame(astra_bodyframe_t bodyFrame)
   {
-    astra_plane_t floorPlane;
-    if (try_output_floor(bodyFrame, &floorPlane))
-    {
+   // astra_plane_t floorPlane;
+   // if (try_output_floor(bodyFrame, &floorPlane))
+   // {
       //  TODO: 
       //  use floor coords for pointing gesture processing
-    }
+   // }
     output_bodies(bodyFrame);
   }
 
@@ -140,6 +141,8 @@ public:
   {
     set_key_handler();
 
+    ROS_INFO(
+        "ASTRA_BODY_TRACKER: Starting Astra Loop");
     do
     {
       ros::spinOnce();
@@ -191,12 +194,15 @@ private:
   void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
   {
     ROS_INFO(
-        "Starting ROS Astra Stream for Body Tracking");
+        "ASTRA_BODY_TRACKER: received object_detection_done MSG.");
     objectsDetected = true;
   }
 
   void runAstraStreamLoop()
   {
+    ROS_INFO(
+        "ASTRA_BODY_TRACKER: Starting Astra Loop");
+
     //  initialization cannot be skipped -> rc = 7
     astra_initialize();
 
@@ -213,6 +219,8 @@ private:
     astra_reader_get_bodystream(reader, &bodyStream);
 
     astra_stream_start(bodyStream);
+    ROS_INFO(
+        "ASTRA_BODY_TRACKER: Starting Astra Stream.");
     do
     {
       //  read skeleton data

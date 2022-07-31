@@ -19,7 +19,7 @@ private:
     tf2_ros::Buffer tf2_; 
     tf2_ros::TransformListener tfListener_;
 
-    void CheckObjectSize(
+    bool CheckObjectSize(
         pcl::PointXYZ maxPt,
         pcl::PointXYZ bb_size);
 
