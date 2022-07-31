@@ -109,7 +109,7 @@ private:
   std::string resolveDeviceURI(const std::string& device_id);
   void initDevice();
 
-  void advertiseROSTopics();
+  void initializeROSTopics();
 
   void imageConnectCb();
   void depthConnectCb();

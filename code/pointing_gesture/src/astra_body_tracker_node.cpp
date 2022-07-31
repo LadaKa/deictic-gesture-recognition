@@ -30,6 +30,8 @@
 
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
+#include <std_msgs/Empty.h>
+
 #include <sstream>
 #include <string>
 
@@ -69,6 +71,12 @@ public:
 
     ros::NodeHandle nodeHandle("~");
     nodeHandle.param<std::string>("myparm1", myparm1_, "mydefault");
+
+    // SUBSCRIBERS
+    sub_object_detection_done = nh_.subscribe(
+        "object_detection_done",
+        1,
+        &astra_body_tracker_node::object_detection_done_cb, this);
 
     // PUBLISHERS
     // Publish tracked person in 2D and 3D
@@ -132,9 +140,29 @@ public:
   {
     set_key_handler();
 
-    //  2022-04-23 18:46:05,946 ERROR [orbbec.ni.device_streamset]
-    //  failed to open device: 	Could not open "2bc5/0401@1/13": Failed to set USB interface!
+    do
+    {
+      ros::spinOnce();
 
+    } while (shouldContinue && !objectsDetected);
+
+    if (shouldContinue)
+    {
+      runAstraStreamLoop();
+    }
+  }
+
+private:
+
+  void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
+  {
+    ROS_INFO(
+        "Starting ROS Astra Stream for Body Tracking");
+    objectsDetected = true;
+  }
+
+  void runAstraStreamLoop()
+  {
     //  initialization cannot be skipped -> rc = 7
     astra_initialize();
 
@@ -183,8 +211,9 @@ public:
     astra_terminate();
   }
 
-private:
-  /////////////// DATA MEMBERS /////////////////////
+
+/////////////// DATA MEMBERS /////////////////////
+  bool objectsDetected = false;
 
   std::string _name;
   ros::NodeHandle nh_;
@@ -193,6 +222,8 @@ private:
   ros::Publisher body_tracking_position_pub_;
   ros::Publisher body_tracking_skeleton_pub_;
   ros::Publisher marker_pub_;
+
+  ros::Subscriber sub_object_detection_done;
 };
 
 // The main entry point for this node.

@@ -132,7 +132,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
 #  /home/system/AstraSDK/samples/cmake/astra/capi
   ${ASTRA_INCLUDE_DIR}
   ${ASTRA_INCLUDE_DIR}/astra/capi

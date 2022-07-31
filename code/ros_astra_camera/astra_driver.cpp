@@ -151,7 +151,7 @@ namespace astra_wrapper
     }
     ROS_DEBUG("Dynamic reconfigure configuration received.");
 
-    advertiseROSTopics();
+    initializeROSTopics();
   }
 
   AstraDriver::~AstraDriver()
@@ -159,9 +159,8 @@ namespace astra_wrapper
     device_->stopAllStreams();
   }
 
-  void AstraDriver::advertiseROSTopics()
+  void AstraDriver::initializeROSTopics()
   {
-    // not really advertising..
     sub_object_detection_done = nh_.subscribe(
         "object_detection_done",
         1,
