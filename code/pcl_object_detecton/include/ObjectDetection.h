@@ -9,8 +9,10 @@
 #include "tf/message_filter.h"
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl/point_types.h>
+#include <visualization_msgs/Marker.h>
 
 #include "PointCloudPublishers.h"
+
 
 class ObjectDetection
 {
@@ -18,6 +20,7 @@ private:
     PointCloudPublishers publishers;
     tf2_ros::Buffer tf2_; 
     tf2_ros::TransformListener tfListener_;
+    visualization_msgs::Marker objects_markers[3];  // const
 
     bool CheckObjectSize(
         pcl::PointXYZ maxPt,
@@ -28,12 +31,14 @@ public:
 
     void SetPublishers(PointCloudPublishers pcPublishers);
 
-    void PublishMarkerBox(
+    void AddMarkerBox(
         std::string frame_id,
         int id,
         float x, float y, float z,
         float size_x, float size_y, float size_z,
         float color_r, float color_g, float color_b);
+
+    void PublishObjectsMarkers();
 
     bool Detect(
         const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg,

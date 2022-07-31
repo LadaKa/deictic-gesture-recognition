@@ -7,8 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /RobotModel1
-        - /TF1
-        - /DepthCloud1/Auto Size1
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 533
   - Class: rviz/Selection
@@ -29,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -88,7 +87,15 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
+        camera_depth_frame:
+          Value: true
+        camera_depth_optical_frame:
+          Value: true
         camera_link:
+          Value: true
+        camera_rgb_frame:
+          Value: true
+        camera_rgb_optical_frame:
           Value: true
       Marker Alpha: 1
       Marker Scale: 0.5
@@ -99,72 +106,21 @@ Visualization Manager:
       Tree:
         base_link:
           camera_link:
-            {}
+            camera_depth_frame:
+              camera_depth_optical_frame:
+                {}
+            camera_rgb_frame:
+              camera_rgb_optical_frame:
+                {}
       Update Interval: 0
       Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: ""
-      Decay Time: 0
+    - Class: rviz/Marker
       Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: PointCloud2
-      Position Transformer: ""
-      Queue Size: 10
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic: /pcl_object_detection/cluster0
-      Unreliable: false
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
-    - Alpha: 1
-      Auto Size:
-        Auto Size Factor: 1
-        Value: true
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz/DepthCloud
-      Color: 255; 255; 255
-      Color Image Topic: ""
-      Color Transformer: ""
-      Color Transport Hint: raw
-      Decay Time: 0
-      Depth Map Topic: /depth/image
-      Depth Map Transport Hint: raw
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Min Color: 0; 0; 0
-      Name: DepthCloud
-      Occlusion Compensation:
-        Occlusion Time-Out: 30
-        Value: false
-      Position Transformer: ""
-      Queue Size: 5
-      Selectable: true
-      Size (Pixels): 3
-      Style: Flat Squares
-      Topic Filter: true
-      Use Fixed Frame: true
-      Use rainbow: true
+      Marker Topic: /pcl_object_detection/marker
+      Name: Marker
+      Namespaces:
+        pcl_object_detection: true
+      Queue Size: 100
       Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
@@ -176,20 +132,20 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 255; 255; 255
-      Color Transformer: ""
+      Color Transformer: Intensity
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
       Name: PointCloud2
-      Position Transformer: ""
+      Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
       Style: Flat Squares
-      Topic: /pcl_object_detection/cluster0
+      Topic: /camera/depth/points
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -238,10 +194,30 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6953970193862915
+      Pitch: 0.565396249294281
       Target Frame: <Fixed Frame>
-      Yaw: 0.5135819911956787
-    Saved: ~
+      Yaw: 0.058575648814439774
+    Saved:
+      - Class: rviz/Orbit
+        Distance: 9.919084548950195
+        Enable Stereo Rendering:
+          Stereo Eye Separation: 0.05999999865889549
+          Stereo Focal Distance: 1
+          Swap Stereo Eyes: false
+          Value: false
+        Field of View: 0.7853981852531433
+        Focal Point:
+          X: 0
+          Y: 0
+          Z: 0
+        Focal Shape Fixed Size: true
+        Focal Shape Size: 0.05000000074505806
+        Invert Z Axis: false
+        Name: Orbit
+        Near Clip Distance: 0.009999999776482582
+        Pitch: 0.565396249294281
+        Target Frame: <Fixed Frame>
+        Yaw: 0.058575648814439774
 Window Geometry:
   Displays:
     collapsed: false
