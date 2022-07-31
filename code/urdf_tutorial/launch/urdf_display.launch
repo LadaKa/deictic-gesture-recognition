@@ -14,8 +14,6 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
 
 
-  <!-- TODO: this will be part of main launch file -->
-
   <!-- pcl_object_detection_node -->
   <node pkg="pcl_object_detection" type="pcl_object_detection_node" name="pcl_object_detection_node" output="screen">
 
@@ -32,6 +30,9 @@
   </node>
 
   <!-- launch astra camera (topics: camera/...) -->
-  <!--include file="$(find astra_camera)/launch/astra.launch" /-->
+  <include file="$(find astra_camera)/launch/astra.launch" />
+  
+  <!-- pointing_gesture_node -->
+  <node pkg="pointing_gesture" type="pointing_gesture_node" name="pointing_gesture_node" output="screen"/>
 
 </launch>
