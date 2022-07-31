@@ -127,12 +127,12 @@ public:
 
   void output_frame(astra_bodyframe_t bodyFrame)
   {
-    /*
-      TBA:  methods to get some reference points:
-
-            void output_floor(astra_bodyframe_t bodyFrame)
-            void output_body_mask(astra_bodyframe_t bodyFrame)
-    */
+    astra_plane_t floorPlane;
+    if (try_output_floor(bodyFrame, &floorPlane))
+    {
+      //  TODO: 
+      //  use floor coords for pointing gesture processing
+    }
     output_bodies(bodyFrame);
   }
 
@@ -153,6 +153,40 @@ public:
   }
 
 private:
+
+  bool try_output_floor(astra_bodyframe_t bodyFrame, astra_plane_t  *floorPlane)
+  {
+    astra_floor_info_t floorInfo;
+
+    astra_status_t rc = astra_bodyframe_floor_info(bodyFrame, &floorInfo);
+    if (rc != ASTRA_STATUS_SUCCESS)
+    {
+      printf("Error %d in astra_bodyframe_floor_info()\n", rc);
+      return false;
+    }
+
+    const astra_bool_t floorDetected = floorInfo.floorDetected;
+    floorPlane = &floorInfo.floorPlane;
+    const astra_floormask_t* floorMask = &floorInfo.floorMask;
+
+    if (floorDetected != ASTRA_FALSE)
+    {
+      printf("Floor plane: [%f, %f, %f, %f]\n",
+             floorPlane->a,
+             floorPlane->b,
+             floorPlane->c,
+             floorPlane->d);
+
+      const int32_t bottomCenterIndex = floorMask->width / 2 + floorMask->width * (floorMask->height - 1);
+      printf("Floor mask: width: %d height: %d bottom center value: %d\n",
+            floorMask->width,
+            floorMask->height,
+            floorMask->data[bottomCenterIndex]);
+
+      return true;
+    }
+    return false;
+  }
 
   void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
   {
