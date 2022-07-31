@@ -359,38 +359,19 @@ bool ObjectDetection::CheckObjectSize(
     pcl::PointXYZ maxPt, 
     pcl::PointXYZ bb_size)
 {
-
-    if (maxPt.z > 0.1)
-    {
-        //std::cout << " FAIL: Object too tall: "
-        //          << "maxPt.z=" << maxPt.z << std::endl;
+    
+    if (maxPt.x > 2.0)
+    {      
         return false;
     }
-    if (maxPt.y < 2.0)
-    {
-        
-        return false;
-    }
-    if (bb_size.z > 0.20)
-    {
-        //std::cout << " FAIL: Object too tall: "
-        //          << "bb_size.z=" << bb_size.z << std::endl;
-                  return false;
-    }
+    
 
     std::cout << " Max points: "
                 << maxPt.x << " "
                 << maxPt.y << " "
                 << maxPt.z << " "
                 << std::endl;
+   
     return true;
 
-    /*
-    else if(minPt.z > 0.12)
-    {
-      std::cout << " FAIL: Bottom of Object too high.  min Z = " << minPt.z << std::endl;
-      ++j;
-      continue;
-    }
-    */
 }
