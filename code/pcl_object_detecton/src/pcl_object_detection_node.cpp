@@ -178,7 +178,7 @@ void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_
   {
     ROS_INFO("PclObjectDetection: Objects detected.");
     std_msgs::Empty empty_msg;
-    //pub_object_detection_done.publish(empty_msg);
+    pub_object_detection_done.publish(empty_msg);
   }
 }
 
