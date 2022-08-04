@@ -198,29 +198,28 @@ private:
     objectsDetected = true;
   }
 
+  // starts after receiving 'object_detection_done' msg
   void runAstraStreamLoop()
   {
     ROS_INFO(
         "ASTRA_BODY_TRACKER: Starting Astra Loop");
 
-    //  initialization cannot be skipped -> rc = 7
-    astra_initialize();
-
-    const char *licenseString = "<INSERT LICENSE KEY HERE>";
-    orbbec_body_tracking_set_license(licenseString);
-
     astra_streamsetconnection_t sensor;
-    astra_streamset_open("device/default", &sensor);
-
     astra_reader_t reader;
-    astra_reader_create(sensor, &reader);
-
     astra_bodystream_t bodyStream;
-    astra_reader_get_bodystream(reader, &bodyStream);
-
-    astra_stream_start(bodyStream);
-    ROS_INFO(
-        "ASTRA_BODY_TRACKER: Starting Astra Stream.");
+    
+    // handle delayed ROS Astra Device stream termination
+    bool astra_stream_started = false;
+    do
+    {
+      astra_stream_started = tryStartAstraStream(
+        sensor, reader, bodyStream);
+    } while (
+      shouldContinue
+      &&
+      !astra_stream_started);
+    
+    // read data from stream
     do
     {
       //  read skeleton data
@@ -253,6 +252,35 @@ private:
     astra_terminate();
   }
 
+  bool tryStartAstraStream(
+    astra_streamsetconnection_t &sensor,
+    astra_reader_t &reader,
+    astra_bodystream_t &bodyStream)
+  {
+    try
+    {
+      //  initialization cannot be skipped -> rc = 7
+      astra_initialize();
+      ROS_INFO(
+        "ASTRA_BODY_TRACKER: Astra Stream initialized");
+      astra_streamset_open("device/default", &sensor);
+      astra_reader_create(sensor, &reader);
+      astra_reader_get_bodystream(reader, &bodyStream);
+      astra_stream_start(bodyStream);
+      ROS_INFO(
+        "ASTRA_BODY_TRACKER: Starting Astra Stream");
+
+      return true;
+    }
+    catch (...)
+    {
+      // delayed ROS Astra Device stream termination
+      ROS_INFO(
+        "ASTRA_BODY_TRACKER: Astra Stream Unavailable");
+      return false;
+    }
+
+  }
 
 /////////////// DATA MEMBERS /////////////////////
   bool objectsDetected = false;
