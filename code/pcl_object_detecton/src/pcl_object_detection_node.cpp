@@ -49,12 +49,13 @@ class PclObjectDetection
 {
 public:
   PclObjectDetection(ros::NodeHandle n);
+  void runLoop();
+
 
 private:
   // FUNCTIONS
   void cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg);
-
-
+  
   // CONSTANTS
 
   const char *DEFAULT_TARGET_FRAME = "base_link"; // TF frame for sensors
@@ -156,11 +157,23 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   ROS_INFO("PclObjectDetection: Initializing completed.");
 }
 
+void PclObjectDetection::runLoop()
+{
+  do
+    {
+      ros::spinOnce();
+      if (objectsDetected)
+      {
+        objectDetection.PublishObjectsMarkers();
+      }
+  } while (true); // stopped by key handler [Ctrl+C]
+  
+}
+
 void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg)
 {
   if (objectsDetected)
   {
-    objectDetection.PublishObjectsMarkers();
     return;
   }
     
@@ -190,6 +203,6 @@ int main(int argc, char **argv)
 
   ros::NodeHandle n;
   PclObjectDetection pcl_object_detection_node(n);
-  ros::spin();
+  pcl_object_detection_node.runLoop();
   return 0;
 }
