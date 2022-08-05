@@ -128,12 +128,10 @@ public:
 
   void output_frame(astra_bodyframe_t bodyFrame)
   {
-   // astra_plane_t floorPlane;
-   // if (try_output_floor(bodyFrame, &floorPlane))
-   // {
-      //  TODO: 
-      //  use floor coords for pointing gesture processing
-   // }
+    if (!floorDetected && try_output_floor(bodyFrame, &floorPlane))
+    {
+      floorDetected = true;
+    };
     output_bodies(bodyFrame);
   }
 
@@ -284,6 +282,9 @@ private:
 
 /////////////// DATA MEMBERS /////////////////////
   bool objectsDetected = false;
+  bool floorDetected = false;
+
+  astra_plane_t floorPlane;
 
   std::string _name;
   ros::NodeHandle nh_;
