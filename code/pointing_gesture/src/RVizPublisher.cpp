@@ -69,21 +69,21 @@ void RVizPublisher::PublishBones(pointing_gesture::Skeleton_<pointing_gesture::S
         skeleton_data.joint_position_spine_top,
         skeleton_data.joint_position_spine_mid,
         skeleton_data.joint_position_spine_bottom};
-    PublishLinesMarkers(13, spinePositions, 4, 0.4, 0.4, 0.4);
+    PublishLinesMarkers(13, spinePositions, 4, 1, 0.2, 0.2);
 
     // left arm:
     geometry_msgs::Point32_<pointing_gesture::Skeleton> leftArmPositions[]{
         skeleton_data.joint_position_left_shoulder,
         skeleton_data.joint_position_left_elbow,
         skeleton_data.joint_position_left_hand};
-    PublishLinesMarkers(14, leftArmPositions, 3, 0.4, 0.4, 0.4);
+    PublishLinesMarkers(14, leftArmPositions, 3, 1, 0.2, 0.2);
 
     // right arm:
     geometry_msgs::Point32_<pointing_gesture::Skeleton> rightArmPositions[]{
         skeleton_data.joint_position_right_shoulder,
         skeleton_data.joint_position_right_elbow,
         skeleton_data.joint_position_right_hand};
-    PublishLinesMarkers(15, rightArmPositions, 3, 0.4, 0.4, 0.4);
+    PublishLinesMarkers(15, rightArmPositions, 3, 1, 0.2, 0.2);
 }
 
 RVizPublisher::RVizPublisher(ros::Publisher marker_pub)
