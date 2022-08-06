@@ -128,12 +128,14 @@ public:
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
 
-      if (detect_left_hand_grip(body))
+      if (!pointingGestureDetected && detect_left_hand_grip(body))
       {
         if (floorDetected)
         {
+          // detect pointing gesture
           pointingPerson = &person;
           pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
+          pointingGestureDetected = true;
         }
         else
         {
@@ -236,6 +238,8 @@ private:
   // starts after receiving 'object_detection_done' msg
   void runAstraStreamLoop()
   {
+    //  TODO: 
+    //  refactor - start / skeletons / pointing person
     ROS_INFO(
         "ASTRA_BODY_TRACKER: Starting Astra Loop");
 
@@ -279,7 +283,23 @@ private:
 
       ros::spinOnce();
 
-    } while (shouldContinue);
+    } while (
+        shouldContinue && !pointingGestureDetected);
+
+    if (shouldContinue)
+    {
+      // pointing gesture detected
+      RVizPublisher rVizPublisher(marker_pub_);
+
+      do 
+      {
+        //  TODO: publish pointing skeleton
+        rVizPublisher.PublishPointingGesture(
+          pointingPerson->GetPointingGesture());
+        ros::spinOnce();
+
+      } while (shouldContinue);
+    }
 
     astra_reader_destroy(&reader);
     astra_streamset_close(&sensor);

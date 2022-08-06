@@ -48,4 +48,5 @@ void TrackedSkeleton::GetGestureJointPosition(
 {
   right_elbow = skeleton_data.joint_position_right_elbow;
   right_hand = skeleton_data.joint_position_right_hand;
+  
 }

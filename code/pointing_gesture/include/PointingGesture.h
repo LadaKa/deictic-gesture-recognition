@@ -8,8 +8,7 @@
 class PointingGesture
 {
 private:
-    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_position;
-    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_position;
+    
     astra_plane_t floor;
 
     geometry_msgs::Point32_<pointing_gesture::Skeleton> GetPointsDifference(
@@ -17,6 +16,10 @@ private:
         geometry_msgs::Point32_<pointing_gesture::Skeleton> point_1);
 
 public:
+
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_position;
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_position;
+    
     PointingGesture();
 
     PointingGesture(

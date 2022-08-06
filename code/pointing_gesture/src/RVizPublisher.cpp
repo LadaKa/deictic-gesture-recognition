@@ -97,3 +97,17 @@ void RVizPublisher::PublishSkeleton(
     RVizPublisher::PublishJoints(skeleton);
     RVizPublisher::PublishBones(skeleton);
 }
+
+void RVizPublisher::PublishPointingGesture(
+    PointingGesture *gesture)
+{
+    // intersection with floor
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> floorIntersection =
+        gesture->GetFloorIntersection();
+
+    // pointed ray
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> pointedRay[]{
+        gesture->right_hand_position,
+        floorIntersection};
+    PublishLinesMarkers(101, pointedRay, 2, 0.2, 1, 0.2);
+}
