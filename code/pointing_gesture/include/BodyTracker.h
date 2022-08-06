@@ -16,8 +16,6 @@
 #include <ros/message_operations.h>
 
 #include <geometry_msgs/Point32.h>
-#include <geometry_msgs/Point32.h>
-#include <geometry_msgs/Point32.h>
 
 namespace pointing_gesture
 {
