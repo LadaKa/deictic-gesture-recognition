@@ -11,7 +11,6 @@ void TrackedSkeleton::SetJointPositionByWorldPosition(
   joint_position.z = ((astra_vector3f_t *)&joint->worldPosition)->y / 1000.0;
 }
 
-
 void TrackedSkeleton::SetJointPositions(
     astra_body_t *body)
 {
@@ -31,7 +30,6 @@ void TrackedSkeleton::SetJointPositions(
   SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_HAND, skeleton_data.joint_position_right_hand);
 }
 
-
 TrackedSkeleton::TrackedSkeleton(astra_body_t *body)
 {
   TrackedSkeleton::skeleton_data.body_id = (int)body->id;
@@ -41,5 +39,13 @@ TrackedSkeleton::TrackedSkeleton(astra_body_t *body)
 
 pointing_gesture::Skeleton_<pointing_gesture::Skeleton> TrackedSkeleton::GetSkeleton()
 {
-    return TrackedSkeleton::skeleton_data;
+  return TrackedSkeleton::skeleton_data;
+}
+
+void TrackedSkeleton::GetGestureJointPosition(
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_elbow,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_hand)
+{
+  right_elbow = skeleton_data.joint_position_right_elbow;
+  right_hand = skeleton_data.joint_position_right_hand;
 }

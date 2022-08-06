@@ -8,7 +8,6 @@
 class TrackedSkeleton
 {
 private:
-    // TODO: pointing_gesture::Skeleton skeleton
     pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data;
 
     void SetJointPositionByWorldPosition(
@@ -22,6 +21,10 @@ public:
     TrackedSkeleton(astra_body_t *body);
 
     pointing_gesture::Skeleton_<pointing_gesture::Skeleton> GetSkeleton();
+
+    void GetGestureJointPosition(
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_elbow,
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_hand);
 };
 
 #endif

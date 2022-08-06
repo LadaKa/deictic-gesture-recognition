@@ -130,7 +130,16 @@ public:
 
       if (detect_left_hand_grip(body))
       {
-        // TODO: PointingGesture gesture()..
+        if (floorDetected)
+        {
+          pointingPerson = &person;
+          pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
+        }
+        else
+        {
+          printf(
+            "Pointing gesture can not be processed - floor plane not detected.");
+        };
       }
     }
   }
@@ -311,6 +320,9 @@ private:
 /////////////// DATA MEMBERS /////////////////////
   bool objectsDetected = false;
   bool floorDetected = false;
+
+  bool pointingGestureDetected = false;
+  TrackedPerson* pointingPerson;
 
   astra_plane_t floorPlane;
 

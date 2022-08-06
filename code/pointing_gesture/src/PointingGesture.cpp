@@ -1,20 +1,20 @@
 #include "PointingGesture.h"
 
 PointingGesture::PointingGesture(
-    geometry_msgs::Point32 right_elbow_pos,
-    geometry_msgs::Point32 right_wrist_pos,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_pos,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_pos,
     astra_plane_t floor_plane)
 {
     right_elbow_position = right_elbow_pos;
-    right_wrist_position = right_wrist_pos;
+    right_hand_position = right_hand_pos;
     floor = floor_plane;
 };
 
-geometry_msgs::Point32 PointingGesture::GetPointsDifference(
-    geometry_msgs::Point32 point_0,
-    geometry_msgs::Point32 point_1)
+geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetPointsDifference(
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> point_0,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> point_1)
 {
-    geometry_msgs::Point32 difference;
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> difference;
 
     difference.x = point_0.x - point_1.x;
     difference.y = point_0.y - point_1.y;
@@ -23,13 +23,13 @@ geometry_msgs::Point32 PointingGesture::GetPointsDifference(
     return difference;
 };
 
-geometry_msgs::Point32 PointingGesture::GetFloorIntersection()
+geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorIntersection()
 {
-    geometry_msgs::Point32 difference = PointingGesture::GetPointsDifference(
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> difference = PointingGesture::GetPointsDifference(
         right_elbow_position,
-        right_wrist_position);
+        right_hand_position);
 
-    geometry_msgs::Point32 intersection;
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection;
 
     intersection.x =
         right_elbow_position.x + (right_elbow_position.z * difference.x) / difference.z;
