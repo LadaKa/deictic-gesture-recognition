@@ -20,7 +20,7 @@ void RVizLineMarker::SetLineListProperties(
     line_list.color.r = r;
     line_list.color.g = g;
     line_list.color.b = b;
-    line_list.color.a = 0.5;
+    line_list.color.a = 1;
 }
 
 void RVizLineMarker::SetLineListPoints(

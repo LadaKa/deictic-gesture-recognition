@@ -3,7 +3,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <cylinder length="0.6" radius="0.2"/>
+        <cylinder length="1" radius="0.1"/>
       </geometry>
     </visual>
   </link>
@@ -12,7 +12,7 @@
   <link name="camera_link">
     <visual>
       <geometry>
-        <box size="0.6 0.1 0.2"/>
+        <box size="0.2 0.1 0.2"/>
       </geometry>
     </visual>
   </link>

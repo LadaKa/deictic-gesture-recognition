@@ -150,6 +150,14 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /body_tracker/marker
+      Name: Marker
+      Namespaces:
+        astra_body_tracker: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -178,7 +186,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.919084548950195
+      Distance: 5.46902322769165
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -194,10 +202,50 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.565396249294281
+      Pitch: 0.46539604663848877
       Target Frame: <Fixed Frame>
-      Yaw: 0.058575648814439774
+      Yaw: 3.038578510284424
     Saved:
+      - Class: rviz/Orbit
+        Distance: 9.919084548950195
+        Enable Stereo Rendering:
+          Stereo Eye Separation: 0.05999999865889549
+          Stereo Focal Distance: 1
+          Swap Stereo Eyes: false
+          Value: false
+        Field of View: 0.7853981852531433
+        Focal Point:
+          X: 0
+          Y: 0
+          Z: 0
+        Focal Shape Fixed Size: true
+        Focal Shape Size: 0.05000000074505806
+        Invert Z Axis: false
+        Name: Orbit
+        Near Clip Distance: 0.009999999776482582
+        Pitch: 0.565396249294281
+        Target Frame: <Fixed Frame>
+        Yaw: 0.058575648814439774
+      - Class: rviz/Orbit
+        Distance: 9.919084548950195
+        Enable Stereo Rendering:
+          Stereo Eye Separation: 0.05999999865889549
+          Stereo Focal Distance: 1
+          Swap Stereo Eyes: false
+          Value: false
+        Field of View: 0.7853981852531433
+        Focal Point:
+          X: 0
+          Y: 0
+          Z: 0
+        Focal Shape Fixed Size: true
+        Focal Shape Size: 0.05000000074505806
+        Invert Z Axis: false
+        Name: Orbit
+        Near Clip Distance: 0.009999999776482582
+        Pitch: 0.565396249294281
+        Target Frame: <Fixed Frame>
+        Yaw: 0.058575648814439774
       - Class: rviz/Orbit
         Distance: 9.919084548950195
         Enable Stereo Rendering:
