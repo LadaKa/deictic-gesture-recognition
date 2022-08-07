@@ -29,6 +29,7 @@ void TrackedPerson::Set2DPositionDataByKeyJoint(
     position_data.position2d.y = (projection_y - 0.314) * ASTRA_MINI_FOV_Y;
     position_data.position2d.z = 0.0;
 
+    /*
     std::cout << std::setprecision(4) << std::setw(7)
               << "Astra: "
               << "2D Tracking for ID "
@@ -42,6 +43,8 @@ void TrackedPerson::Set2DPositionDataByKeyJoint(
               << " y: " << position_data.position2d.y
               << " z: " << position_data.position2d.z
               << std::endl;
+              
+    */
 }
 
 TrackedPerson::TrackedPerson(astra_body_t *body)
@@ -53,7 +56,7 @@ TrackedPerson::TrackedPerson(astra_body_t *body)
     astra_joint_t *keyJoint = &body->joints[KEY_JOINT_TO_TRACK];
 
     TrackedPerson::Set2DPositionDataByKeyJoint(bodyId, bodyStatus, keyJoint);
-    
+
     position_data.position3d.x = ((astra_vector3f_t *)&keyJoint->worldPosition)->z / 1000.0;
     position_data.position3d.y = ((astra_vector3f_t *)&keyJoint->worldPosition)->x / 1000.0;
     position_data.position3d.z = ((astra_vector3f_t *)&keyJoint->worldPosition)->y / 1000.0;
@@ -62,4 +65,24 @@ TrackedPerson::TrackedPerson(astra_body_t *body)
 pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> TrackedPerson::GetPositionData()
 {
     return TrackedPerson::position_data;
+}
+
+void TrackedPerson::SetPointingGesture(
+    pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data,
+    astra_plane_t floorPlane)
+{
+    pointing_gesture = new PointingGesture(
+        skeleton_data.joint_position_right_elbow,
+        skeleton_data.joint_position_right_hand,
+        skeleton_data.joint_position_right_foot);
+}
+
+PointingGesture *TrackedPerson::GetPointingGesture()
+{
+    return pointing_gesture;
+}
+
+void TrackedPerson::SetPointingTrackedSkeleton(TrackedSkeleton trackedSkeleton)
+{
+    pointingTrackedSkeleton = &trackedSkeleton;
 }

@@ -4,6 +4,8 @@
 #include <geometry_msgs/Point32.h>
 
 #include "Skeleton.h"
+#include "PointingGesture.h"
+
 #include "ros/ros.h"
 
 class RVizPublisher
@@ -36,6 +38,8 @@ public:
     RVizPublisher(ros::Publisher marker_pub_);
 
     void PublishSkeleton(pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton);
+
+    void PublishPointingGesture(PointingGesture *gesture);
 };
 
 #endif

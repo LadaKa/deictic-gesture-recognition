@@ -60,6 +60,10 @@
 #include "TrackedPerson.h"
 #include "TrackedSkeleton.h"
 
+
+// gesture
+#include "PointingGesture.h"
+
 class astra_body_tracker_node
 {
 public:
@@ -98,7 +102,7 @@ public:
     ROS_INFO("ASTRA_BODY_TRACKER: node shutting down");
   }
 
-  void output_bodies(astra_bodyframe_t bodyFrame)
+  void output_bodies_with_gestures(astra_bodyframe_t bodyFrame)
   {
     astra_body_list_t bodyList;
     const astra_status_t rc = astra_bodyframe_body_list(bodyFrame, &bodyList);
@@ -123,7 +127,55 @@ public:
 
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
+
+      if (!pointingGestureDetected && detect_left_hand_grip(body))
+      {
+        if (floorDetected)
+        {
+          // detect pointing gesture
+          ROS_INFO("GESTURE DETECTED ******************************");
+          pointingPerson = &person;
+          
+          pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
+          pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
+         // pointingGestureDetected = true;
+          do 
+          {
+            rVizPublisher.PublishSkeleton(skeleton_data);
+            rVizPublisher.PublishPointingGesture(
+              pointingPerson->GetPointingGesture());
+            ros::spinOnce();
+          }
+          while (shouldContinue);
+          
+          return;
+        }
+        else
+        {
+          printf(
+            "Pointing gesture can not be processed - floor plane not detected.");
+        };
+      }
     }
+  }
+
+  bool detect_left_hand_grip(const astra_body_t* body)
+  {
+    const astra_handpose_info_t* handPoses = &body->handPoses;
+
+    // astra_handpose_t is one of:
+    // ASTRA_HANDPOSE_UNKNOWN = 0
+    // ASTRA_HANDPOSE_GRIP = 1
+    const astra_handpose_t leftHandPose = handPoses->leftHand;
+
+    // DEBUG
+    const astra_handpose_t rightHandPose = handPoses->rightHand;
+    /*printf("Body %d Left hand pose: %d Right hand pose: %d\n",
+        body->id,
+        leftHandPose,
+        rightHandPose);
+    */
+    return (leftHandPose == 1);
   }
 
   void output_frame(astra_bodyframe_t bodyFrame)
@@ -132,7 +184,7 @@ public:
     {
       floorDetected = true;
     };
-    output_bodies(bodyFrame);
+    output_bodies_with_gestures(bodyFrame);
   }
 
   void runLoop()
@@ -199,6 +251,8 @@ private:
   // starts after receiving 'object_detection_done' msg
   void runAstraStreamLoop()
   {
+    //  TODO: 
+    //  refactor - start / skeletons / pointing person
     ROS_INFO(
         "ASTRA_BODY_TRACKER: Starting Astra Loop");
 
@@ -242,7 +296,27 @@ private:
 
       ros::spinOnce();
 
-    } while (shouldContinue);
+    } while (
+        shouldContinue && !pointingGestureDetected);
+
+    ROS_INFO("Gesture detected.");
+
+    if (shouldContinue)
+    {
+      // pointing gesture detected
+      RVizPublisher rVizPublisher(marker_pub_);
+      pointing_gesture::Skeleton_<pointing_gesture::Skeleton> pointingSkeleton =
+        pointingPerson->pointingTrackedSkeleton->GetSkeleton();
+
+      do 
+      {
+        rVizPublisher.PublishSkeleton(pointingSkeleton);
+        //rVizPublisher.PublishPointingGesture(
+         // pointingPerson->GetPointingGesture());
+        ros::spinOnce();
+
+      } while (shouldContinue);
+    }
 
     astra_reader_destroy(&reader);
     astra_streamset_close(&sensor);
@@ -283,6 +357,9 @@ private:
 /////////////// DATA MEMBERS /////////////////////
   bool objectsDetected = false;
   bool floorDetected = false;
+
+  bool pointingGestureDetected = false;
+  TrackedPerson* pointingPerson;
 
   astra_plane_t floorPlane;
 

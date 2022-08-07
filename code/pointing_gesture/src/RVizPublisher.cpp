@@ -69,21 +69,22 @@ void RVizPublisher::PublishBones(pointing_gesture::Skeleton_<pointing_gesture::S
         skeleton_data.joint_position_spine_top,
         skeleton_data.joint_position_spine_mid,
         skeleton_data.joint_position_spine_bottom};
-    PublishLinesMarkers(13, spinePositions, 4, 1, 0.2, 0.2);
+    PublishLinesMarkers(13, spinePositions, 4, 0, 0, 0);
 
     // left arm:
     geometry_msgs::Point32_<pointing_gesture::Skeleton> leftArmPositions[]{
+        skeleton_data.joint_position_spine_top,
         skeleton_data.joint_position_left_shoulder,
         skeleton_data.joint_position_left_elbow,
         skeleton_data.joint_position_left_hand};
-    PublishLinesMarkers(14, leftArmPositions, 3, 1, 0.2, 0.2);
-
+    PublishLinesMarkers(14, leftArmPositions, 4, 0, 0, 0);
     // right arm:
     geometry_msgs::Point32_<pointing_gesture::Skeleton> rightArmPositions[]{
+        skeleton_data.joint_position_spine_top,
         skeleton_data.joint_position_right_shoulder,
         skeleton_data.joint_position_right_elbow,
         skeleton_data.joint_position_right_hand};
-    PublishLinesMarkers(15, rightArmPositions, 3, 1, 0.2, 0.2);
+    PublishLinesMarkers(15, rightArmPositions, 4, 0, 0, 0);
 }
 
 RVizPublisher::RVizPublisher(ros::Publisher marker_pub)
@@ -96,4 +97,18 @@ void RVizPublisher::PublishSkeleton(
 {
     RVizPublisher::PublishJoints(skeleton);
     RVizPublisher::PublishBones(skeleton);
+}
+
+void RVizPublisher::PublishPointingGesture(
+    PointingGesture *gesture)
+{
+    // intersection with floor
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> floorIntersection =
+        gesture->GetFloorIntersection();
+
+    // pointed ray
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> pointedRay[]{
+        gesture->right_hand_position,
+        floorIntersection};
+    PublishLinesMarkers(101, pointedRay, 2, 0.2, 1, 0.2);
 }

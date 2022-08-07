@@ -162,7 +162,8 @@ add_executable(${PROJECT_NAME}_node
  src/RVizPointMarker.cpp 
  src/RVizPublisher.cpp 
  src/TrackedPerson.cpp 
- src/TrackedSkeleton.cpp 
+ src/TrackedSkeleton.cpp
+ src/PointingGesture.cpp
  src/OutputUtils.cpp
  src/astra_body_tracker_node.cpp)
 

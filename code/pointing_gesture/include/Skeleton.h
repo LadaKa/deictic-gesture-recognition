@@ -57,7 +57,8 @@ struct Skeleton_
     , joint_position_left_hand()
     , joint_position_right_shoulder()
     , joint_position_right_elbow()
-    , joint_position_right_hand()  {
+    , joint_position_right_hand()
+    , joint_position_right_foot()  {
     }
   Skeleton_(const ContainerAllocator& _alloc)
     : body_id(0)
@@ -76,7 +77,8 @@ struct Skeleton_
     , joint_position_left_hand(_alloc)
     , joint_position_right_shoulder(_alloc)
     , joint_position_right_elbow(_alloc)
-    , joint_position_right_hand(_alloc)  {
+    , joint_position_right_hand(_alloc)  
+    , joint_position_right_foot(_alloc){
   (void)_alloc;
     }
 
@@ -133,6 +135,9 @@ struct Skeleton_
    typedef  ::geometry_msgs::Point32_<ContainerAllocator>  _joint_position_right_hand_type;
   _joint_position_right_hand_type joint_position_right_hand;
 
+   typedef  ::geometry_msgs::Point32_<ContainerAllocator>  _joint_position_right_foot_type;
+   _joint_position_right_hand_type joint_position_right_foot;
+
 
 
 
@@ -178,7 +183,8 @@ bool operator==(const ::pointing_gesture::Skeleton_<ContainerAllocator1> & lhs, 
     lhs.joint_position_left_hand == rhs.joint_position_left_hand &&
     lhs.joint_position_right_shoulder == rhs.joint_position_right_shoulder &&
     lhs.joint_position_right_elbow == rhs.joint_position_right_elbow &&
-    lhs.joint_position_right_hand == rhs.joint_position_right_hand;
+    lhs.joint_position_right_hand == rhs.joint_position_right_hand &&
+    lhs.joint_position_right_foot == rhs.joint_position_right_foot;
 }
 
 template<typename ContainerAllocator1, typename ContainerAllocator2>
@@ -285,7 +291,8 @@ struct Definition< ::pointing_gesture::Skeleton_<ContainerAllocator> >
 "geometry_msgs/Point32 joint_position_right_elbow\n"
 "geometry_msgs/Point32 joint_position_right_hand\n"
 "\n"
-"# Robot is usually too close to see legs, and not very interesting\n"
+"# foor_position.Z ~ floor_plane.Z \n"
+"geometry_msgs/Point32 joint_position_right_foot\n"
 "\n"
 "\n"
 "\n"
@@ -337,6 +344,7 @@ namespace serialization
       stream.next(m.joint_position_right_shoulder);
       stream.next(m.joint_position_right_elbow);
       stream.next(m.joint_position_right_hand);
+      stream.next(m.joint_position_right_foot);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -403,6 +411,9 @@ struct Printer< ::pointing_gesture::Skeleton_<ContainerAllocator> >
     s << indent << "joint_position_right_hand: ";
     s << std::endl;
     Printer< ::geometry_msgs::Point32_<ContainerAllocator> >::stream(s, indent + "  ", v.joint_position_right_hand);
+    s << indent << "joint_position_right_foot: ";
+    s << std::endl;
+    Printer< ::geometry_msgs::Point32_<ContainerAllocator> >::stream(s, indent + "  ", v.joint_position_right_foot);
   }
 };
 
