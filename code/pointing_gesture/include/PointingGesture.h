@@ -14,9 +14,12 @@ private:
         geometry_msgs::Point32_<pointing_gesture::Skeleton> point_0,
         geometry_msgs::Point32_<pointing_gesture::Skeleton> point_1);
 
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> ComputeFloorIntersection();
+
 public:
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_position;
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_position;
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection;
 
     PointingGesture();
 

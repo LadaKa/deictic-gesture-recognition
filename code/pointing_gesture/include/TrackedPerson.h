@@ -4,6 +4,7 @@
 #include <astra/capi/astra.h>
 #include "BodyTracker.h"
 #include "Skeleton.h"
+#include "TrackedSkeleton.h"
 #include "PointingGesture.h"
 
 class TrackedPerson
@@ -18,11 +19,16 @@ private:
         astra_joint_t *keyJoint);
 
 public:
+
+    TrackedSkeleton *pointingTrackedSkeleton;
+
     TrackedPerson(
         astra_body_t *body);
 
     pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> GetPositionData();
     
+    void SetPointingTrackedSkeleton(TrackedSkeleton trackedSkeleton);
+
     void SetPointingGesture(
         pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data,
         astra_plane_t floorPlane);

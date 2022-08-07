@@ -8,6 +8,7 @@ PointingGesture::PointingGesture(
     right_elbow_position = right_elbow_pos;
     right_hand_position = right_hand_pos;
     floor = floor_plane;
+    intersection = ComputeFloorIntersection();
 };
 
 geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetPointsDifference(
@@ -23,13 +24,11 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetPointsDi
     return difference;
 };
 
-geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorIntersection()
+geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::ComputeFloorIntersection()
 {
     geometry_msgs::Point32_<pointing_gesture::Skeleton> difference = PointingGesture::GetPointsDifference(
         right_elbow_position,
         right_hand_position);
-
-    geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection;
 
     intersection.x =
         right_elbow_position.x + (right_elbow_position.z * difference.x) / difference.z;
@@ -46,6 +45,11 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorInt
 
     return intersection;
 };
+
+geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorIntersection()
+{
+    return intersection;
+}
 
 // DEBUG:
 /*

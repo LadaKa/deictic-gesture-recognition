@@ -135,7 +135,9 @@ public:
           // detect pointing gesture
           pointingPerson = &person;
           pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
+          pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
           pointingGestureDetected = true;
+          return;
         }
         else
         {
@@ -292,13 +294,14 @@ private:
     {
       // pointing gesture detected
       RVizPublisher rVizPublisher(marker_pub_);
+      pointing_gesture::Skeleton_<pointing_gesture::Skeleton> pointingSkeleton =
+        pointingPerson->pointingTrackedSkeleton->GetSkeleton();
 
       do 
       {
-        //  TODO: publish pointing skeleton
-        //  rVizPublisher.PublishPointingGesture(
-        PointingGesture *gesture =  pointingPerson->GetPointingGesture();
-        gesture->GetFloorIntersection();
+        rVizPublisher.PublishSkeleton(pointingSkeleton);
+        //rVizPublisher.PublishPointingGesture(
+         // pointingPerson->GetPointingGesture());
         ros::spinOnce();
 
       } while (shouldContinue);

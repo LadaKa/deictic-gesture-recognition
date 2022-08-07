@@ -8,6 +8,7 @@
 class TrackedSkeleton
 {
 private:
+    // TODO: skeleton type?
     pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data;
 
     void SetJointPositionByWorldPosition(
