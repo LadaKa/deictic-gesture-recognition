@@ -51,13 +51,13 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorInt
 /*
 Pointing gesture: 
 right elbow:
- 1.940328 0.446187 0.372101 
+ 2.450810 -0.040403 0.440874 
 right hand:
- 1.940328 0.446187 0.372101 
+ 2.186281 -0.064913 0.492674 
 intersection:
- -nan -nan 0.000000 
+ 0.199423 -0.249009 0.000000 
 difference:
- 0.000000 0.000000 0.000000 
+ 0.264529 0.024510 -0.051801 
 */
 void PointingGesture::OutputPosition(
     std::string header,
