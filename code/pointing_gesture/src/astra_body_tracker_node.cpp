@@ -133,10 +133,21 @@ public:
         if (floorDetected)
         {
           // detect pointing gesture
+          ROS_INFO("GESTURE DETECTED ******************************");
           pointingPerson = &person;
+          
           pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
           pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
-          pointingGestureDetected = true;
+         // pointingGestureDetected = true;
+          do 
+          {
+            rVizPublisher.PublishSkeleton(skeleton_data);
+            rVizPublisher.PublishPointingGesture(
+              pointingPerson->GetPointingGesture());
+            ros::spinOnce();
+          }
+          while (shouldContinue);
+          
           return;
         }
         else
@@ -159,11 +170,11 @@ public:
 
     // DEBUG
     const astra_handpose_t rightHandPose = handPoses->rightHand;
-    printf("Body %d Left hand pose: %d Right hand pose: %d\n",
+    /*printf("Body %d Left hand pose: %d Right hand pose: %d\n",
         body->id,
         leftHandPose,
         rightHandPose);
-
+    */
     return (leftHandPose == 1);
   }
 

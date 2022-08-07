@@ -29,6 +29,7 @@ void TrackedPerson::Set2DPositionDataByKeyJoint(
     position_data.position2d.y = (projection_y - 0.314) * ASTRA_MINI_FOV_Y;
     position_data.position2d.z = 0.0;
 
+    /*
     std::cout << std::setprecision(4) << std::setw(7)
               << "Astra: "
               << "2D Tracking for ID "
@@ -42,6 +43,8 @@ void TrackedPerson::Set2DPositionDataByKeyJoint(
               << " y: " << position_data.position2d.y
               << " z: " << position_data.position2d.z
               << std::endl;
+              
+    */
 }
 
 TrackedPerson::TrackedPerson(astra_body_t *body)
@@ -71,7 +74,7 @@ void TrackedPerson::SetPointingGesture(
     pointing_gesture = new PointingGesture(
         skeleton_data.joint_position_right_elbow,
         skeleton_data.joint_position_right_hand,
-        floorPlane);
+        skeleton_data.joint_position_right_foot);
 }
 
 PointingGesture *TrackedPerson::GetPointingGesture()

@@ -3,11 +3,12 @@
 PointingGesture::PointingGesture(
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_pos,
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_pos,
-    astra_plane_t floor_plane)
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_foot_pos)
 {
     right_elbow_position = right_elbow_pos;
     right_hand_position = right_hand_pos;
-    floor = floor_plane;
+    right_foot_position = right_foot_pos;
+
     intersection = ComputeFloorIntersection();
 };
 
@@ -27,19 +28,20 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetPointsDi
 geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::ComputeFloorIntersection()
 {
     geometry_msgs::Point32_<pointing_gesture::Skeleton> difference = PointingGesture::GetPointsDifference(
-        right_elbow_position,
-        right_hand_position);
-
-    intersection.x =
-        right_elbow_position.x + (right_elbow_position.z * difference.x) / difference.z;
-
-    intersection.y =
-        right_elbow_position.y + (right_elbow_position.z * difference.y) / difference.z;
+        right_hand_position,
+        right_elbow_position
+        );
 
     intersection.z =
-        floor.d;
+        right_foot_position.z;
 
-    // DEBUG:
+    intersection.x =
+        right_elbow_position.x + ((intersection.z - right_elbow_position.z) * difference.x) / difference.z;
+
+    intersection.y =
+        right_elbow_position.y + ((intersection.z - right_elbow_position.z) * difference.y) / difference.z;
+
+
     OutputPosition("difference", difference);
     OutputGestureIntersection(intersection);
 
@@ -51,18 +53,6 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorInt
     return intersection;
 }
 
-// DEBUG:
-/*
-Pointing gesture: 
-right elbow:
- 2.450810 -0.040403 0.440874 
-right hand:
- 2.186281 -0.064913 0.492674 
-intersection:
- 0.199423 -0.249009 0.000000 
-difference:
- 0.264529 0.024510 -0.051801 
-*/
 void PointingGesture::OutputPosition(
     std::string header,
     geometry_msgs::Point32_<pointing_gesture::Skeleton> position)
