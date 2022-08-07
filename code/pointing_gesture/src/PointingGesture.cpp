@@ -37,8 +37,42 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetFloorInt
     intersection.y =
         right_elbow_position.y + (right_elbow_position.z * difference.y) / difference.z;
 
-    intersection.z = 
+    intersection.z =
         floor.d;
+
+    // DEBUG:
+    OutputPosition("difference", difference);
+    OutputGestureIntersection(intersection);
 
     return intersection;
 };
+
+// DEBUG:
+/*
+Pointing gesture: 
+right elbow:
+ 1.940328 0.446187 0.372101 
+right hand:
+ 1.940328 0.446187 0.372101 
+intersection:
+ -nan -nan 0.000000 
+difference:
+ 0.000000 0.000000 0.000000 
+*/
+void PointingGesture::OutputPosition(
+    std::string header,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> position)
+{
+    printf("%s:\n %f %f %f \n",
+           header.c_str(),
+           position.x, position.y, position.z);
+}
+
+void PointingGesture::OutputGestureIntersection(
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection)
+{
+    printf("Pointing gesture: \n");
+    OutputPosition("right elbow", right_elbow_position);
+    OutputPosition("right hand", right_hand_position);
+    OutputPosition("intersection", intersection);
+}

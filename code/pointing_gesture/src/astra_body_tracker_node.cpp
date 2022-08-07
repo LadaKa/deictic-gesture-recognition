@@ -286,6 +286,8 @@ private:
     } while (
         shouldContinue && !pointingGestureDetected);
 
+    ROS_INFO("Gesture detected.");
+
     if (shouldContinue)
     {
       // pointing gesture detected
@@ -294,8 +296,9 @@ private:
       do 
       {
         //  TODO: publish pointing skeleton
-        rVizPublisher.PublishPointingGesture(
-          pointingPerson->GetPointingGesture());
+        //  rVizPublisher.PublishPointingGesture(
+        PointingGesture *gesture =  pointingPerson->GetPointingGesture();
+        gesture->GetFloorIntersection();
         ros::spinOnce();
 
       } while (shouldContinue);

@@ -75,7 +75,7 @@ void TrackedPerson::SetPointingGesture(
     //pointing_gesture = &gesture;
     pointing_gesture = new PointingGesture(
         skeleton_data.joint_position_right_elbow, 
-        skeleton_data.joint_position_right_elbow,
+        skeleton_data.joint_position_right_hand,
         floorPlane);
 }
 

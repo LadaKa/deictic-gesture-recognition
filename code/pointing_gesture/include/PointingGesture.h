@@ -8,7 +8,6 @@
 class PointingGesture
 {
 private:
-    
     astra_plane_t floor;
 
     geometry_msgs::Point32_<pointing_gesture::Skeleton> GetPointsDifference(
@@ -16,10 +15,9 @@ private:
         geometry_msgs::Point32_<pointing_gesture::Skeleton> point_1);
 
 public:
-
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_position;
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_position;
-    
+
     PointingGesture();
 
     PointingGesture(
@@ -28,6 +26,14 @@ public:
         astra_plane_t floor_plane);
 
     geometry_msgs::Point32_<pointing_gesture::Skeleton> GetFloorIntersection();
+
+    // DEBUG:
+    void OutputPosition(
+        std::string header,
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> position);
+
+    void OutputGestureIntersection(
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection);
 };
 
 #endif
