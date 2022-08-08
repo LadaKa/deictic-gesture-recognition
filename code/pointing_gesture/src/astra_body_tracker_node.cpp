@@ -128,17 +128,17 @@ public:
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
 
-      if (!pointingGestureDetected && detect_left_hand_grip(body))
+      if (detect_left_hand_grip(body))
       {
-        if (floorDetected)
-        {
+        
           // detect pointing gesture
-          ROS_INFO("GESTURE DETECTED ******************************");
+          ROS_INFO(
+            "Gesture detected");
           pointingPerson = &person;
           
           pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
           pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
-         // pointingGestureDetected = true;
+          pointingGestureDetected = true;
           do 
           {
             rVizPublisher.PublishSkeleton(skeleton_data);
@@ -147,14 +147,6 @@ public:
             ros::spinOnce();
           }
           while (shouldContinue);
-          
-          return;
-        }
-        else
-        {
-          printf(
-            "Pointing gesture can not be processed - floor plane not detected.");
-        };
       }
     }
   }
@@ -170,11 +162,7 @@ public:
 
     // DEBUG
     const astra_handpose_t rightHandPose = handPoses->rightHand;
-    /*printf("Body %d Left hand pose: %d Right hand pose: %d\n",
-        body->id,
-        leftHandPose,
-        rightHandPose);
-    */
+
     return (leftHandPose == 1);
   }
 
@@ -207,6 +195,9 @@ public:
 
 private:
 
+  // only for debugging
+  // height over floor issue
+  // https://3dclub.orbbec3d.com/t/calculating-height-over-floor/1225/6
   bool try_output_floor(astra_bodyframe_t bodyFrame, astra_plane_t  *floorPlane)
   {
     astra_floor_info_t floorInfo;
@@ -297,26 +288,7 @@ private:
       ros::spinOnce();
 
     } while (
-        shouldContinue && !pointingGestureDetected);
-
-    ROS_INFO("Gesture detected.");
-
-    if (shouldContinue)
-    {
-      // pointing gesture detected
-      RVizPublisher rVizPublisher(marker_pub_);
-      pointing_gesture::Skeleton_<pointing_gesture::Skeleton> pointingSkeleton =
-        pointingPerson->pointingTrackedSkeleton->GetSkeleton();
-
-      do 
-      {
-        rVizPublisher.PublishSkeleton(pointingSkeleton);
-        //rVizPublisher.PublishPointingGesture(
-         // pointingPerson->GetPointingGesture());
-        ros::spinOnce();
-
-      } while (shouldContinue);
-    }
+        shouldContinue);
 
     astra_reader_destroy(&reader);
     astra_streamset_close(&sensor);
