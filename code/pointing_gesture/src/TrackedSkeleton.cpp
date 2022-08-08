@@ -28,6 +28,14 @@ void TrackedSkeleton::SetJointPositions(
   SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_SHOULDER, skeleton_data.joint_position_right_shoulder);
   SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_ELBOW, skeleton_data.joint_position_right_elbow);
   SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_HAND, skeleton_data.joint_position_right_hand);
+
+  SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_HIP, skeleton_data.joint_position_left_hip);
+  SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_KNEE, skeleton_data.joint_position_left_knee);
+  SetJointPositionByWorldPosition(body, ASTRA_JOINT_LEFT_FOOT, skeleton_data.joint_position_left_foot);
+
+  SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_HIP, skeleton_data.joint_position_right_hip);
+  SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_KNEE, skeleton_data.joint_position_right_knee);
+  SetJointPositionByWorldPosition(body, ASTRA_JOINT_RIGHT_FOOT, skeleton_data.joint_position_right_foot);
 }
 
 TrackedSkeleton::TrackedSkeleton(astra_body_t *body)
