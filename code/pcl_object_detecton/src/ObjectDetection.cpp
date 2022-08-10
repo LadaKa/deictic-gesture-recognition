@@ -197,6 +197,7 @@ bool ObjectDetection::Detect(
         float marker_g = 1.0;
         float marker_b = 1.0;
 
+        ROS_INFO("PCL OBJECT DETECTION: Processing point cloud.");
 
         int j = 0;
         for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it)
@@ -286,8 +287,6 @@ bool ObjectDetection::Detect(
 
                 if (j < 3)
                 {
-                    std::cout << "Checking object " << j << std::endl;
-                    
                     if (CheckObjectSize(maxPt, bb_size))
                     {
                         marker_r = marker_r + 0.2;
@@ -302,7 +301,10 @@ bool ObjectDetection::Detect(
 
 
                         publishers.PublishClusterMessage(j, cloud_rotated_msg);
-                                      
+                        ROS_INFO(
+                            "PCL OBJECT DETECTION: Detected object [%i]. Center: %d %d %d",
+                            j, 
+                            obj_center.x, obj_center.y, obj_center.z); 
                     }
                     else
                         j--; //!!
@@ -364,13 +366,6 @@ bool ObjectDetection::CheckObjectSize(
     {      
         return false;
     }
-    
-
-    std::cout << " Max points: "
-                << maxPt.x << " "
-                << maxPt.y << " "
-                << maxPt.z << " "
-                << std::endl;
    
     return true;
 

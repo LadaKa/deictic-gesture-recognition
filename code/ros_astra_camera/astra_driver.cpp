@@ -1585,7 +1585,7 @@ namespace astra_wrapper
   void AstraDriver::object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
   {
     ROS_INFO(
-        "PCL Objection Detection done. Terminating ROS Astra Stream.");
+        "ROS ASTRA CAMERA: Received object_detection_done MSG. Terminating ROS Astra Stream.");
     device_->~AstraDevice();
   }
 

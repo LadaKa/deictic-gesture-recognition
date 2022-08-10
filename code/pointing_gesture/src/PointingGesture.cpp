@@ -42,7 +42,7 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::ComputeFloo
         right_elbow_position.y + ((intersection.z - right_elbow_position.z) * difference.y) / difference.z;
 
 
-    OutputPosition("difference", difference);
+    // OutputPosition("difference", difference);
     OutputGestureIntersection(intersection);
 
     return intersection;

@@ -55,7 +55,8 @@ public:
 private:
   // FUNCTIONS
   void cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg);
-  
+  void PrintRosInfo(std::string info);
+
   // CONSTANTS
 
   const char *DEFAULT_TARGET_FRAME = "base_link"; // TF frame for sensors
@@ -107,7 +108,7 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
                                                             input_cloud_frame_("")
 {
 
-  ROS_INFO("PclObjectDetection: Initializing...");
+  PrintRosInfo("Initializing...");
 
   // PARAMETERS
   // TODO USE THESE IN CODE
@@ -153,8 +154,6 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   // SUBSCRIBERS
   // Create a ROS subscriber for the input point cloud
   depth_cloud_sub_ = nh_.subscribe(depth_topic_, 1, &PclObjectDetection::cloud_cb, this);
-
-  ROS_INFO("PclObjectDetection: Initializing completed.");
 }
 
 void PclObjectDetection::runLoop()
@@ -177,7 +176,7 @@ void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_
     return;
   }
     
-  ROS_INFO("PclObjectDetection: cloud_cb...");
+  PrintRosInfo("Received point cloud MSG.");
   input_cloud_frame_ = input_cloud_msg->header.frame_id; 
   
   objectDetection.SetPublishers(publishers);
@@ -189,16 +188,20 @@ void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_
 
   if (objectsDetected)
   {
-    ROS_INFO("PclObjectDetection: Objects detected.");
+    PrintRosInfo("Object Detection done.");
     std_msgs::Empty empty_msg;
     pub_object_detection_done.publish(empty_msg);
   }
 }
 
+void PclObjectDetection::PrintRosInfo(std::string info)
+{
+  ROS_INFO("PCL OBJECT DETECTION: %s.", info.c_str());
+}
+
 int main(int argc, char **argv)
 {
 
-  ROS_INFO("PclObjectDetection: Initializing ROS... ");
   ros::init(argc, argv, "pcl_object_detection");
 
   ros::NodeHandle n;

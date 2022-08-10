@@ -47,7 +47,6 @@ void PointCloudPublishers::PublishClusterMessage(
     sensor_msgs::PointCloud2Ptr message)
 {
     PointCloudPublishers::pub_clusters[index].publish(message);
-    ROS_INFO("PCL- PublishClusterMessage");
 }
 
 void PointCloudPublishers::PublishPlaneMessage(
