@@ -302,9 +302,10 @@ bool ObjectDetection::Detect(
 
                         publishers.PublishClusterMessage(j, cloud_rotated_msg);
                         ROS_INFO(
-                            "PCL OBJECT DETECTION: Detected object [%i]. Center: %d %d %d",
+                            "PCL OBJECT DETECTION: Detected object [%i].\nCenter: %f %f %f.\nMin: %f %f %f. ",
                             j, 
-                            obj_center.x, obj_center.y, obj_center.z); 
+                            obj_center.x, obj_center.y, obj_center.z,
+                            minPt.x, minPt.y, minPt.z); 
                     }
                     else
                         j--; //!!
@@ -324,7 +325,7 @@ bool ObjectDetection::Detect(
             ++j;
         }
 
-        // Publish the nearest object found in front of the robot
+        // Publifh the nearest object found in front of the robot
         if (-1 != nearest_object_index)
         {
 

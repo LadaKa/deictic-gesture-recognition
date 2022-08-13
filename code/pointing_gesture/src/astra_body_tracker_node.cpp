@@ -126,21 +126,26 @@ public:
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
 
-      if (detect_left_hand_grip(body))
+      if (detect_both_hands_grip(body))
       {
-        
           // detect pointing gesture
+          PointingGesture pointingGesture(
+            skeleton_data.joint_position_right_elbow,
+            skeleton_data.joint_position_right_hand,
+            skeleton_data.joint_position_right_foot);
+          
           PrintRosInfo("Gesture detected.");
           pointingPerson = &person;
           
-          pointingPerson->SetPointingGesture(skeleton_data, floorPlane);
+          pointingPerson->SetPointingGesture(pointingGesture);
           pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
           pointingGestureDetected = true;
           do 
           {
             rVizPublisher.PublishSkeleton(skeleton_data);
             rVizPublisher.PublishPointingGesture(
-              pointingPerson->GetPointingGesture());
+              &pointingGesture);
+            //  pointingPerson->GetPointingGesture());
             ros::spinOnce();
           }
           while (shouldContinue);
@@ -148,7 +153,7 @@ public:
     }
   }
 
-  bool detect_left_hand_grip(const astra_body_t* body)
+  bool detect_both_hands_grip(const astra_body_t* body)
   {
     const astra_handpose_info_t* handPoses = &body->handPoses;
 
@@ -156,11 +161,9 @@ public:
     // ASTRA_HANDPOSE_UNKNOWN = 0
     // ASTRA_HANDPOSE_GRIP = 1
     const astra_handpose_t leftHandPose = handPoses->leftHand;
-
-    // DEBUG
     const astra_handpose_t rightHandPose = handPoses->rightHand;
 
-    return (leftHandPose == 1);
+    return ((leftHandPose == 1) && (rightHandPose == 1));
   }
 
   void output_frame(astra_bodyframe_t bodyFrame)
@@ -208,7 +211,7 @@ private:
 
     if (floorDetected != ASTRA_FALSE)
     {
-      /*printf("Floor plane: [%f, %f, %f, %f]\n",
+      printf("Floor plane: [%f, %f, %f, %f]\n",
              floorPlane->a,
              floorPlane->b,
              floorPlane->c,
@@ -219,8 +222,7 @@ private:
             floorMask->width,
             floorMask->height,
             floorMask->data[bottomCenterIndex]);
-    */
-      return true;
+     return true;
     }
     return false;
   }

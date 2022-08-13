@@ -68,13 +68,9 @@ pointing_gesture::BodyTracker_<pointing_gesture::BodyTracker> TrackedPerson::Get
 }
 
 void TrackedPerson::SetPointingGesture(
-    pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data,
-    astra_plane_t floorPlane)
+    PointingGesture gesture)
 {
-    pointing_gesture = new PointingGesture(
-        skeleton_data.joint_position_right_elbow,
-        skeleton_data.joint_position_right_hand,
-        skeleton_data.joint_position_right_foot);
+    pointing_gesture = &gesture;
 }
 
 PointingGesture *TrackedPerson::GetPointingGesture()

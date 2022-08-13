@@ -29,9 +29,7 @@ public:
     
     void SetPointingTrackedSkeleton(TrackedSkeleton trackedSkeleton);
 
-    void SetPointingGesture(
-        pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton_data,
-        astra_plane_t floorPlane);
+    void SetPointingGesture(PointingGesture gesture);
 
     PointingGesture* GetPointingGesture();
 };

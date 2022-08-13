@@ -3,7 +3,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <cylinder length="1" radius="0.1"/>
+        <cylinder length="0.8" radius="0.1"/>
       </geometry>
     </visual>
   </link>
