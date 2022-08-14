@@ -126,13 +126,6 @@ bool ObjectDetection::Detect(
             break;
         }
 
-        /*
-          // Publish the model coefficients for each plane
-          pcl_msgs::ModelCoefficients ros_coefficients;
-          pcl_conversions::fromPCL(*coefficients, ros_coefficients);
-          pub.publish (ros_coefficients);
-        */
-
         // Extract the inliers
         extract.setInputCloud(downsampled_XYZ);
         extract.setIndices(inliers);
@@ -185,12 +178,6 @@ bool ObjectDetection::Detect(
         ec.setInputCloud(downsampled_XYZ);
         ec.extract(cluster_indices);
 
-        // Nearest object
-        sensor_msgs::PointCloud2Ptr nearest_object_cloud_msg;
-        int nearest_object_index = -1;
-        float nearest_object_weighted_distance = 10000.0;
-        pcl::PointXYZ nearest_obj_minPt, nearest_obj_maxPt, nearest_obj_bb_size, nearest_obj_center;
-
         // Clusters
 
         float marker_r = 0.0;
@@ -234,15 +221,6 @@ bool ObjectDetection::Detect(
 
                 // Find bounding box of rotated cluster
                 pcl::getMinMax3D(*pcl_rotated_cluster_XYZ, minPt, maxPt);
-                /*
-                std::cout << "CLUSTER [" << j << "] : "
-                  << "Max x: " << maxPt.x
-                  << ", y: " << maxPt.y
-                  << ", z: " << maxPt.z
-                  << "    Min x: " << minPt.x
-                  << ", y: " << minPt.y
-                  << ", z: " << minPt.z << std::endl;
-                */
 
                 bb_size.x = maxPt.x - minPt.x;
                 bb_size.y = maxPt.y - minPt.y;
@@ -251,39 +229,6 @@ bool ObjectDetection::Detect(
                 obj_center.x = minPt.x + (bb_size.x / 2);
                 obj_center.y = minPt.y + (bb_size.y / 2);
                 obj_center.z = minPt.z + (bb_size.z / 2);
-
-                /*
-                std::cout << "OBJECT [" << j << "] : "
-                  << "  x: " << obj_center.x
-                  << ", y: " << obj_center.y
-                  << ", z: " << obj_center.z
-                  << ", l: " << bb_size.x
-                  << ", w: " << bb_size.y
-                  << ", h: " << bb_size.z
-                  << ", top: " << maxPt.z
-                  << ", bottom: " << minPt.z;
-                */
-                
-                
-                // std::cout << " PASS" << std::endl;
-                const int PICKUP_ZONE_MAX_Y = 400; // mm from center of robot
-                // find the nearest object to the robot
-                float weighted_obj_center_y = obj_center.y;
-                if (fabs(weighted_obj_center_y) > PICKUP_ZONE_MAX_Y)
-                    weighted_obj_center_y *= 2.0; // penalize objects too far to the side (prefer objects ahead)
-
-                float weighted_distance = sqrt(pow(obj_center.x, 2) + pow(weighted_obj_center_y, 2));
-                if (weighted_distance < nearest_object_weighted_distance)
-                {
-                    // New Nearest Object
-                    nearest_object_weighted_distance = weighted_distance;
-                    nearest_object_index = j;
-                    nearest_object_cloud_msg = cloud_rotated_msg;
-                    nearest_obj_minPt = minPt;
-                    nearest_obj_maxPt = maxPt;
-                    nearest_obj_bb_size = bb_size;
-                    nearest_obj_center = obj_center;
-                }
 
                 if (j < 3)
                 {
@@ -298,7 +243,6 @@ bool ObjectDetection::Detect(
                             obj_center.x, obj_center.y, obj_center.z, // Object Center
                             bb_size.x, bb_size.y, bb_size.z,          // Object Size
                             marker_r, marker_g, marker_b); 
-
 
                         publishers.PublishClusterMessage(j, cloud_rotated_msg);
                         ROS_INFO(
@@ -323,36 +267,6 @@ bool ObjectDetection::Detect(
             }
 
             ++j;
-        }
-
-        // Publifh the nearest object found in front of the robot
-        if (-1 != nearest_object_index)
-        {
-
-            publishers.pub_nearest_object.publish(nearest_object_cloud_msg);
-
-           /* ObjectDetection::AddMarkerBox(
-                target_frame,
-                10,
-                nearest_obj_center.x, nearest_obj_center.y, nearest_obj_center.z,
-                nearest_obj_bb_size.x, nearest_obj_bb_size.y, nearest_obj_bb_size.z,
-                0.0, 1.0, 0.0); // Green
-           */
-
-          /*  std::cout << "NEAREST OBJECT: index: "
-                      << nearest_object_index
-                      << ",  Center x: " << nearest_obj_center.x
-                      << ", y: " << nearest_obj_center.y
-                      << ", z: " << nearest_obj_center.z
-                      << std::endl
-                      << "  Bounding Box l: " << nearest_obj_bb_size.x
-                      << ", w: " << nearest_obj_bb_size.y
-                      << ", h: " << nearest_obj_bb_size.z
-                      << ",   minPt.x: " << nearest_obj_minPt.x
-                      << ", maxPt.x: " << nearest_obj_maxPt.x
-                      << ", minPt.z: " << nearest_obj_minPt.z
-                      << ", maxPt.z: " << nearest_obj_maxPt.z
-                      << std::endl;*/
         }
     }
     return objectsDetected;
