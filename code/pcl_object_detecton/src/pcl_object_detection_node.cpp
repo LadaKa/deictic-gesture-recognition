@@ -10,12 +10,9 @@
 // PCL specific includes
 #include <sensor_msgs/PointCloud2.h>
 #include <pcl_conversions/pcl_conversions.h>
-//#include <pcl/conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 
-//#include <pcl/io/pcd_io.h>
-//#include <pcl/point_types.h>
 #include <pcl/common/common.h>
 
 #include <pcl/sample_consensus/model_types.h>
@@ -41,9 +38,16 @@
 #include "tf/transform_listener.h"
 #include "tf/message_filter.h"
 #include "message_filters/subscriber.h"
-// NOTE: you must install TF2 Sensor Messages: sudo apt-get install ros-kinetic-tf2-sensor-msgs
+
+#include <geometry_msgs/Point32.h>
+#include "DetectedObjects.h"
+
+#include "ObjectsPublisher.h"
 
 #include "ObjectDetection.h"
+
+// NOTE: you must install TF2 Sensor Messages: sudo apt-get install ros-kinetic-tf2-sensor-msgs
+
 
 class PclObjectDetection
 {
@@ -97,7 +101,10 @@ private:
   ros::Publisher pub_objects;
   ros::Publisher marker_pub_;
 
-  PointCloudPublishers publishers;
+  ros::Publisher pub_detected_objects;
+
+  PointCloudPublishers pcl_publishers;
+  ObjectsPublisher objects_publisher;
 
   ros::Publisher pub_object_detection_done;
 };
@@ -135,17 +142,21 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   pub_remaining = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/remaining", 1);
   pub_objects = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/objects", 1);
 
-
   // Publish markers to show where robot thinks object is in RViz
   marker_pub_ = nh_.advertise<visualization_msgs::Marker>("pcl_object_detection/marker", 1);
 
-  publishers.SetClustersPublishers(
+  // Publish positions of detected objects
+  pub_detected_objects = nh_.advertise<pcl_object_detection::DetectedObjects>("pcl_object_detection/detected_objects", 1);
+
+  pcl_publishers.SetClustersPublishers(
       pub_cluster0, pub_cluster1, pub_cluster2, pub_cluster3, pub_cluster4);
-  publishers.SetPlanesPublishers(
+  pcl_publishers.SetPlanesPublishers(
       pub0, pub1, pub2, pub3);
-  publishers.SetOtherPublishers(
+  pcl_publishers.SetOtherPublishers(
       pub_voxel, pub_nearest_object, pub_remaining, pub_objects, marker_pub_);
 
+  objects_publisher.SetPublisher(
+      pub_detected_objects);
 
  // ugly hotfix for ros_astra_camera termination
   pub_object_detection_done = nh_.advertise<std_msgs::Empty>(
@@ -163,7 +174,7 @@ void PclObjectDetection::runLoop()
       ros::spinOnce();
       if (objectsDetected)
       {
-        objectDetection.PublishObjectsMarkers();
+        objectDetection.PublishObjectsMessages();
       }
   } while (true); // stopped by key handler [Ctrl+C]
   
@@ -179,7 +190,7 @@ void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_
   PrintRosInfo("Received point cloud MSG.");
   input_cloud_frame_ = input_cloud_msg->header.frame_id; 
   
-  objectDetection.SetPublishers(publishers);
+  objectDetection.SetPublishers(pcl_publishers, objects_publisher);
 
   objectsDetected = objectDetection.Detect(
           input_cloud_msg,

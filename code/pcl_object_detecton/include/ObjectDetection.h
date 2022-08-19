@@ -12,15 +12,18 @@
 #include <visualization_msgs/Marker.h>
 
 #include "PointCloudPublishers.h"
-
+#include "ObjectsPublisher.h"
 
 class ObjectDetection
 {
 private:
     PointCloudPublishers publishers;
+    ObjectsPublisher objectsPublisher;
+
     tf2_ros::Buffer tf2_; 
     tf2_ros::TransformListener tfListener_;
     visualization_msgs::Marker objects_markers[3];  // const
+    pcl::PointXYZ detected_objects_centers[3];
 
     bool CheckObjectSize(
         pcl::PointXYZ maxPt,
@@ -29,7 +32,9 @@ private:
 public:
     ObjectDetection();
 
-    void SetPublishers(PointCloudPublishers pcPublishers);
+    void SetPublishers(
+        PointCloudPublishers pcPublishers,
+        ObjectsPublisher objPublisher);
 
     void AddMarkerBox(
         std::string frame_id,
@@ -38,7 +43,7 @@ public:
         float size_x, float size_y, float size_z,
         float color_r, float color_g, float color_b);
 
-    void PublishObjectsMarkers();
+    void PublishObjectsMessages();
 
     bool Detect(
         const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg,

@@ -23,9 +23,12 @@ ObjectDetection::ObjectDetection():
     tfListener_(ObjectDetection::tf2_)
 {};
 
-void ObjectDetection::SetPublishers(PointCloudPublishers pcPublishers)
+void ObjectDetection::SetPublishers(
+    PointCloudPublishers pcPublishers,
+    ObjectsPublisher objPublisher)
 {
-    ObjectDetection::publishers = pcPublishers;
+    publishers = pcPublishers;
+    objectsPublisher = objPublisher;
 }
 
 void ObjectDetection::AddMarkerBox(
@@ -47,12 +50,13 @@ void ObjectDetection::AddMarkerBox(
     
 }
 
-void ObjectDetection::PublishObjectsMarkers()
+void ObjectDetection::PublishObjectsMessages()
 {
     for (int i = 0; i < 3; i++) // const
     {
         publishers.pub_marker.publish(objects_markers[i]);
     }
+    objectsPublisher.Publish();
 }
 
 bool ObjectDetection::Detect(
@@ -236,6 +240,8 @@ bool ObjectDetection::Detect(
                     {
                         marker_r = marker_r + 0.2;
                         marker_g = marker_g - 0.2;
+
+                        detected_objects_centers[j] = obj_center;
 
                         ObjectDetection::AddMarkerBox(            // Publish the bounding box as a marker
                             target_frame,                             // Transform Frame from camera to robot base
