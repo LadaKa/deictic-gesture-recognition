@@ -252,7 +252,7 @@ bool ObjectDetection::Detect(
 
                         publishers.PublishClusterMessage(j, cloud_rotated_msg);
                         ROS_INFO(
-                            "PCL OBJECT DETECTION: Detected object [%i].\nCenter: %f %f %f.\nMin: %f %f %f. ",
+                            "PCL OBJECT DETECTION: Detected object [%i].\n\t\tCenter: %f %f %f.\n\t\tMin: %f %f %f.\n",
                             j, 
                             obj_center.x, obj_center.y, obj_center.z,
                             minPt.x, minPt.y, minPt.z); 

@@ -34,5 +34,8 @@
   
   <!-- pointing_gesture_node -->
   <node pkg="pointing_gesture" type="pointing_gesture_node" name="pointing_gesture_node" output="screen"/>
+  
+  <!-- task_control_node -->
+  <node pkg="task_control" type="task_control_node" name="task_control_node" output="screen"/>
 
 </launch>

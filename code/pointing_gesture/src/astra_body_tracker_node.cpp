@@ -302,7 +302,7 @@ private:
       astra_reader_get_bodystream(reader, &bodyStream);
       astra_stream_start(bodyStream);
       PrintRosInfo(
-          "Starting Astra Stream");
+          "Starting Astra Stream.\n");
 
       return true;
     }
