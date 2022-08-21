@@ -28,13 +28,14 @@ struct DetectedObjects_
     : objectsCenters()  {
     }
   DetectedObjects_(const ContainerAllocator& _alloc)
-    : objectsCenters(_alloc)  {
+    : objectsCenters()  {
   (void)_alloc;
-    }
+      objectsCenters.assign( ::geometry_msgs::Point32_<ContainerAllocator> (_alloc));
+  }
 
 
 
-   typedef std::vector< ::geometry_msgs::Point32_<ContainerAllocator> , typename ContainerAllocator::template rebind< ::geometry_msgs::Point32_<ContainerAllocator> >::other >  _objectsCenters_type;
+   typedef boost::array< ::geometry_msgs::Point32_<ContainerAllocator> , 3>  _objectsCenters_type;
   _objectsCenters_type objectsCenters;
 
 
@@ -99,12 +100,12 @@ struct IsMessage< ::pcl_object_detection::DetectedObjects_<ContainerAllocator> c
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::pcl_object_detection::DetectedObjects_<ContainerAllocator> >
-  : FalseType
+  : TrueType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::pcl_object_detection::DetectedObjects_<ContainerAllocator> const>
-  : FalseType
+  : TrueType
   { };
 
 template <class ContainerAllocator>
@@ -147,7 +148,7 @@ struct Definition< ::pcl_object_detection::DetectedObjects_<ContainerAllocator> 
 {
   static const char* value()
   {
-    return "geometry_msgs/Point32[] objectsCenters\n"
+    return "geometry_msgs/Point32[3] objectsCenters\n"
 "================================================================================\n"
 "MSG: geometry_msgs/Point32\n"
 "# This contains the position of a point in free space(with 32 bits of precision).\n"

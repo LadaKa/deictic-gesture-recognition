@@ -263,6 +263,12 @@ bool ObjectDetection::Detect(
                 else 
                 {
                     objectsDetected = true;
+
+                    objectsPublisher.CreateObjectsMsg(
+                        detected_objects_centers[0],
+                        detected_objects_centers[1],
+                        detected_objects_centers[2]);
+                        
                     break;
                 }
             }

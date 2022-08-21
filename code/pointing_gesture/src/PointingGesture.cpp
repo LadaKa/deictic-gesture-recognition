@@ -70,3 +70,13 @@ void PointingGesture::OutputGestureIntersection(
     OutputPosition("right hand", right_hand_position);
     OutputPosition("intersection", intersection);
 }
+
+geometry_msgs::Point32 PointingGesture::GetIntersectionMessage()
+{
+    geometry_msgs::Point32 intersectionMsg;
+    intersectionMsg.x = intersection.x;
+    intersectionMsg.y = intersection.y;
+    intersectionMsg.z = intersection.z;
+
+    return intersectionMsg;
+}

@@ -15,8 +15,14 @@ private:
     ros::Publisher pub_stop_object_detection_stream;
     ros::Subscriber sub_object_detection_done;
     ros::Subscriber sub_detected_objects;
+    ros::Subscriber sub_pointed_intersection;
 
+    bool objectsDetected = false;
     bool pointingGestureDetected = false;
+
+    static const int detectedObjectsCount = 3; // !!
+
+    geometry_msgs::Point32 detectedObjectsCenters[detectedObjectsCount];
 
     void object_detection_done_cb(const std_msgs::Empty::ConstPtr& msg)
     {
@@ -27,26 +33,43 @@ private:
         pub_stop_object_detection_stream.publish(empty_msg);
     }
 
-    void detected_objects_cb(const pcl_object_detection::DetectedObjects::ConstPtr& msg)
+    void detected_objects_cb(const pcl_object_detection::DetectedObjects& msg)
     {
-        if (pointingGestureDetected)
-        {
+        ROS_INFO(
+            "detected_objects_cb");
+        if (objectsDetected)
+            return;
 
+        for (int i = 0; i < detectedObjectsCount; i++)
+        {
+            detectedObjectsCenters[i] = msg.objectsCenters[i];
+        };
+        objectsDetected = true;
+    }
+
+    void pointed_intersection_cb(const geometry_msgs::Point32& msg)
+    {
+        ROS_INFO(
+            "pointed_intersection_cb");
+        if (pointingGestureDetected)
+            return;
+
+        if (objectsDetected)
+        {
+            pointingGestureDetected = true;    
+            int pointedObjectIndex = GetPointedObjectIndex(msg);
         }
     }
 
     // returns index of object that is nearest to pointed floor intersection)
-    int GetPointedObjectIndex(
-        geometry_msgs::Point32 pointedFloorIntersection,
-        geometry_msgs::Point32 objectsCenters[])
+    int GetPointedObjectIndex(geometry_msgs::Point32 pointedFloorIntersection)
     { 
         int minDistanceIndex = 0;
         float minDistance = std::numeric_limits<float>::max();
-        int size = sizeof(objectsCenters)/sizeof(geometry_msgs::Point32);
-        ROS_INFO("%d", size);
-        for (int i = 0; i < size; i++)
+
+        for (int i = 0; i < detectedObjectsCount; i++)
         {
-            geometry_msgs::Point32 center = objectsCenters[i];
+            geometry_msgs::Point32 center = detectedObjectsCenters[i];
             float x = center.x - pointedFloorIntersection.x;
             float y = center.y - pointedFloorIntersection.y;
             float distance = sqrt(pow(x, 2) + pow(y, 2));
@@ -73,12 +96,21 @@ public:
         sub_object_detection_done = nh.subscribe(
             "pcl_object_detection/object_detection_done",
              1, 
-             &task_control_node::object_detection_done_cb, this);
+             &task_control_node::object_detection_done_cb, 
+             this);
 
         sub_detected_objects = nh.subscribe(
             "pcl_object_detection/detected_objects",
             1,
-            &task_control_node::detected_objects_cb, this);
+            &task_control_node::detected_objects_cb, 
+            this);
+
+        
+        sub_pointed_intersection = nh.subscribe(
+            "body_tracker/intersection",
+            1,
+            &task_control_node::pointed_intersection_cb,
+            this);
 
         pub_stop_object_detection_stream = _nh.advertise<std_msgs::Empty>(
             "stop_object_detection_stream",

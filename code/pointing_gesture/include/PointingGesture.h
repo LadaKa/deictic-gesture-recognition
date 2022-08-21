@@ -31,6 +31,8 @@ public:
 
     geometry_msgs::Point32_<pointing_gesture::Skeleton> GetFloorIntersection();
 
+    geometry_msgs::Point32 GetIntersectionMessage();
+
     // DEBUG:
     void OutputPosition(
         std::string header,

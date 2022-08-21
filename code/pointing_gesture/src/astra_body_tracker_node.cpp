@@ -60,7 +60,6 @@
 #include "TrackedPerson.h"
 #include "TrackedSkeleton.h"
 
-
 // gesture
 #include "PointingGesture.h"
 
@@ -76,7 +75,7 @@ public:
     nodeHandle.param<std::string>("myparm1", myparm1_, "mydefault");
 
     // SUBSCRIBERS
-    
+
     // hotfix for ros_astra_camera
     sub_object_detection_done = nh_.subscribe(
         "camera/object_detection_done",
@@ -128,34 +127,39 @@ public:
 
       if (detect_both_hands_grip(body))
       {
-          // detect pointing gesture
-          PointingGesture pointingGesture(
+        // detect pointing gesture
+        PointingGesture pointingGesture(
             skeleton_data.joint_position_right_elbow,
             skeleton_data.joint_position_right_hand,
             skeleton_data.joint_position_right_foot);
-          
-          PrintRosInfo("Gesture detected.");
-          pointingPerson = &person;
-          
-          pointingPerson->SetPointingGesture(pointingGesture);
-          pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
-          pointingGestureDetected = true;
-          do 
-          {
-            rVizPublisher.PublishSkeleton(skeleton_data);
-            rVizPublisher.PublishPointingGesture(
+
+        PrintRosInfo("Gesture detected.");
+        pointingPerson = &person;
+
+        pointingPerson->SetPointingGesture(pointingGesture);
+        pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
+        pointingGestureDetected = true;
+
+        geometry_msgs::Point32 intersectionMsg = pointingGesture.GetIntersectionMessage();
+        ros::Publisher intersectionPub = nh_.advertise<geometry_msgs::Point32>("body_tracker/intersection", 1);
+
+        do
+        {
+          rVizPublisher.PublishSkeleton(skeleton_data);
+          rVizPublisher.PublishPointingGesture(
               &pointingGesture);
-            //  pointingPerson->GetPointingGesture());
-            ros::spinOnce();
-          }
-          while (shouldContinue);
+          
+          intersectionPub.publish(intersectionMsg);
+          
+          ros::spinOnce();
+        } while (shouldContinue);
       }
     }
   }
 
-  bool detect_both_hands_grip(const astra_body_t* body)
+  bool detect_both_hands_grip(const astra_body_t *body)
   {
-    const astra_handpose_info_t* handPoses = &body->handPoses;
+    const astra_handpose_info_t *handPoses = &body->handPoses;
 
     // astra_handpose_t is one of:
     // ASTRA_HANDPOSE_UNKNOWN = 0
@@ -191,11 +195,10 @@ public:
   }
 
 private:
-
   // only for debugging
   // height over floor issue
   // https://3dclub.orbbec3d.com/t/calculating-height-over-floor/1225/6
-  bool try_output_floor(astra_bodyframe_t bodyFrame, astra_plane_t  *floorPlane)
+  bool try_output_floor(astra_bodyframe_t bodyFrame, astra_plane_t *floorPlane)
   {
     astra_floor_info_t floorInfo;
 
@@ -207,7 +210,7 @@ private:
 
     const astra_bool_t floorDetected = floorInfo.floorDetected;
     floorPlane = &floorInfo.floorPlane;
-    const astra_floormask_t* floorMask = &floorInfo.floorMask;
+    const astra_floormask_t *floorMask = &floorInfo.floorMask;
 
     if (floorDetected != ASTRA_FALSE)
     {
@@ -219,10 +222,10 @@ private:
 
       const int32_t bottomCenterIndex = floorMask->width / 2 + floorMask->width * (floorMask->height - 1);
       printf("Floor mask: width: %d height: %d bottom center value: %d\n",
-            floorMask->width,
-            floorMask->height,
-            floorMask->data[bottomCenterIndex]);
-     return true;
+             floorMask->width,
+             floorMask->height,
+             floorMask->data[bottomCenterIndex]);
+      return true;
     }
     return false;
   }
@@ -240,18 +243,17 @@ private:
     astra_streamsetconnection_t sensor;
     astra_reader_t reader;
     astra_bodystream_t bodyStream;
-    
+
     // handle delayed ROS Astra Device stream termination
     bool astra_stream_started = false;
     do
     {
       astra_stream_started = tryStartAstraStream(
-        sensor, reader, bodyStream);
+          sensor, reader, bodyStream);
     } while (
-      shouldContinue
-      &&
-      !astra_stream_started);
-    
+        shouldContinue &&
+        !astra_stream_started);
+
     // read data from stream
     do
     {
@@ -287,9 +289,9 @@ private:
   }
 
   bool tryStartAstraStream(
-    astra_streamsetconnection_t &sensor,
-    astra_reader_t &reader,
-    astra_bodystream_t &bodyStream)
+      astra_streamsetconnection_t &sensor,
+      astra_reader_t &reader,
+      astra_bodystream_t &bodyStream)
   {
     try
     {
@@ -300,7 +302,7 @@ private:
       astra_reader_get_bodystream(reader, &bodyStream);
       astra_stream_start(bodyStream);
       PrintRosInfo(
-        "Starting Astra Stream");
+          "Starting Astra Stream");
 
       return true;
     }
@@ -308,10 +310,9 @@ private:
     {
       // delayed ROS Astra Device stream termination
       PrintRosInfo(
-        "Astra Stream unavailable.");
+          "Astra Stream unavailable.");
       return false;
     }
-
   }
 
   void PrintRosInfo(std::string info)
@@ -319,12 +320,12 @@ private:
     ROS_INFO("ASTRA BODY TRACKER: %s.", info.c_str());
   }
 
-/////////////// DATA MEMBERS /////////////////////
+  /////////////// DATA MEMBERS /////////////////////
   bool objectsDetected = false;
   bool floorDetected = false;
 
   bool pointingGestureDetected = false;
-  TrackedPerson* pointingPerson;
+  TrackedPerson *pointingPerson;
 
   astra_plane_t floorPlane;
 
@@ -338,7 +339,6 @@ private:
 
   ros::Subscriber sub_object_detection_done;
 };
-
 
 // The main entry point for this node.
 int main(int argc, char *argv[])

@@ -1,1 +1,1 @@
-geometry_msgs/Point32[] objectsCenters
+geometry_msgs/Point32[3] objectsCenters
