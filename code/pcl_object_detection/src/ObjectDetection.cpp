@@ -27,7 +27,7 @@ void ObjectDetection::SetPublishers(
     PointCloudPublishers pcPublishers,
     ObjectsPublisher objPublisher)
 {
-    publishers = pcPublishers;
+    pclPublishers = pcPublishers;
     objectsPublisher = objPublisher;
 }
 
@@ -45,16 +45,24 @@ void ObjectDetection::AddMarkerBox(
         size_x, size_y, size_z,
         color_r, color_g, color_b);
     visualization_msgs::Marker marker = rVizMarkerBox.GetMarker();
-    ObjectDetection::objects_markers[id] = marker;
+    objects_markers[id] = marker;
+}
 
-    
+void ObjectDetection::ChangeMarkerColor(
+    int index,
+    float color_r, float color_g, float color_b)
+{
+    RVizMarkerBox rVizMarkerBox(
+        objects_markers[index],
+        color_r, color_g, color_b);
+    objects_markers[index] = rVizMarkerBox.GetMarker();
 }
 
 void ObjectDetection::PublishObjectsMessages()
 {
-    for (int i = 0; i < 3; i++) // const
+    for (int i = 0; i < objectsCount; i++) // const
     {
-        publishers.pub_marker.publish(objects_markers[i]);
+        pclPublishers.pub_marker.publish(objects_markers[i]);
     }
     objectsPublisher.Publish();
 }
@@ -95,7 +103,7 @@ bool ObjectDetection::Detect(
 
     sensor_msgs::PointCloud2 voxel_output;
     pcl_conversions::fromPCL(cloud_filtered2, voxel_output);
-    publishers.pub_voxel.publish(voxel_output);
+    pclPublishers.pub_voxel.publish(voxel_output);
 
     // Convert from PCL2 to PCL XYZ cloud?
     pcl::fromPCLPointCloud2(cloud_filtered2, *downsampled_XYZ);
@@ -143,7 +151,7 @@ bool ObjectDetection::Detect(
             pcl::toPCLPointCloud2(*cloud_plane_p, tmp_cloud);
             pcl_conversions::fromPCL(tmp_cloud, output);
 
-            publishers.PublishPlaneMessage(i, output);
+            pclPublishers.PublishPlaneMessage(i, output);
         }
 
         // Create the filtering object
@@ -158,7 +166,7 @@ bool ObjectDetection::Detect(
     pcl::PCLPointCloud2 tmp_cloud;
     pcl::toPCLPointCloud2(*downsampled_XYZ, tmp_cloud);
     pcl_conversions::fromPCL(tmp_cloud, output);
-    publishers.pub_remaining.publish(output);
+    pclPublishers.pub_remaining.publish(output);
 
     // Look for object Clusters
 
@@ -234,7 +242,7 @@ bool ObjectDetection::Detect(
                 obj_center.y = minPt.y + (bb_size.y / 2);
                 obj_center.z = minPt.z + (bb_size.z / 2);
 
-                if (j < 3)
+                if (j < objectsCount)
                 {
                     if (CheckObjectSize(maxPt, bb_size))
                     {
@@ -250,7 +258,7 @@ bool ObjectDetection::Detect(
                             bb_size.x, bb_size.y, bb_size.z,          // Object Size
                             marker_r, marker_g, marker_b); 
 
-                        publishers.PublishClusterMessage(j, cloud_rotated_msg);
+                        pclPublishers.PublishClusterMessage(j, cloud_rotated_msg);
                         ROS_INFO(
                             "PCL OBJECT DETECTION: Detected object [%i].\n\t\tCenter: %f %f %f.\n\t\tMin: %f %f %f.\n",
                             j, 

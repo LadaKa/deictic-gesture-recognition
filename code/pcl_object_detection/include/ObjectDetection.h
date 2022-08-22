@@ -17,19 +17,21 @@
 class ObjectDetection
 {
 private:
-    PointCloudPublishers publishers;
+    static const int objectsCount = 3;
+    PointCloudPublishers pclPublishers;
     ObjectsPublisher objectsPublisher;
-
     tf2_ros::Buffer tf2_; 
     tf2_ros::TransformListener tfListener_;
-    visualization_msgs::Marker objects_markers[3];  // const
-    pcl::PointXYZ detected_objects_centers[3];
+    pcl::PointXYZ detected_objects_centers[objectsCount];
 
     bool CheckObjectSize(
         pcl::PointXYZ maxPt,
         pcl::PointXYZ bb_size);
 
 public:
+    // TODO: code properly
+    visualization_msgs::Marker objects_markers[objectsCount];
+
     ObjectDetection();
 
     void SetPublishers(
@@ -41,6 +43,10 @@ public:
         int id,
         float x, float y, float z,
         float size_x, float size_y, float size_z,
+        float color_r, float color_g, float color_b);
+
+    void ChangeMarkerColor(
+        int index,
         float color_r, float color_g, float color_b);
 
     void PublishObjectsMessages();

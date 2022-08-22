@@ -5,15 +5,11 @@ PointCloudPublishers::PointCloudPublishers(){};
 void PointCloudPublishers::SetClustersPublishers(
     ros::Publisher pub_cluster0,
     ros::Publisher pub_cluster1,
-    ros::Publisher pub_cluster2,
-    ros::Publisher pub_cluster3,
-    ros::Publisher pub_cluster4)
+    ros::Publisher pub_cluster2)
 {
     PointCloudPublishers::pub_clusters[0] = pub_cluster0;
     PointCloudPublishers::pub_clusters[1] = pub_cluster1;
     PointCloudPublishers::pub_clusters[2] = pub_cluster2;
-    PointCloudPublishers::pub_clusters[3] = pub_cluster3;
-    PointCloudPublishers::pub_clusters[4] = pub_cluster4;
 }
 
 void PointCloudPublishers::SetPlanesPublishers(

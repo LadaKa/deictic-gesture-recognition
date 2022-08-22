@@ -133,7 +133,7 @@ public:
             skeleton_data.joint_position_right_hand,
             skeleton_data.joint_position_right_foot);
 
-        PrintRosInfo("Gesture detected.");
+        PrintRosInfo("Gesture detected");
         pointingPerson = &person;
 
         pointingPerson->SetPointingGesture(pointingGesture);
@@ -214,17 +214,17 @@ private:
 
     if (floorDetected != ASTRA_FALSE)
     {
-      printf("Floor plane: [%f, %f, %f, %f]\n",
+      printf("\t\tFloor plane: [%f, %f, %f, %f]\n",
              floorPlane->a,
              floorPlane->b,
              floorPlane->c,
              floorPlane->d);
 
       const int32_t bottomCenterIndex = floorMask->width / 2 + floorMask->width * (floorMask->height - 1);
-      printf("Floor mask: width: %d height: %d bottom center value: %d\n",
+      /*printf("\t\tFloor mask: width: %d height: %d bottom center value: %d\n\n",
              floorMask->width,
              floorMask->height,
-             floorMask->data[bottomCenterIndex]);
+             floorMask->data[bottomCenterIndex]);*/
       return true;
     }
     return false;
@@ -233,7 +233,7 @@ private:
   void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
   {
     PrintRosInfo(
-        "Received object_detection_done MSG.");
+        "Received object_detection_done MSG");
     objectsDetected = true;
   }
 
@@ -302,7 +302,7 @@ private:
       astra_reader_get_bodystream(reader, &bodyStream);
       astra_stream_start(bodyStream);
       PrintRosInfo(
-          "Starting Astra Stream.\n");
+          "Starting Astra Stream");
 
       return true;
     }

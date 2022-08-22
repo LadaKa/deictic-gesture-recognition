@@ -2,10 +2,11 @@
 #include <ros/ros.h>
 #include "ros/console.h"
 #include <std_msgs/Empty.h>
+#include <std_msgs/Int32.h>
 #include <geometry_msgs/Point32.h>
 
 // TODO: fix 'existing target error' when added as dependence
-#include "/home/lada/cat_git/src/pcl_object_detecton/include/DetectedObjects.h"
+#include "/home/lada/cat_git/src/pcl_object_detection/include/DetectedObjects.h"
 
 class task_control_node
 {
@@ -13,24 +14,29 @@ class task_control_node
 private:
     ros::NodeHandle _nh;
     std::string _name;
-    ros::Publisher pub_stop_object_detection_stream;
+
+    ros::Publisher pub_pointed_object_index;
+
     ros::Subscriber sub_object_detection_done;
     ros::Subscriber sub_detected_objects;
     ros::Subscriber sub_pointed_intersection;
 
     bool objectsDetected = false;
     bool pointingGestureDetected = false;
+    bool pointedObjectSelected = false;
+
+    std_msgs::Int32 pointedObjectIndexMsg;
 
     static const int detectedObjectsCount = 3; // !!
 
     geometry_msgs::Point32 detectedObjectsCenters[detectedObjectsCount];
 
-    void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
+    /*void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
     {
         // TODO: set proper published msg and subscriber
         std_msgs::Empty empty_msg;
         pub_stop_object_detection_stream.publish(empty_msg);
-    }
+    }*/
 
     void detected_objects_cb(const pcl_object_detection::DetectedObjects &msg)
     {
@@ -52,7 +58,8 @@ private:
         if (objectsDetected)
         {
             pointingGestureDetected = true;
-            int pointedObjectIndex = GetPointedObjectIndex(msg);
+            pointedObjectIndexMsg.data = GetPointedObjectIndex(msg);
+            pointedObjectSelected = true;
         }
     }
 
@@ -87,12 +94,6 @@ private:
 public:
     task_control_node(std::string name) : _name(name)
     {
-        sub_object_detection_done = _nh.subscribe(
-            "pcl_object_detection/object_detection_done",
-            1,
-            &task_control_node::object_detection_done_cb,
-            this);
-
         sub_detected_objects = _nh.subscribe(
             "pcl_object_detection/detected_objects",
             1,
@@ -105,8 +106,8 @@ public:
             &task_control_node::pointed_intersection_cb,
             this);
 
-        pub_stop_object_detection_stream = _nh.advertise<std_msgs::Empty>(
-            "task_control/stop_object_detection_stream",
+        pub_pointed_object_index = _nh.advertise<std_msgs::Int32>(
+            "task_control/pointed_object_index",
             1);
     }
 
@@ -114,6 +115,10 @@ public:
     {
         do
         {
+            if (pointedObjectSelected)
+            {
+                pub_pointed_object_index.publish(pointedObjectIndexMsg);
+            }
             ros::spinOnce();
 
         } while (true); // TODO
@@ -122,7 +127,7 @@ public:
 
 int main(int argc, char **argv)
 {
-    ROS_INFO("task_control_node: Initializing ROS... ");
+    ROS_INFO("TASK_CONTROL: Initializing ROS... ");
     ros::init(argc, argv, "task_control_node");
 
     task_control_node node(ros::this_node::getName());

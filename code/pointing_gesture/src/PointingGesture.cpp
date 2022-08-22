@@ -57,7 +57,7 @@ void PointingGesture::OutputPosition(
     std::string header,
     geometry_msgs::Point32_<pointing_gesture::Skeleton> position)
 {
-    printf("%s:\n %f %f %f \n",
+    printf("\t\t%s:\t%f %f %f \n",
            header.c_str(),
            position.x, position.y, position.z);
 }
@@ -65,7 +65,7 @@ void PointingGesture::OutputPosition(
 void PointingGesture::OutputGestureIntersection(
     geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection)
 {
-    printf("Pointing gesture: \n");
+    printf("\t\tPointing gesture: \n");
     OutputPosition("right elbow", right_elbow_position);
     OutputPosition("right hand", right_hand_position);
     OutputPosition("intersection", intersection);

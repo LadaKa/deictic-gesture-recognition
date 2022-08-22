@@ -40,10 +40,10 @@
 #include "message_filters/subscriber.h"
 
 #include <geometry_msgs/Point32.h>
+#include <std_msgs/Int32.h>
+
 #include "DetectedObjects.h"
-
 #include "ObjectsPublisher.h"
-
 #include "ObjectDetection.h"
 
 // NOTE: you must install TF2 Sensor Messages: sudo apt-get install ros-kinetic-tf2-sensor-msgs
@@ -59,6 +59,7 @@ public:
 private:
   // FUNCTIONS
   void cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_cloud_msg);
+  void pointed_object_index_cb(const std_msgs::Int32 &index_msg);
   void PrintRosInfo(std::string info);
 
   // CONSTANTS
@@ -77,17 +78,17 @@ private:
   double tf_tolerance_;
   std::string depth_topic_;
   bool objectsDetected = false;
+  bool pointedObjectSelected = false;
   ObjectDetection objectDetection;
   
   // SUBSCRIBERS
   ros::Subscriber depth_cloud_sub_;
+  ros::Subscriber pointed_object_index_sub;
 
   // PUBLISHERS
   ros::Publisher pub_cluster0;
   ros::Publisher pub_cluster1;
   ros::Publisher pub_cluster2;
-  ros::Publisher pub_cluster3;
-  ros::Publisher pub_cluster4;
   ros::Publisher pub_nearest_object;
 
   ros::Publisher pub0;
@@ -128,8 +129,6 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   pub_cluster0 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/cluster0", 1);
   pub_cluster1 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/cluster1", 1);
   pub_cluster2 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/cluster2", 1);
-  pub_cluster3 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/cluster3", 1);
-  pub_cluster4 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/cluster4", 1);
   pub_nearest_object = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/nearest_object", 1);
 
   pub0 = nh_.advertise<sensor_msgs::PointCloud2>("pcl_object_detection/plane0", 1);
@@ -149,7 +148,7 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
   pub_detected_objects = nh_.advertise<pcl_object_detection::DetectedObjects>("pcl_object_detection/detected_objects", 1);
 
   pcl_publishers.SetClustersPublishers(
-      pub_cluster0, pub_cluster1, pub_cluster2, pub_cluster3, pub_cluster4);
+      pub_cluster0, pub_cluster1, pub_cluster2);
   pcl_publishers.SetPlanesPublishers(
       pub0, pub1, pub2, pub3);
   pcl_publishers.SetOtherPublishers(
@@ -163,8 +162,13 @@ PclObjectDetection::PclObjectDetection(ros::NodeHandle n) : nh_(n),
         "camera/object_detection_done", 1);
 
   // SUBSCRIBERS
+
   // Create a ROS subscriber for the input point cloud
-  depth_cloud_sub_ = nh_.subscribe(depth_topic_, 1, &PclObjectDetection::cloud_cb, this);
+  depth_cloud_sub_ = nh_.subscribe(
+    depth_topic_, 1, &PclObjectDetection::cloud_cb, this);
+
+  pointed_object_index_sub = nh_.subscribe(
+    "task_control/pointed_object_index", 1, &PclObjectDetection::pointed_object_index_cb, this);
 }
 
 void PclObjectDetection::runLoop()
@@ -205,6 +209,19 @@ void PclObjectDetection::cloud_cb(const sensor_msgs::PointCloud2ConstPtr &input_
   }
 }
 
+void PclObjectDetection::pointed_object_index_cb(const std_msgs::Int32 &index_msg)
+{
+  if (pointedObjectSelected)
+  {
+    return;
+  }
+
+  pointedObjectSelected = true;
+  objectDetection.ChangeMarkerColor(
+    index_msg.data,
+    0, 1, 0.2);
+}
+
 void PclObjectDetection::PrintRosInfo(std::string info)
 {
   ROS_INFO("PCL OBJECT DETECTION: %s.", info.c_str());
@@ -212,7 +229,6 @@ void PclObjectDetection::PrintRosInfo(std::string info)
 
 int main(int argc, char **argv)
 {
-
   ros::init(argc, argv, "pcl_object_detection");
 
   ros::NodeHandle n;

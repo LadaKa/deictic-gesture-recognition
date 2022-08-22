@@ -7,14 +7,13 @@
 class PointCloudPublishers
 {
 private:
-
+    static const int objectsCount = 3;
+    static const int planesCount = 4;
 public:
     // PUBLISHERS
 
-    ros::Publisher pub_clusters[5];
-    ros::Publisher pub_planes[4];
-
-
+    ros::Publisher pub_clusters[objectsCount];
+    ros::Publisher pub_planes[planesCount];
 
     ros::Publisher pub_voxel;
     ros::Publisher pub_nearest_object;
@@ -29,10 +28,10 @@ public:
     void SetClustersPublishers(
         ros::Publisher pub_cluster0,
         ros::Publisher pub_cluster1,
-        ros::Publisher pub_cluster2,
-        ros::Publisher pub_cluster3,
-        ros::Publisher pub_cluster4);
+        ros::Publisher pub_cluster2);
 
+    // planes and other publishers - no use so far
+    // camera calibration needed
     void SetPlanesPublishers(
         ros::Publisher pub_plane0,
         ros::Publisher pub_plane1,

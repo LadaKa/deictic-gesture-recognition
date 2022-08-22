@@ -5,6 +5,17 @@ visualization_msgs::Marker RVizMarkerBox::GetMarker()
     return RVizMarkerBox::marker;
 }
 
+// creates rVizMarkerBox with modified color of marker
+RVizMarkerBox::RVizMarkerBox(
+    visualization_msgs::Marker msgMarker,
+    float color_r, float color_g, float color_b)
+{
+    marker = msgMarker;
+    marker.color.r = color_r;
+    marker.color.g = color_g;
+    marker.color.b = color_b;
+}
+
 RVizMarkerBox::RVizMarkerBox(
     std::string frame_id,
     int id,
