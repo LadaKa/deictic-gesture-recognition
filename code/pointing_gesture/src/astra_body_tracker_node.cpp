@@ -167,7 +167,7 @@ public:
     const astra_handpose_t leftHandPose = handPoses->leftHand;
     const astra_handpose_t rightHandPose = handPoses->rightHand;
 
-    return ((leftHandPose == 1) && (rightHandPose == 1));
+    return ((leftHandPose == 1) || (rightHandPose == 1));
   }
 
   void output_frame(astra_bodyframe_t bodyFrame)
@@ -258,12 +258,15 @@ private:
     do
     {
       //  read skeleton data
+     // PrintRosInfo("Before astra_update");
+      
       astra_update();
       astra_reader_frame_t frame;
       astra_status_t rc = astra_reader_open_frame(reader, 0, &frame);
-
+    //  PrintRosInfo("After astra_update");
       if (rc == ASTRA_STATUS_SUCCESS)
       {
+        
         astra_bodyframe_t bodyFrame;
         astra_frame_get_bodyframe(frame, &bodyFrame);
 

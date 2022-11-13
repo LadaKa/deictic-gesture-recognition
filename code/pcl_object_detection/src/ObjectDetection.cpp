@@ -292,12 +292,13 @@ bool ObjectDetection::Detect(
     return objectsDetected;
 } // cloud_cb
 
+// TODO: rename 
 bool ObjectDetection::CheckObjectSize(
     pcl::PointXYZ maxPt, 
     pcl::PointXYZ bb_size)
 {
     
-    if (maxPt.x > 2.0)
+    if (maxPt.x > 3.0)
     {      
         return false;
     }

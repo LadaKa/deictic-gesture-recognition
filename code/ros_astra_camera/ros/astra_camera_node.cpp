@@ -29,7 +29,7 @@
  *
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
-
+ 
 #include "astra_camera/astra_driver.h"
 #include <std_msgs/Empty.h>
 

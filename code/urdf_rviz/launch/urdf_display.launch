@@ -29,6 +29,7 @@
     <param name="depth_topic" value="/camera/depth/points"/>
   </node>
 
+
   <!-- launch astra camera (topics: camera/...) -->
   <include file="$(find astra_camera)/launch/astra.launch" />
   
