@@ -29,19 +29,48 @@
  *
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
-
+ 
 #include "astra_camera/astra_driver.h"
+#include <std_msgs/Empty.h>
 
-int main(int argc, char **argv){
+class astra_camera_node
+{
 
-  ROS_INFO("Launching astra_camera_node");
+private:
+  astra_wrapper::AstraDriver *drv;
+  ros::NodeHandle _nh;
+  ros::Subscriber sub_stop_object_detection_stream;
+
+public:
+  void stop_object_detection_stream_cb(const std_msgs::Empty::ConstPtr &msg)
+  {
+    // ~AstraDriver(): 
+    // stop all streams of AstraDriver device
+    drv->~AstraDriver();
+  }
+
+  astra_camera_node()
+  {
+    sub_stop_object_detection_stream = _nh.subscribe(
+        "stop_object_detection_stream",
+        1,
+        &astra_camera_node::stop_object_detection_stream_cb,
+        this);
+
+    ros::NodeHandle n;
+    ros::NodeHandle pnh("~");
+
+    drv = new astra_wrapper::AstraDriver(n, pnh);
+    ros::spin();
+  }
+};
+
+int main(int argc, char **argv)
+{
+
+  ROS_INFO("astra_camera_node: Initializing ROS... ");
   ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
-
-  astra_wrapper::AstraDriver drv(n, pnh);
-
-  ros::spin();
+  astra_camera_node();
 
   return 0;
 }

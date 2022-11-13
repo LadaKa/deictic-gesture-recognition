@@ -69,6 +69,8 @@
 
 #include <ros/ros.h>
 
+#include <std_msgs/Empty.h>
+
 namespace astra_wrapper
 {
 
@@ -217,6 +219,10 @@ private:
 
   Config old_config_;
   int uvc_flip_;
+  
+  // Added to enable terminate device stream and start astra sdk stream
+  ros::Subscriber sub_object_detection_done;
+  void object_detection_done_cb(const std_msgs::Empty::ConstPtr& msg);
 };
 
 }

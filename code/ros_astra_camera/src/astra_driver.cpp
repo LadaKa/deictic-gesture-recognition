@@ -158,8 +158,13 @@ AstraDriver::~AstraDriver() {
   device_->stopAllStreams();
 }
 
+// TODO: rename to 'initialiseROSTopics()'
 void AstraDriver::advertiseROSTopics()
 {
+  sub_object_detection_done = nh_.subscribe(
+        "object_detection_done",
+        1,
+        &AstraDriver::object_detection_done_cb, this);
 
   // Allow remapping namespaces rgb, ir, depth, depth_registered
   ros::NodeHandle color_nh(nh_, "rgb");
@@ -1340,5 +1345,16 @@ sensor_msgs::ImageConstPtr AstraDriver::rawToFloatingPointConversion(sensor_msgs
 
   return new_image;
 }
+
+/*
+    Added to enable terminate device stream and start astra sdk stream:
+*/
+
+  void AstraDriver::object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
+  {
+    ROS_INFO(
+        "ROS ASTRA CAMERA: Received object_detection_done MSG. Terminating ROS Astra Stream.");
+    device_->~AstraDevice();
+  }
 
 }
