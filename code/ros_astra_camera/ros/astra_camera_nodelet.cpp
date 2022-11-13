@@ -31,17 +31,28 @@
  */
 
 #include "astra_camera/astra_driver.h"
+#include <nodelet/nodelet.h>
 
-int main(int argc, char **argv){
+namespace astra_camera
+{
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+class AstraDriverNodelet : public nodelet::Nodelet
+{
+public:
+  AstraDriverNodelet()  {};
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+  ~AstraDriverNodelet() {}
 
-  ros::spin();
+private:
+  virtual void onInit()
+  {
+    lp.reset(new astra_wrapper::AstraDriver(getNodeHandle(), getPrivateNodeHandle()));
+  };
 
-  return 0;
+  boost::shared_ptr<astra_wrapper::AstraDriver> lp;
+};
+
 }
+
+#include <pluginlib/class_list_macros.h>
+PLUGINLIB_EXPORT_CLASS(astra_camera::AstraDriverNodelet, nodelet::Nodelet)

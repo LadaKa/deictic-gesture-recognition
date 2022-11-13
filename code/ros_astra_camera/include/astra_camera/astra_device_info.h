@@ -30,18 +30,27 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#ifndef ASTRA_DEVICE_INFO_H_
+#define ASTRA_DEVICE_INFO_H_
 
-int main(int argc, char **argv){
+#include <ostream>
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+#include <boost/cstdint.hpp>
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+namespace astra_wrapper
+{
 
-  ros::spin();
+struct AstraDeviceInfo
+{
+  std::string uri_;
+  std::string vendor_;
+  std::string name_;
+  uint16_t vendor_id_;
+  uint16_t product_id_;
+};
 
-  return 0;
+std::ostream& operator << (std::ostream& stream, const AstraDeviceInfo& device_info);
+
 }
+
+#endif /* DRIVER_H_ */

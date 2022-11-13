@@ -30,18 +30,49 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#ifndef ASTRA_DEVICE_MANAGER_H_
+#define ASTRA_DEVICE_MANAGER_H_
 
-int main(int argc, char **argv){
+#include "astra_camera/astra_device_info.h"
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+#include <boost/thread/mutex.hpp>
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+#include <vector>
+#include <string>
+#include <ostream>
 
-  ros::spin();
+namespace astra_wrapper
+{
 
-  return 0;
+class AstraDeviceListener;
+class AstraDevice;
+
+class AstraDeviceManager
+{
+public:
+  AstraDeviceManager();
+  virtual ~AstraDeviceManager();
+
+  static boost::shared_ptr<AstraDeviceManager> getSingelton();
+
+  boost::shared_ptr<std::vector<AstraDeviceInfo> > getConnectedDeviceInfos() const;
+  boost::shared_ptr<std::vector<std::string> > getConnectedDeviceURIs() const;
+  std::size_t getNumOfConnectedDevices() const;
+
+  boost::shared_ptr<AstraDevice> getAnyDevice();
+  boost::shared_ptr<AstraDevice> getDevice(const std::string& device_URI);
+
+  std::string getSerial(const std::string& device_URI) const;
+
+protected:
+  boost::shared_ptr<AstraDeviceListener> device_listener_;
+
+  static boost::shared_ptr<AstraDeviceManager> singelton_;
+};
+
+
+std::ostream& operator <<(std::ostream& stream, const AstraDeviceManager& device_manager);
+
 }
+
+#endif

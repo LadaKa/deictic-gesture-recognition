@@ -30,18 +30,66 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#include "astra_camera/astra_timer_filter.h"
+#include <algorithm>
 
-int main(int argc, char **argv){
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+namespace astra_wrapper
+{
 
-  astra_wrapper::AstraDriver drv(n, pnh);
-
-  ros::spin();
-
-  return 0;
+AstraTimerFilter::AstraTimerFilter(std::size_t filter_len):
+    filter_len_(filter_len)
+{
 }
+
+AstraTimerFilter::~AstraTimerFilter()
+{
+}
+
+void AstraTimerFilter::addSample(double sample)
+{
+  buffer_.push_back(sample);
+  if (buffer_.size()>filter_len_)
+    buffer_.pop_front();
+}
+
+double AstraTimerFilter::getMedian()
+{
+  if (buffer_.size()>0)
+  {
+    std::deque<double> sort_buffer = buffer_;
+
+    std::sort(sort_buffer.begin(), sort_buffer.end());
+
+    return sort_buffer[sort_buffer.size()/2];
+  } else
+    return 0.0;
+}
+
+double AstraTimerFilter::getMovingAvg()
+{
+  if (buffer_.size() > 0)
+  {
+    double sum = 0;
+
+    std::deque<double>::const_iterator it = buffer_.begin();
+    std::deque<double>::const_iterator it_end = buffer_.end();
+
+    while (it != it_end)
+    {
+      sum += *(it++);
+    }
+
+    return sum / static_cast<double>(buffer_.size());
+  } else
+    return 0.0;
+}
+
+
+void AstraTimerFilter::clear()
+{
+  buffer_.clear();
+}
+
+
+} //namespace openni2_wrapper

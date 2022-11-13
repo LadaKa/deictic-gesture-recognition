@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Willow Garage, Inc.
+ * Copyright (c) 2014, Savioke, Inc.
  * Copyright (c) 2016, Orbbec Ltd.
  * All rights reserved.
  *
@@ -30,18 +30,37 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+/**
+ * Small executable that creates a device manager to print the information of all devices including their
+ * serial number.
+ */
 
-int main(int argc, char **argv){
+#include <iostream>
+#include "astra_camera/astra_device_manager.h"
+#include "astra_camera/astra_exception.h"
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+using astra_wrapper::AstraDeviceManager;
+using astra_wrapper::AstraDeviceInfo;
+using astra_wrapper::AstraException;
 
-  astra_wrapper::AstraDriver drv(n, pnh);
-
-  ros::spin();
-
+int main(int arc, char** argv)
+{
+  astra_wrapper::AstraDeviceManager manager;
+  boost::shared_ptr<std::vector<astra_wrapper::AstraDeviceInfo> > device_infos = manager.getConnectedDeviceInfos();
+  std::cout << "Found " << device_infos->size() << " devices:" << std::endl << std::endl;
+  for (size_t i = 0; i < device_infos->size(); ++i)
+  {
+    std::cout << "Device #" << i << ":" << std::endl;
+    std::cout << device_infos->at(i) << std::endl;
+    try {
+      std::string serial = manager.getSerial(device_infos->at(i).uri_);
+      std::cout << "Serial number: " << serial << std::endl;
+    }
+    catch (const AstraException& exception)
+    {
+      std::cerr << "Could not retrieve serial number: " << exception.what() << std::endl;
+    }
+  }
   return 0;
 }
+

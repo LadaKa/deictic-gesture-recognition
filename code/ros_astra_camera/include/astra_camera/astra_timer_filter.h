@@ -30,18 +30,35 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#ifndef ASTRA_TIME_FILTER_H_
+#define ASTRA_TIME_FILTER_H_
 
-int main(int argc, char **argv){
+#include <deque>
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+#include "openni2/OpenNI.h"
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+namespace astra_wrapper
+{
 
-  ros::spin();
+class AstraTimerFilter
+{
+public:
+  AstraTimerFilter(std::size_t filter_len);
+  virtual ~AstraTimerFilter();
 
-  return 0;
+  void addSample(double sample);
+
+  double getMedian();
+  double getMovingAvg();
+
+  void clear();
+
+private:
+  std::size_t filter_len_;
+
+  std::deque<double> buffer_;
+};
+
 }
+
+#endif

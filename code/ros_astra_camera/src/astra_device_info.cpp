@@ -30,18 +30,21 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#include "astra_camera/astra_device_info.h"
 
-int main(int argc, char **argv){
+namespace astra_wrapper
+{
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
 
-  astra_wrapper::AstraDriver drv(n, pnh);
-
-  ros::spin();
-
-  return 0;
+std::ostream& operator << (std::ostream& stream, const AstraDeviceInfo& device_info) {
+  stream << "Uri: " << device_info.uri_ << " (Vendor: " << device_info.vendor_ <<
+                                           ", Name: " << device_info.name_ <<
+                                           ", Vendor ID: " << std::hex << device_info.vendor_id_ <<
+                                           ", Product ID: " << std::hex << device_info.product_id_ <<
+                                             ")" << std::endl;
+  return stream;
 }
+
+
+
+} //namespace openni2_wrapper

@@ -30,18 +30,50 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#ifndef ASTRA_FRAME_LISTENER_H_
+#define ASTRA_FRAME_LISTENER_H_
 
-int main(int argc, char **argv){
+#include "astra_camera/astra_device.h"
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
+#include <sensor_msgs/Image.h>
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+#include <vector>
 
-  ros::spin();
+#include "openni2/OpenNI.h"
 
-  return 0;
+namespace astra_wrapper
+{
+
+class AstraTimerFilter;
+
+class AstraFrameListener : public openni::VideoStream::NewFrameListener
+{
+public:
+  AstraFrameListener();
+
+  virtual ~AstraFrameListener()
+  { };
+
+  void onNewFrame(openni::VideoStream& stream);
+
+  void setCallback(FrameCallbackFunction& callback)
+  {
+    callback_ = callback;
+  }
+
+  void setUseDeviceTimer(bool enable);
+
+private:
+  openni::VideoFrameRef m_frame;
+
+  FrameCallbackFunction callback_;
+
+  bool user_device_timer_;
+  boost::shared_ptr<AstraTimerFilter> timer_filter_;
+
+  double prev_time_stamp_;
+};
+
 }
+
+#endif

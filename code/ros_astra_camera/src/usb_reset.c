@@ -1,5 +1,7 @@
+/* usbreset -- send a USB port reset to a USB device */
+
 /*
- * Copyright (c) 2013, Willow Garage, Inc.
+ * Copyright (c) 2014, JSK Robotics Lab, Inc.
  * Copyright (c) 2016, Orbbec Ltd.
  * All rights reserved.
  *
@@ -30,18 +32,41 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/ioctl.h>
 
-int main(int argc, char **argv){
+#include <linux/usbdevice_fs.h>
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+int main(int argc, char **argv)
+{
+  const char *filename;
+  int fd;
+  int rc;
 
-  ros::spin();
+  if (argc != 2) {
+    fprintf(stderr, "Usage: usbreset device-filename\n");
+    return 1;
+  }
+  filename = argv[1];
 
+  fd = open(filename, O_WRONLY);
+  if (fd < 0) {
+    perror("Error opening output file");
+    return 1;
+  }
+
+  printf("Resetting USB device %s\n", filename);
+  rc = ioctl(fd, USBDEVFS_RESET, 0);
+  if (rc < 0) {
+    perror("Error in ioctl");
+    return 1;
+  }
+  printf("Reset successful\n");
+
+  close(fd);
   return 0;
 }

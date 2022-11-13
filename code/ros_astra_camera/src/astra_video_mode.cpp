@@ -30,18 +30,65 @@
  *      Author: Tim Liu (liuhua@orbbec.com)
  */
 
-#include "astra_camera/astra_driver.h"
+#include "astra_camera/astra_video_mode.h"
 
-int main(int argc, char **argv){
+namespace astra_wrapper
+{
 
-  ROS_INFO("Launching astra_camera_node");
-  ros::init(argc, argv, "astra_camera");
-  ros::NodeHandle n;
-  ros::NodeHandle pnh("~");
 
-  astra_wrapper::AstraDriver drv(n, pnh);
+std::ostream& operator << (std::ostream& stream, const AstraVideoMode& video_mode) {
+  stream << "Resolution: " << (int)video_mode.x_resolution_ << "x" << (int)video_mode.y_resolution_ <<
+                              "@" << video_mode.frame_rate_ <<
+                              "Hz Format: ";
 
-  ros::spin();
+  switch (video_mode.pixel_format_)
+  {
+    case PIXEL_FORMAT_DEPTH_1_MM:
+      stream << "Depth 1mm";
+      break;
+    case PIXEL_FORMAT_DEPTH_100_UM:
+      stream << "Depth 100um";
+      break;
+    case PIXEL_FORMAT_SHIFT_9_2:
+      stream << "Shift 9/2";
+      break;
+    case PIXEL_FORMAT_SHIFT_9_3:
+      stream << "Shift 9/3";
+      break;
+    case PIXEL_FORMAT_RGB888:
+      stream << "RGB888";
+      break;
+    case PIXEL_FORMAT_YUV422:
+      stream << "YUV422";
+      break;
+    case PIXEL_FORMAT_GRAY8:
+      stream << "Gray8";
+      break;
+    case PIXEL_FORMAT_GRAY16:
+      stream << "Gray16";
+      break;
+    case PIXEL_FORMAT_JPEG:
+      stream << "JPEG";
+      break;
 
-  return 0;
+    default:
+      break;
+  }
+
+  return stream;
 }
+
+bool operator==(const AstraVideoMode& video_mode_a, const AstraVideoMode& video_mode_b)
+{
+  return (video_mode_a.x_resolution_==video_mode_b.x_resolution_) &&
+         (video_mode_a.y_resolution_==video_mode_b.y_resolution_) &&
+         (video_mode_a.frame_rate_  ==video_mode_b.frame_rate_)   &&
+         (video_mode_a.pixel_format_==video_mode_b.pixel_format_);
+}
+
+bool operator!=(const AstraVideoMode& video_mode_a, const AstraVideoMode& video_mode_b)
+{
+  return !(video_mode_a==video_mode_b);
+}
+
+} //namespace openni2_wrapper
