@@ -244,7 +244,7 @@ bool ObjectDetection::Detect(
 
                 if (j < objectsCount)
                 {
-                    if (CheckObjectSize(maxPt, bb_size))
+                    if (CheckObjectProperties(maxPt, bb_size))
                     {
                         marker_r = marker_r + 0.2;
                         marker_g = marker_g - 0.2;
@@ -292,13 +292,17 @@ bool ObjectDetection::Detect(
     return objectsDetected;
 } // cloud_cb
 
-// TODO: rename 
-bool ObjectDetection::CheckObjectSize(
-    pcl::PointXYZ maxPt, 
+ 
+bool ObjectDetection::CheckObjectProperties(
+    pcl::PointXYZ obj_center,
     pcl::PointXYZ bb_size)
 {
-    
-    if (maxPt.x > 3.0)
+    // object detection frame:
+    // TODO: set as node param (robot will be moving towards objects)
+    if ((obj_center.x < 2.0) 
+        || (obj_center.x > 4.0)
+        || (obj_center.y < -1.0)
+        || (obj_center.y >  1.0))
     {      
         return false;
     }
