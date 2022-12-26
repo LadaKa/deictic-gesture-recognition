@@ -1,0 +1,15 @@
+2022-12-26:
+
+Notebook Acer (camera + ros packages for image processing):
+
+Installed:
+	Ubuntu 20.04
+	ROS Noetic
+		
+Getting Started with Neobotics MP-500 and the UR5 Robot
+
+-	Power on the robot arm amplifier on top of the mobile robot
+-	Power on the mobile robot by turning the key clockwise
+-	Power on the universal robot arm by pressing the power button on the teach pendant (touch screen)
+		- doesn't work - maybe needs to recharge
+
