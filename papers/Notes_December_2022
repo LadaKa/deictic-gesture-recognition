@@ -11,5 +11,25 @@ Getting Started with Neobotics MP-500 and the UR5 Robot
 -	Power on the robot arm amplifier on top of the mobile robot
 -	Power on the mobile robot by turning the key clockwise
 -	Power on the universal robot arm by pressing the power button on the teach pendant (touch screen)
-		- doesn't work - maybe needs to recharge
+		- doesn't work - FIXED
+		
+		
+--------------------------------------------------------------------------------
+2022-12-27:
 
+Getting Started with Neobotics MP-500 and the UR5 Robot
+
+	Power on the universal robot arm by pressing the power button on the teach pendant (touch screen)
+		- didn't work - because of Neobotix 'emergency stop' state
+		
+	After the teach pendant is turned on, initialize the robot arm - OK
+	
+	The arm was manually (freedrive) set into the position to pick a small object from the floor - OK:
+		- reach of the arm is sufficient
+		- the distance to the object is ok (SICK lidar doesn't raise emergency stop)
+		
+
+	VNC View connected to the neobotix server - OK
+	
+	TODO: connect to ROS master  
+	
