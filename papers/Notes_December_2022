@@ -33,3 +33,24 @@ Getting Started with Neobotics MP-500 and the UR5 Robot
 	
 	TODO: connect to ROS master  
 	
+------------------------------------------------------------------------------------
+2022-12-29:
+
+Connect to Neobotix ROS master:
+
+	ladak@ladak-ThinkStation-P330:~$ rosnode list
+	ERROR: Unable to communicate with master!
+
+	ladak@ladak-ThinkStation-P330:~$ export ROS_MASTER_URI=http://192.168.0.10:11311
+
+	ladak@ladak-ThinkStation-P330:~$ rosnode list
+		/joint_state_publisher
+		/joy_node
+		/kinematics_differential/neo_kinematics_differential_node
+		/lidar_1
+		/lidar_1/lidar_1_filter
+		/neo_teleop/neo_teleop_node
+		/relayboard_v2/relayboard_v2_node
+		/robot_state_publisher
+		/rosout
+
