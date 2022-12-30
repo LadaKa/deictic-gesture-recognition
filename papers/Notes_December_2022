@@ -72,5 +72,66 @@ Run the robot arm:
 	
 	Fixed by:			
 		sudo apt install ros-noetic-moveit
+		
+------------------------------------------------------------------------------------
+2022-12-30:
+
+Notebook Acer (camera + ros packages for image processing):
+
+Installed:
+	Ubuntu 20.04
+	ROS Noetic
+	
+ORBBEC Astra:
+	
+	1. 	Copy Astra SDK
+	2. 	Copy ROS packages
+	3. 	Install libuvc and libsfml
+	4.	Install OpenNI
+	5. 	Set ENV vars
+	
+	
+ROS_PACKAGE_PATH=/home/ladak/catkin_ws/src/ros_astra_camera:/home/ladak/catkin_ws/src/pcl_object_detection:/home/ladak/catkin_ws/src/pointing_gesture:/home/ladak/catkin_ws/src/task_control:/home/ladak/catkin_ws/src/urdf_rviz:/opt/ros/noetic/share
+ASTRA_ROOT=/home/ladak/Desktop/AstraSDK
+ASTRA_SDK=/home/ladak/Desktop/AstraSDK
+ASTRA_SDK_LIB=/home/ladak/Desktop/AstraSDK/lib
+ASTRA_INCLUDE_DIR=/home/ladak/Desktop/AstraSDK/include
+LD_LIBRARY_PATH=/home/ladak/catkin_ws/devel/lib:/opt/ros/noetic/lib:/home/ladak/Desktop/AstraSDK/lib
+ASTRA_SDK_INCLUDE=/home/ladak/Desktop/AstraSDK/include
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
