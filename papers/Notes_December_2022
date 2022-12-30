@@ -86,8 +86,9 @@ ORBBEC Astra:
 	
 	1. 	Copy Astra SDK
 	2. 	Copy ROS packages
-	3. 	Install libuvc and libsfml
-	4.	Install OpenNI
+	3. 	Install libuvc and libsfml:
+				sudo apt install libuvc-dev	# libuvc not available for noetic
+	4.	TODO: 	Install OpenNI
 	5. 	Set ENV vars
 	
 	
@@ -99,9 +100,10 @@ ASTRA_INCLUDE_DIR=/home/ladak/Desktop/AstraSDK/include
 LD_LIBRARY_PATH=/home/ladak/catkin_ws/devel/lib:/opt/ros/noetic/lib:/home/ladak/Desktop/AstraSDK/lib
 ASTRA_SDK_INCLUDE=/home/ladak/Desktop/AstraSDK/include
 
+	6. 	Build packages using catkin_make:
+				sudo apt-get install ros-noetic-tf2-sensor-msgs 
 
-
-
+		TODO:	
 
 
 
