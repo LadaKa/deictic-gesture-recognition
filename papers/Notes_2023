@@ -10,4 +10,34 @@ Eclipse for C++:
 	
 Build:
 	- TODO - resolve PointingGesture build error
-	
+
+-----------------------------------------------------------------------------------------
+
+2023-02-05:
+
+- gave up build the original version of Astra SDK - it's impossible without any hint:
+https://3dclub.orbbec3d.com/t/insufficent-documentation-of-astra-sdk/2311
+
+- downloaded some other version for Ubuntu (AstraSDK-v2.1.3-94bca0f52e-20210608T062039Z-Ubuntu18.04-x86_64.tar.gz)
+
+Build:
+
+Astra SDK Samples:
+
+- now I am able at least compile Astra SDK samples using:
+	'cmake .' and 'make'
+
+- still got 'undefined reference' error when build single sample using:
+	g++ -std=c++11 -I "/home/robot/Desktop/AstraSDK/include/" -L "/home/robot/Desktop/AstraSDK/lib/"  main.cpp -lastra -lastra_core -lastra_core_api -o main
+
+
+DeicticGestureRecognition:
+
+- got "ModuleNotFoundError: No module named 'catkin'" in Eclipse
+
+- got many 'undefined reference' errors when using 'catkin build' in terminal:
+	/usr/bin/ld: CMakeFiles/pointing_gesture_node.dir/src/astra_body_tracker_node.cpp.o: in function `astra_body_tracker_node::output_bodies_with_gestures(_astra_bodyframe*)':
+	astra_body_tracker_node.cpp:(.text._ZN23astra_body_tracker_node27output_bodies_with_gesturesEP16_astra_bodyframe[_ZN23astra_body_tracker_node27output_bodies_with_gesturesEP16_astra_bodyframe]+0x4e): undefined reference to `astra_bodyframe_body_list'
+
+
+- built successfully when using 'catkin_make' in terminal
