@@ -41,3 +41,12 @@ DeicticGestureRecognition:
 
 
 - built successfully when using 'catkin_make' in terminal
+
+--------------------------------------------------------------------------------------------
+
+2023-02-12:
+
+- setup git repo on acer
+- installed rgbd_launch
+- can launch all packages, but object detection parameters needs to be debugged
+
