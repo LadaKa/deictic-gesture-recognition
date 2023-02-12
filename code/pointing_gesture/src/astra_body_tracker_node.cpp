@@ -45,6 +45,11 @@
 #include <stdbool.h>
 #include <key_handler.h>
 
+// added to handle build errors on ACER
+
+#include <astra/capi/streams/body_capi.h>
+#include <astra/capi/streams/body_types.h>
+
 // custom message
 #include "BodyTracker.h"
 
@@ -101,7 +106,7 @@ public:
 
   void output_bodies_with_gestures(astra_bodyframe_t bodyFrame)
   {
-    astra_body_list_t bodyList;
+	astra_body_list_t bodyList;
     const astra_status_t rc = astra_bodyframe_body_list(bodyFrame, &bodyList);
     if (rc != ASTRA_STATUS_SUCCESS)
     {

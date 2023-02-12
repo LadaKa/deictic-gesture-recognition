@@ -7,7 +7,7 @@
 
 // TODO: fix 'existing target error' when added as dependence
 // #include "/home/lada/cat_git/src/pcl_object_detection/include/DetectedObjects.h"
-#include "/home/ladak/Desktop/ws_11_22/src/pcl_object_detection/include/DetectedObjects.h"
+#include "//home/robot/catkin_ws/src/pcl_object_detection/include/DetectedObjects.h"
 
 
 class task_control_node

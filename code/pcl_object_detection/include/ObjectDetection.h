@@ -24,7 +24,7 @@ private:
     tf2_ros::TransformListener tfListener_;
     pcl::PointXYZ detected_objects_centers[objectsCount];
 
-    bool CheckObjectSize(
+    bool CheckObjectProperties(
         pcl::PointXYZ maxPt,
         pcl::PointXYZ bb_size);
 

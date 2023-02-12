@@ -16,9 +16,9 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 
-set(CMAKE_MODULE_PATH "/home/ladak/Desktop/AstraSDK/samples/cmake/")
+set(CMAKE_MODULE_PATH "/home/robot/Desktop/AstraSDK/samples/cmake/")
 #list(APPEND CMAKE_MODULE_PATH "/home/system/AstraSDK/samples/cmake/")
-set(ASTRA_SAMPLES_COMMON_DIR "/home/ladak/Desktop/AstraSDK/samples/common/")
+set(ASTRA_SAMPLES_COMMON_DIR "/home/robot/Desktop/AstraSDK/samples/common/")
 
 
 MESSAGE( STATUS "AFTER:" )

@@ -6,7 +6,7 @@
 
 
   <!-- Is this really required? -->
-  <maintainer email="ladak@todo.todo">ladak</maintainer>
+  <maintainer email="robot@todo.todo">robot</maintainer>
   <license>TODO</license>
 
   <!-- Use build_depend for packages you need at compile time: -->
