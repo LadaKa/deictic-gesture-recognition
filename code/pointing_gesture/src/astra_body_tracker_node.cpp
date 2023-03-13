@@ -27,6 +27,7 @@
    Publishes 3d markers for selected joints.  Visible as markers in RVIZ
 
 */
+#include <unistd.h>
 
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
@@ -186,12 +187,15 @@ public:
 
   void runLoop()
   {
+	PrintRosInfo("runLoop");
     set_key_handler();
     do
     {
       ros::spinOnce();
 
     } while (shouldContinue && !objectsDetected);
+
+    sleep(10);//sleeps for 3 second
 
     if (shouldContinue)
     {
@@ -263,15 +267,15 @@ private:
     do
     {
       //  read skeleton data
-     // PrintRosInfo("Before astra_update");
+      //PrintRosInfo("Before astra_update");
       
       astra_update();
       astra_reader_frame_t frame;
-      astra_status_t rc = astra_reader_open_frame(reader, 0, &frame);
-    //  PrintRosInfo("After astra_update");
+      astra_status_t rc = astra_reader_open_frame(reader, 500, &frame);
+      // PrintRosInfo("After astra_update");
       if (rc == ASTRA_STATUS_SUCCESS)
       {
-        
+    	PrintRosInfo("OK");
         astra_bodyframe_t bodyFrame;
         astra_frame_get_bodyframe(frame, &bodyFrame);
 
@@ -281,7 +285,12 @@ private:
         output_frame(bodyFrame);
         astra_reader_close_frame(&frame);
       }
+      else
+      {
+    	  PrintRosInfo("FAIL");
+    	  printf("ASTRA_STATUS: %d \n", rc);
 
+      }
       //  read depth data if needed
       //  ...
 
