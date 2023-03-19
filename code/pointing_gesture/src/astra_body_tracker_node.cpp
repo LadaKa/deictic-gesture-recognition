@@ -131,7 +131,7 @@ public:
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
 
-      if (detect_both_hands_grip(body))
+      if ( detect_left_hand_raised_gesture(&skeleton_data))
       {
         // detect pointing gesture
         PointingGesture pointingGesture(
@@ -163,6 +163,21 @@ public:
     }
   }
 
+  bool detect_left_hand_raised_gesture(pointing_gesture::Skeleton_<pointing_gesture::Skeleton> *skeleton_data)
+  {
+    // TODO: hand/elbow ~ 0.00 ?
+    bool raised_hand_detected = &skeleton_data->joint_position_left_elbow.z > &skeleton_data->joint_position_left_shoulder.z;
+
+    if (raised_hand_detected)
+    {
+      printf("Left hand raised - vertical coord:\n elbow ~ %f \n shoulder ~ %f",
+        &skeleton_data->joint_position_left_elbow.z,
+        &skeleton_data->joint_position_left_shoulder.z);
+    }
+    return raised_hand_detected;
+  }
+
+  // grip detection doesn't work as expected 
   bool detect_both_hands_grip(const astra_body_t *body)
   {
     const astra_handpose_info_t *handPoses = &body->handPoses;
@@ -267,15 +282,13 @@ private:
     do
     {
       //  read skeleton data
-      //PrintRosInfo("Before astra_update");
       
       astra_update();
       astra_reader_frame_t frame;
       astra_status_t rc = astra_reader_open_frame(reader, 500, &frame);
-      // PrintRosInfo("After astra_update");
+
       if (rc == ASTRA_STATUS_SUCCESS)
       {
-    	PrintRosInfo("OK");
         astra_bodyframe_t bodyFrame;
         astra_frame_get_bodyframe(frame, &bodyFrame);
 
