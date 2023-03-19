@@ -19,6 +19,18 @@
 
 #include "RVizMarkerBox.h"
 
+// detection frame [m]
+int min_center_x = 2;
+int max_center_x = 3;   // max depth for skeleton tracking is about 4 m
+int min_center_y = -1;
+int max_center_y = 1;
+int max_center_z = 0;
+
+// size limits [m]
+float max_bbox_x = 0.2;
+float max_bbox_y = 0.2;
+float max_bbox_z = 0.4;
+
 ObjectDetection::ObjectDetection(): 
     tfListener_(ObjectDetection::tf2_)
 {};
@@ -244,7 +256,8 @@ bool ObjectDetection::Detect(
 
                 if (j < objectsCount)
                 {
-                    if (CheckObjectProperties(maxPt, bb_size))
+
+                    if (CheckObjectProperties(obj_center, bb_size))
                     {
                         marker_r = marker_r + 0.2;
                         marker_g = marker_g - 0.2;
@@ -263,7 +276,7 @@ bool ObjectDetection::Detect(
                             "PCL OBJECT DETECTION: Detected object [%i].\n\t\tCenter: %f %f %f.\n\t\tMin: %f %f %f.\n",
                             j, 
                             obj_center.x, obj_center.y, obj_center.z,
-                            minPt.x, minPt.y, minPt.z); 
+                            minPt.x, minPt.y, minPt.z);
                     }
                     else
                         j--; //!!
@@ -297,16 +310,21 @@ bool ObjectDetection::CheckObjectProperties(
     pcl::PointXYZ obj_center,
     pcl::PointXYZ bb_size)
 {
-    // object detection frame:
-    // TODO: set as node param (robot will be moving towards objects)
-    if ((obj_center.x < 2.0) 
-        || (obj_center.x > 4.0)
-        || (obj_center.y < -1.0)
-        || (obj_center.y >  1.0))
-    {      
-        return false;
+    // object detection frame
+	// frame can be fixed (another cam will be used to get precise coordinates)
+
+    if ((obj_center.x >= min_center_x)
+        && (obj_center.x <= max_center_x)
+        && (obj_center.y >= min_center_y)
+        && (obj_center.y <= max_center_y)
+        && (obj_center.z <= max_center_z))
+
+    {                           
+        return true;
     }
-   
-    return true;
+
+    //ROS_INFO("PCL OBJECT DETECTION: Detected wrong object \n\t\tCenter: %f %f %f.\n\t\n",
+    //obj_center.x, obj_center.y, obj_center.z);
+    return false;
 
 }
