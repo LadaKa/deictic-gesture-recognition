@@ -130,10 +130,18 @@ public:
 
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
-
-      if ( detect_left_hand_raised_gesture(&skeleton_data))
+     
+      // detected pointing gesture?
+      if (
+        // left hand raised
+        (skeleton_data.joint_position_left_hand.z > skeleton_data.joint_position_left_shoulder.z) 
+        && 
+        // rigth arm pointing
+        (skeleton_data.joint_position_right_elbow.z > skeleton_data.joint_position_right_hand.z))
       {
-        // detect pointing gesture
+
+        trackedSkeleton.PrintAllJointsPositions();
+
         PointingGesture pointingGesture(
             skeleton_data.joint_position_right_elbow,
             skeleton_data.joint_position_right_hand,
@@ -161,20 +169,6 @@ public:
         } while (shouldContinue);
       }
     }
-  }
-
-  bool detect_left_hand_raised_gesture(pointing_gesture::Skeleton_<pointing_gesture::Skeleton> *skeleton_data)
-  {
-    // TODO: hand/elbow ~ 0.00 ?
-    bool raised_hand_detected = &skeleton_data->joint_position_left_elbow.z > &skeleton_data->joint_position_left_shoulder.z;
-
-    if (raised_hand_detected)
-    {
-      printf("Left hand raised - vertical coord:\n elbow ~ %f \n shoulder ~ %f",
-        &skeleton_data->joint_position_left_elbow.z,
-        &skeleton_data->joint_position_left_shoulder.z);
-    }
-    return raised_hand_detected;
   }
 
   // grip detection doesn't work as expected 
