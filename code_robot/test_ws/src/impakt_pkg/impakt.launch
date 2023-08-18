@@ -38,16 +38,16 @@
 
   <!-- UR-5 -->
 
-  <include file="$(dirname)/ur_gazebo/ur5_bringup.launch">
+  <include file="$(find ur_gazebo)/ur5_bringup.launch">
     <arg name='tf_prefix' value=''/>
      <arg name="gazebo_world" value="worlds/empty.world"/>
   </include>
 
-  <include file="$(dirname)/ur5_moveit_config/launch/moveit_planning_execution.launch">
+  <include file="$(find ur5_moveit_config)/launch/moveit_planning_execution.launch">
     <arg name='sim' value='true'/>
   </include>
 
-  <include file="$(dirname)/ur5_moveit_config/launch/moveit_rviz.launch">
+  <include file="$(find ur5_moveit_config)/launch/moveit_rviz.launch">
   </include>
 
 </launch>
