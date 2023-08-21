@@ -27,12 +27,17 @@
           This macro is NOT part of the public API of the ur_description pkg,
           and as such should be considered to be for internal use only.
   -->
-  <xacro:macro name="read_model_data" params="joint_limits_parameters_file kinematics_parameters_file physical_parameters_file visual_parameters_file">
+  <xacro:macro name="read_model_data" params="
+  joint_limits_parameters_file:='$(find ur_description)/config/ur5/joint_limits.yaml'
+   kinematics_parameters_file:='$(find ur_description)/config/ur5/default_kinematics.yaml'
+   physical_parameters_file:='$(find ur_description)/config/ur5/physical_parameters.yaml'
+   visual_parameters_file:='$(find ur_description)/config/ur5/visual_parameters.yaml'
+   ">
     <!-- Read .yaml files from disk, load content into properties -->
-    <xacro:property name="config_joint_limit_parameters" value="${xacro.load_yaml(joint_limits_parameters_file)}"/>
-    <xacro:property name="config_kinematics_parameters" value="${xacro.load_yaml(kinematics_parameters_file)}"/>
-    <xacro:property name="config_physical_parameters" value="${xacro.load_yaml(physical_parameters_file)}"/>
-    <xacro:property name="config_visual_parameters" value="${xacro.load_yaml(visual_parameters_file)}"/>
+    <xacro:property name="config_joint_limit_parameters" value="${xacro.load_yaml('./joint_limits.yaml')}"/>
+    <xacro:property name="config_kinematics_parameters" value="${xacro.load_yaml('./default_kinematics.yaml')}"/>
+    <xacro:property name="config_physical_parameters" value="${xacro.load_yaml('./physical_parameters.yaml')}"/>
+    <xacro:property name="config_visual_parameters" value="${xacro.load_yaml('./visual_parameters.yaml')}"/>
 
     <!-- Extract subsections from yaml dictionaries -->
     <xacro:property name="sec_limits" value="${config_joint_limit_parameters['joint_limits']}"/>
