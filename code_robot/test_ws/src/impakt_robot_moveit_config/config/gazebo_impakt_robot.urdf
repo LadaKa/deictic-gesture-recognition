@@ -55,9 +55,9 @@
             <publishTf>true</publishTf>
             <publishOdomTF>true</publishOdomTF>
         </plugin>
-        <plugin name="gazebo_ros_control">
+        <!--plugin name="gazebo_ros_control">
             <robotNamespace>/</robotNamespace>
-        </plugin>
+        </plugin-->
     </gazebo>
     <gazebo reference="lidar_1_link">
         <sensor name="lidar_1_link" type="ray">
@@ -919,12 +919,7 @@
       Inject Gazebo ROS Control plugin, which allows us to use ros_control
       controllers to control the virtual robot hw.
     -->
-    <gazebo>
-        <plugin filename="libgazebo_ros_control.so" name="ros_control">
-            <!--robotNamespace>/</robotNamespace-->
-            <!--robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType-->
-        </plugin>
-    </gazebo>
+
     <!--
     Attach the Gazebo model to Gazebo's world frame.
 

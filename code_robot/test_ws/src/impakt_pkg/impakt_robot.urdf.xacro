@@ -55,9 +55,7 @@
             <publishTf>true</publishTf>
             <publishOdomTF>true</publishOdomTF>
         </plugin>
-        <plugin name="gazebo_ros_control">
-            <robotNamespace>/</robotNamespace>
-        </plugin>
+
     </gazebo>
     <gazebo reference="lidar_1_link">
         <sensor name="lidar_1_link" type="ray">
