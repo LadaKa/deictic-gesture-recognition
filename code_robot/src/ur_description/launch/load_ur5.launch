@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <launch>
   <!--ur5 parameters files -->
-  <arg name="joint_limit_params" default="$(find impakt_pkg)/joint_limits.yaml"/>
-  <arg name="kinematics_params" default="$(find impakt_pkg)/default_kinematics.yaml"/>
-  <arg name="physical_params" default="$(find impakt_pkg)/physical_parameters.yaml"/>
-  <arg name="visual_params" default="$(find impakt_pkg)/visual_parameters.yaml"/>
+  <arg name="joint_limit_params" default="$(find ur_description)/config/ur5/joint_limits.yaml"/>
+  <arg name="kinematics_params" default="$(find ur_description)/config/ur5/default_kinematics.yaml"/>
+  <arg name="physical_params" default="$(find ur_description)/config/ur5//physical_parameters.yaml"/>
+  <arg name="visual_params" default="$(find ur_description)/config/ur5//visual_parameters.yaml"/>
   <!--common parameters -->
   <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
   <arg name="safety_limits" default="false" doc="If True, enable the safety limits controller"/>
