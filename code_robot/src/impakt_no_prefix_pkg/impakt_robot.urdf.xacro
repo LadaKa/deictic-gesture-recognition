@@ -34,7 +34,7 @@
   <origin xyz="2 2 0"/>
 
 
-  <xacro:include filename="$(find impakt-robot)/ur_macro.xacro"/>
+  <xacro:include filename="$(find impakt_no_prefix_pkg)/ur_macro.xacro"/>
 
   <!--Declare arguments -->
   <xacro:arg name="joint_limit_params" default=""/>
@@ -56,8 +56,9 @@
   <xacro:arg name="safety_k_position" default="20"/>
 
   <!-- Instantiate the Gazebo robot and pass it all the required arguments. -->
+  <!-- Removed prefix 'ur5_' -->
   <xacro:ur_robot_gazebo
-    prefix="ur5_"
+    prefix="" 
     joint_limits_parameters_file="$(arg joint_limit_params)"
     kinematics_parameters_file="$(arg kinematics_params)"
     physical_parameters_file="$(arg physical_params)"
@@ -76,9 +77,10 @@
     here. Create a NEW xacro instead and decide whether you need to add
     a 'world' link there.
   -->
+  <!-- Removed prefix 'ur5_' from base_link-->
   <joint name="world_joint" type="fixed">
       <parent link="above_body_platform_link"/>
-      <child link="ur5_base_link"/>
+      <child link="base_link"/>
       <origin xyz="0.05 0 0.075" rpy="0 0 0"/>
   </joint>
 
