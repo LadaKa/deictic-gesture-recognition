@@ -13,7 +13,7 @@
   <arg name="safety_pos_margin" default="0.15" doc="The lower/upper limits in the safety controller" />
   <arg name="safety_k_position" default="20" doc="Used to set k position in the safety controller" />
 
-  <arg name="robot_model" value="impakt_robot" />
+  <arg name="robot_model" value="ur5" />
 
   <!-- 'load_ur.launch': 
 
