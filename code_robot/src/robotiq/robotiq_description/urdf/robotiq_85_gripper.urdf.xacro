@@ -2,7 +2,7 @@
 
 <robot name="robotiq_85_gripper" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.transmission.xacro" />
+  <xacro:include filename="$(find robotiq)/robotiq_description/urdf/robotiq_85_gripper.transmission.xacro" />
   
   <xacro:macro name="robotiq_85_gripper" params="prefix parent *origin">
 
@@ -15,12 +15,12 @@
     <link name="${prefix}robotiq_85_base_link">
       <visual>
         <geometry>
-          <mesh filename="package://robotiq_description/meshes/visual/robotiq_85_base_link.dae"/>
+          <mesh filename="$(find robotiq)/robotiq_description/meshes/visual/robotiq_85_base_link.dae"/>
         </geometry>
       </visual>
       <collision>
         <geometry>
-          <mesh filename="package://robotiq_description/meshes/collision/robotiq_85_base_link.stl"/>
+          <mesh filename="$(find robotiq)/robotiq_description/meshes/collision/robotiq_85_base_link.stl"/>
         </geometry>
       </collision>
       <inertial>

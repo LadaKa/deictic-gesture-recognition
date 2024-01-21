@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mp_500">
+
+<xacro:macro name="above_body_box" params="name parent *origin">
+    <joint name="${name}_joint" type="fixed">
+        <xacro:insert_block name="origin" />
+        <axis xyz="0 0 0" />
+        <parent link="${parent}" />
+        <child link="${name}_link" />
+    </joint>
+    
+    <link name="${name}_link">
+        <inertial>
+            <mass value="15" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="0" ixy="0.0" ixz="0.0"
+                    iyy="0" iyz="0.0" 
+                    izz="0" />
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+            <box size="0.23 0.4 0.3"/>
+            </geometry>
+            <material name="grey">
+                <color rgba="0.7 0.7 0.7 1"/>
+            </material>
+        </visual>
+
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="0.23 0.4 0.3"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <gazebo reference="above_body_box_link">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+</xacro:macro>
+
+</robot>
