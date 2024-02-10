@@ -37,6 +37,22 @@
         <joint name="ur5_wrist_2_joint" value="-1.4023"/>
         <joint name="ur5_wrist_3_joint" value="0"/>
     </group_state>
+    <group_state name="test_forward_1" group="manipulator">
+        <joint name="ur5_elbow_joint" value="0.8767"/>
+        <joint name="ur5_shoulder_lift_joint" value="-1.5484"/>
+        <joint name="ur5_shoulder_pan_joint" value="-0.1461"/>
+        <joint name="ur5_wrist_1_joint" value="-1.1689"/>
+        <joint name="ur5_wrist_2_joint" value="-1.5708"/>
+        <joint name="ur5_wrist_3_joint" value="-2.0091"/>
+    </group_state>
+    <group_state name="test_forward_2" group="manipulator">
+        <joint name="ur5_elbow_joint" value="1.7169"/>
+        <joint name="ur5_shoulder_lift_joint" value="-1.0959"/>
+        <joint name="ur5_shoulder_pan_joint" value="-0.1461"/>
+        <joint name="ur5_wrist_1_joint" value="-2.1918"/>
+        <joint name="ur5_wrist_2_joint" value="-1.3151"/>
+        <joint name="ur5_wrist_3_joint" value="-2.0091"/>
+    </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
