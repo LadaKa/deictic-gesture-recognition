@@ -13,45 +13,29 @@
         <chain base_link="ur5_base_link" tip_link="ur5_wrist_3_link"/>
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="default_forward" group="manipulator">
-        <joint name="ur5_elbow_joint" value="0"/>
-        <joint name="ur5_shoulder_lift_joint" value="0"/>
-        <joint name="ur5_shoulder_pan_joint" value="0"/>
-        <joint name="ur5_wrist_1_joint" value="0"/>
-        <joint name="ur5_wrist_2_joint" value="0"/>
+    <group_state name="down" group="manipulator">
+        <joint name="ur5_elbow_joint" value="0.4317"/>
+        <joint name="ur5_shoulder_lift_joint" value="0.0419"/>
+        <joint name="ur5_shoulder_pan_joint" value="1.4389"/>
+        <joint name="ur5_wrist_1_joint" value="-2.3502"/>
+        <joint name="ur5_wrist_2_joint" value="-1.1"/>
         <joint name="ur5_wrist_3_joint" value="0"/>
     </group_state>
     <group_state name="default_up" group="manipulator">
-        <joint name="ur5_elbow_joint" value="-0.0298"/>
-        <joint name="ur5_shoulder_lift_joint" value="-1.5484"/>
-        <joint name="ur5_shoulder_pan_joint" value="-0.0298"/>
-        <joint name="ur5_wrist_1_joint" value="-1.5782"/>
-        <joint name="ur5_wrist_2_joint" value="-1.6378"/>
+        <joint name="ur5_elbow_joint" value="0"/>
+        <joint name="ur5_shoulder_lift_joint" value="-1.57"/>
+        <joint name="ur5_shoulder_pan_joint" value="0"/>
+        <joint name="ur5_wrist_1_joint" value="-1.57"/>
+        <joint name="ur5_wrist_2_joint" value="0"/>
         <joint name="ur5_wrist_3_joint" value="0"/>
     </group_state>
-    <group_state name="camera_down" group="manipulator">
-        <joint name="ur5_elbow_joint" value="0.9561"/>
-        <joint name="ur5_shoulder_lift_joint" value="-0.4467"/>
-        <joint name="ur5_shoulder_pan_joint" value="-0.0298"/>
-        <joint name="ur5_wrist_1_joint" value="-2.0944"/>
-        <joint name="ur5_wrist_2_joint" value="-1.4023"/>
+    <group_state name="forward" group="manipulator">
+        <joint name="ur5_elbow_joint" value="-0.1918"/>
+        <joint name="ur5_shoulder_lift_joint" value="0.2398"/>
+        <joint name="ur5_shoulder_pan_joint" value="1.4389"/>
+        <joint name="ur5_wrist_1_joint" value="-1.8226"/>
+        <joint name="ur5_wrist_2_joint" value="-1.1"/>
         <joint name="ur5_wrist_3_joint" value="0"/>
-    </group_state>
-    <group_state name="test_forward_1" group="manipulator">
-        <joint name="ur5_elbow_joint" value="0.8767"/>
-        <joint name="ur5_shoulder_lift_joint" value="-1.5484"/>
-        <joint name="ur5_shoulder_pan_joint" value="-0.1461"/>
-        <joint name="ur5_wrist_1_joint" value="-1.1689"/>
-        <joint name="ur5_wrist_2_joint" value="-1.5708"/>
-        <joint name="ur5_wrist_3_joint" value="-2.0091"/>
-    </group_state>
-    <group_state name="test_forward_2" group="manipulator">
-        <joint name="ur5_elbow_joint" value="1.7169"/>
-        <joint name="ur5_shoulder_lift_joint" value="-1.0959"/>
-        <joint name="ur5_shoulder_pan_joint" value="-0.1461"/>
-        <joint name="ur5_wrist_1_joint" value="-2.1918"/>
-        <joint name="ur5_wrist_2_joint" value="-1.3151"/>
-        <joint name="ur5_wrist_3_joint" value="-2.0091"/>
     </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
