@@ -10,4 +10,4 @@ controller_list:
       - ur5_wrist_3_joint
 initial:  # Define initial robot poses per group
   - group: manipulator
-    pose: default_forward
+    pose: down
