@@ -1,0 +1,7 @@
+image: impakt_2024_map.pgm
+resolution: 0.030000
+origin: [-36.330000, -36.330000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+
