@@ -1,0 +1,46 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/ladak/Desktop/WS_2024/devel/include/**",
+        "/home/ladak/Desktop/ws_moveit/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_planners/chomp/chomp_motion_planner/include/**",
+        "/home/ladak/Desktop/WS_2024/src/Universal_Robots_ROS_Driver/controller_stopper/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/geometric_shapes/include/**",
+        "/home/ladak/Desktop/WS_2024/src/lidar_scan_subscriber/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_planners/chomp/chomp_interface/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit_resources/prbt_ikfast_manipulator_plugin/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_ros/benchmarks/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_plugins/moveit_ros_control_interface/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_ros/move_group/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_ros/occupancy_map_monitor/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_ros/robot_interaction/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_ros/moveit_servo/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_setup_assistant/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_plugins/moveit_simple_controller_manager/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit_visual_tools/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_planners/pilz_industrial_motion_planner/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/moveit/moveit_planners/pilz_industrial_motion_planner_testutils/include/**",
+        "/home/ladak/Desktop/WS_2024/src/remote_commands/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/rviz_visual_tools/include/**",
+        "/home/ladak/Desktop/ws_moveit/src/srdfdom/include/**",
+        "/home/ladak/Desktop/WS_2024/src/Universal_Robots_ROS_Driver/ur_calibration/include/**",
+        "/home/ladak/Desktop/WS_2024/src/Universal_Robots_Client_Library/include/**",
+        "/home/ladak/Desktop/WS_2024/src/Universal_Robots_ROS_Driver/ur_robot_driver/include/**",
+        "/home/ladak/Desktop/WS_2024/src/wsg_50_driver/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
