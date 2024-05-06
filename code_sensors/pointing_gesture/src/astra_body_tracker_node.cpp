@@ -204,7 +204,7 @@ public:
 
     } while (shouldContinue && !objectsDetected);
 
-    sleep(10);//sleeps for 3 second
+    sleep(5); //sleeps for 5 second
 
     if (shouldContinue)
     {

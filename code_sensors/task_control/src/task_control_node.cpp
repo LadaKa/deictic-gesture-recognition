@@ -5,6 +5,9 @@
 #include <std_msgs/Int32.h>
 #include <geometry_msgs/Point32.h>
 
+#include <iostream>
+#include <fstream>
+
 // TODO: fix 'existing target error' when added as dependence
 // #include "/home/lada/cat_git/src/pcl_object_detection/include/DetectedObjects.h"
 #include "//home/robot/catkin_ws/src/pcl_object_detection/include/DetectedObjects.h"
@@ -65,6 +68,38 @@ private:
         }
     }
 
+    void WriteResultToTempFile(int selectedObjectIndex)
+    {
+        std::ofstream result_file;
+       // result_filename = "~/Desktop/result.txt";
+        result_file.open("/home/robot/Desktop/result.txt"); // TODO: temp
+
+        result_file << detectedObjectsCount << "\n";
+        if (!result_file.is_open())
+        {
+            ROS_INFO("Can't open result file.");
+            return;
+        }
+
+        for (int i = 0; i < detectedObjectsCount; i++)
+        {
+            result_file 
+                << detectedObjectsCenters[i].x
+                << " "
+                << detectedObjectsCenters[i].y
+                << " "
+                << detectedObjectsCenters[i].z
+                << "\n";
+
+        };
+
+        result_file << selectedObjectIndex << "\n";
+
+        result_file.close();
+
+        ROS_INFO("Result was written to result file.");
+    }
+
     // returns index of object that is nearest to pointed floor intersection)
     int GetPointedObjectIndex(const geometry_msgs::Point32::ConstPtr &pointedFloorIntersection)
     {
@@ -85,13 +120,32 @@ private:
             }
         }
 
+        ROS_INFO("RESULT: \n");
+
         ROS_INFO(
-            "TASK_CONTROL: Pointed object:\n\t\tIndex: %d.\n\t\tDistance: %f\n",
+            "Pointed object:\t\tIndex: %d.\t\tDistance: %f\n",
             minDistanceIndex,
             minDistance);
 
+        ROS_INFO("Detected objects centers:\n");
+        for (int i = 0; i < detectedObjectsCount; i++)
+        {
+            ROS_INFO("[%d]:\t%f \t %f \t %f \n",
+                i,
+                detectedObjectsCenters[i].x,
+                detectedObjectsCenters[i].y,
+                detectedObjectsCenters[i].z);
+
+        };
+
+        WriteResultToTempFile(minDistanceIndex);
+
+        // TODO: refactor
+        system("/bin/bash -c /home/robot/hello.sh");
+
         return minDistanceIndex;
     }
+
 
 public:
     task_control_node(std::string name) : _name(name)
@@ -120,6 +174,7 @@ public:
             if (pointedObjectSelected)
             {
                 pub_pointed_object_index.publish(pointedObjectIndexMsg);
+
             }
             ros::spinOnce();
 
