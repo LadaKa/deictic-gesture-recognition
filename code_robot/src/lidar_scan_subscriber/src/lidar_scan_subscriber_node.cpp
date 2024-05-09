@@ -22,7 +22,7 @@ class lidar_scan_subscriber_node
         }
     */
 
-    float maxNearRange = 1.5;
+    float maxNearRange = 1.0;
 
     float maxDifference = 0.2;
 
@@ -30,7 +30,7 @@ class lidar_scan_subscriber_node
 
     float angle_increment = 0.008808203972876072;
 
-    int ur_base_shift_Y = 20; // TODO
+    int ur_base_shift_Y = 0.2;
 
     struct Point
     {
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
     //  rangeIndex and range of detected near objects
     std::map<int, float> nearObjects = node->selectNearObjects(lidar_scan_msg->ranges);
-    printAllObjectsCoordinates(nearObjects);
+    node->printAllObjectsCoordinates(nearObjects);
 
     ros::spin();
     return 0;
