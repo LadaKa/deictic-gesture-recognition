@@ -22,11 +22,25 @@ class lidar_scan_subscriber_node
         }
     */
 
-    float maxNearRange = 1.5;
+    float maxNearRange = 1.0;
 
     float maxDifference = 0.2;
 
     int rangesCount = 536;
+
+    float angle_increment = 0.008808203972876072;
+
+    int ur_base_shift_Y = 0.2;
+
+    struct Point
+    {
+        float x, y;
+        Point(float x_coord, float y_coord)
+        {
+            this->x = x_coord;
+            this->y = y_coord;
+        }
+    };
 
 public:
     std::map<int, float> selectNearObjects(std::vector<float> ranges)
@@ -67,6 +81,38 @@ public:
         std::cout << std::endl;
         return nearObjects;
     }
+
+    // lidar coordinates of detected object (origin in lidar)
+    Point getObjectLidarCoordinates(
+        int rangeIndex, float range, int zeroAngleIndex, float rad)
+    {
+        // angle in degrees
+        float theta = (rangeIndex - zeroAngleIndex) * angle_increment * rad;
+
+        float x = range * cos(theta);
+        float y = range * sin(theta);
+
+        std::cout << "Lidar: " << x << "  " << y << "\n";
+
+        return Point(x, y);
+    }
+
+    // convert lidar coordinates of all detected objects
+    // to UR arm coordinates
+    // TODO: rename and return result as map
+    void printAllObjectsCoordinates(std::map<int, float> objectsRanges)
+    {
+        float rad = 180 / M_PI;
+        int zeroAngleIndex = rangesCount / 2;
+
+        for (const auto &pair : objectsRanges)
+        {
+            Point lidarCoord = getObjectLidarCoordinates(
+                pair.first, pair.second, zeroAngleIndex, rad);
+            // TODO: -Y?
+            std::cout << "UR arm: " << -(pair.first) * 1000 << "  " << (pair.second + ur_base_shift_Y) * 1000 << "\n";
+        }
+    }
 };
 
 int main(int argc, char *argv[])
@@ -85,6 +131,7 @@ int main(int argc, char *argv[])
 
     //  rangeIndex and range of detected near objects
     std::map<int, float> nearObjects = node->selectNearObjects(lidar_scan_msg->ranges);
+    node->printAllObjectsCoordinates(nearObjects);
 
     ros::spin();
     return 0;
