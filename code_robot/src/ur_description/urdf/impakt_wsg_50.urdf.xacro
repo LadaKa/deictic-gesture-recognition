@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+        xmlns:xacro="http://ros.org/wiki/xacro"
+	name="wsg_50_coupler">
+
+<xacro:include filename="$(find impakt_pkg)/impakt_robot.urdf.xacro" />
+<xacro:include filename="$(find wsg_50_simulation)/urdf/wsg_50.urdf.xacro" />
+ 
+
+  <!-- Wsg Coupler -->
+  <!--  + Height added by the coupler: 8mm -->
+  <!--  + Reference frame: at the middle (4mm) -->
+  <link name="wsg_coupler">
+
+    <inertial>
+      <origin xyz="2.073e-05   1.45286e-03  -1.1049e-03" rpy="0 0 0" />
+      <mass value="0.168" />
+      <inertia ixx="6.69695624e-05" ixy="5.21511788e-09" ixz="-2.74383009e-08" 
+               iyy="7.85088161e-05" iyz="5.41105193e-07" izz="1.41819717e-04"/>
+    </inertial>
+  </link>
+
+  <joint name="wsg_coupler_joint" type="fixed">
+    <origin xyz="0 0 0.004" rpy="0 0 0" />
+    <parent link="ur5_tool0"/>
+    <child link="wsg_coupler"/>
+  </joint>
+  <gazebo reference="wsg_coupler">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+    
+  <!-- Attach the wsg gripper -->
+  <xacro:wsg_50_xacro parent="wsg_coupler" finger_length="0.023" finger_tip="0" name="wsg_50">
+    <origin xyz="0 0 0.004" rpy="0 0 0"/>
+  </xacro:wsg_50_xacro> 
+  
+  <!-- Gazebo FT sensor plugin -->
+  <gazebo reference="wrist_3_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo>
+    <plugin name="ft_sensor_plugin" filename="libgazebo_ros_ft_sensor.so">
+      <updateRate>250.0</updateRate>
+      <topicName>ft_sensor/raw</topicName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <jointName>wrist_3_joint</jointName>
+    </plugin>
+  </gazebo>
+  
+  <!-- Gazebo grasping plugin -->
+ 
+  
+</robot>
