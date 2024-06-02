@@ -87,7 +87,7 @@ public:
         int rangeIndex, float range, int zeroAngleIndex, float rad)
     {
         // angle in degrees
-        float theta = (rangeIndex - zeroAngleIndex) * angle_increment * rad;
+        float theta = 90 + ((zeroAngleIndex - rangeIndex) * angle_increment * rad);
 
         float x = range * cos(theta);
         float y = range * sin(theta);
@@ -97,9 +97,21 @@ public:
         return Point(x, y);
     }
 
+    Point convertLidarToURCoordinates(Point lidarCoordinates)
+    {
+        // flip over X axis
+        float ur_x = - lidarCoordinates.x;
+
+        // shift along Y axis (forward)
+        float ur_y = lidarCoordinates.y - ur_base_shift_Y;
+
+        return Point(ur_x, ur_y);
+    }
+
     // convert lidar coordinates of all detected objects
     // to UR arm coordinates
-    // TODO: rename and return result as map
+
+    // TODO: rename and return result as map; units?
     void printAllObjectsCoordinates(std::map<int, float> objectsRanges)
     {
         float rad = 180 / M_PI;
@@ -109,8 +121,10 @@ public:
         {
             Point lidarCoord = getObjectLidarCoordinates(
                 pair.first, pair.second, zeroAngleIndex, rad);
-            // TODO: -Y?
-            std::cout << "UR arm: " << -(pair.first) * 1000 << "  " << (pair.second + ur_base_shift_Y) * 1000 << "\n";
+            
+            Point urCoord = convertLidarToURCoordinates(lidarCoord);
+
+            std::cout << "UR arm: " << urCoord.x << "  " << urCoord.y << "\n";
         }
     }
 };
