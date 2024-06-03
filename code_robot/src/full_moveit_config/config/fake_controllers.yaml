@@ -8,11 +8,8 @@ controller_list:
       - ur5_wrist_1_joint
       - ur5_wrist_2_joint
       - ur5_wrist_3_joint
-  - name: fake_gripper_controller
-    type: $(arg fake_execution_type)
-    joints:
-      - wsg_50_finger_left_joint
-      - wsg_50_finger_right_joint
 initial:  # Define initial robot poses per group
-  - group: gripper
-    pose: open
+#  - group: manipulator
+#    pose: home
+
+  []
