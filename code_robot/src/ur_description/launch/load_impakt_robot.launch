@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!-- Launch file for impakt robot - replaces files 'load_ur5.launch' and 'load_ur.launch' -->
 <launch>
-  <!--ur5/impakt parameters files -->
-  <arg name="joint_limit_params" default="$(find full_moveit_config)/config/joint_limits.yaml"/>
+  <!--ur5 parameters files -->
+  <arg name="joint_limit_params" default="$(find ur_description)/config/ur5/joint_limits_limited_wrist.yaml"/>
   <arg name="kinematics_params" default="$(find ur_description)/config/ur5/default_kinematics.yaml"/>
   <arg name="physical_params" default="$(find ur_description)/config/ur5/physical_parameters.yaml"/>
   <arg name="visual_params" default="$(find ur_description)/config/ur5/visual_parameters.yaml"/>

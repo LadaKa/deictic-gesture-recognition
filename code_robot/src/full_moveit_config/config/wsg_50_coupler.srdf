@@ -14,10 +14,10 @@
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="forward_down" group="manipulator">
-        <joint name="ur5_elbow_joint" value="1.1018"/>
-        <joint name="ur5_shoulder_lift_joint" value="-0.3824"/>
+        <joint name="ur5_elbow_joint" value="0.4317"/>
+        <joint name="ur5_shoulder_lift_joint" value="0.1095"/>
         <joint name="ur5_shoulder_pan_joint" value="1.4668"/>
-        <joint name="ur5_wrist_1_joint" value="-2.4222"/>
+        <joint name="ur5_wrist_1_joint" value="-2.0798"/>
         <joint name="ur5_wrist_2_joint" value="-1.423"/>
         <joint name="ur5_wrist_3_joint" value="-0.0219"/>
     </group_state>
@@ -37,10 +37,8 @@
         <joint name="ur5_wrist_2_joint" value="-1.5544"/>
         <joint name="ur5_wrist_3_joint" value="-0.0657"/>
     </group_state>
-    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
-    <end_effector name="gripper" parent_link="ur5_tool0" group="manipulator"/>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
-    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="ur5_base_link"/>
+    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
     <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
     <passive_joint name="wheel_left_joint"/>
     <passive_joint name="wheel_right_joint"/>

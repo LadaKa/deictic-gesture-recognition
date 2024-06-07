@@ -13,7 +13,7 @@ offsets:
   elbow_offset: 0.0165 # measured from model
 
 inertia_parameters:
-  base_mass: 1.9  # 19kg - sum of masses below
+  base_mass: 4.0  # This mass might be incorrect
   shoulder_mass: 3.7000
   upper_arm_mass: 8.3930
   upper_arm_inertia_offset: 0.136

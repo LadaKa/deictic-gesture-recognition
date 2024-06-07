@@ -30,7 +30,7 @@ class lidar_scan_subscriber_node
 
     float angle_increment = 0.008808203972876072;
 
-    int ur_base_shift_Y = 0.2;
+    int ur_base_shift_X = 0.2;
 
     struct Point
     {
@@ -99,11 +99,9 @@ public:
 
     Point convertLidarToURCoordinates(Point lidarCoordinates)
     {
-        // flip over X axis
-        float ur_x = - lidarCoordinates.x;
+        float ur_x = lidarCoordinates.y - 0.2; //ur_base_shift_X;
 
-        // shift along Y axis (forward)
-        float ur_y = lidarCoordinates.y - ur_base_shift_Y;
+        float ur_y = -lidarCoordinates.x;
 
         return Point(ur_x, ur_y);
     }
