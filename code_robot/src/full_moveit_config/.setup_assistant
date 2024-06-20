@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ur_description
+    relative_path: urdf/impakt_wsg_50.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/wsg_50_coupler.srdf
+  CONFIG:
+    author_name: ladak
+    author_email: ladagkudlackova@gmail.com
+    generated_timestamp: 1717616254

@@ -1,0 +1,139 @@
+2022-12-26:
+
+Notebook Acer (camera + ros packages for image processing):
+
+Installed:
+	Ubuntu 20.04
+	ROS Noetic
+		
+Getting Started with Neobotics MP-500 and the UR5 Robot
+
+-	Power on the robot arm amplifier on top of the mobile robot
+-	Power on the mobile robot by turning the key clockwise
+-	Power on the universal robot arm by pressing the power button on the teach pendant (touch screen)
+		- doesn't work - FIXED
+		
+		
+--------------------------------------------------------------------------------
+2022-12-27:
+
+Getting Started with Neobotics MP-500 and the UR5 Robot
+
+	Power on the universal robot arm by pressing the power button on the teach pendant (touch screen)
+		- didn't work - because of Neobotix 'emergency stop' state
+		
+	After the teach pendant is turned on, initialize the robot arm - OK
+	
+	The arm was manually (freedrive) set into the position to pick a small object from the floor - OK:
+		- reach of the arm is sufficient
+		- the distance to the object is ok (SICK lidar doesn't raise emergency stop)
+		
+
+	VNC View connected to the neobotix server - OK
+	
+	TODO: connect to ROS master  
+	
+------------------------------------------------------------------------------------
+2022-12-29:
+
+Connect to Neobotix ROS master:
+
+	ladak@ladak-ThinkStation-P330:~$ rosnode list
+	ERROR: Unable to communicate with master!
+
+	ladak@ladak-ThinkStation-P330:~$ export ROS_MASTER_URI=http://192.168.0.10:11311
+
+	ladak@ladak-ThinkStation-P330:~$ rosnode list
+		/joint_state_publisher
+		/joy_node
+		/kinematics_differential/neo_kinematics_differential_node
+		/lidar_1
+		/lidar_1/lidar_1_filter
+		/neo_teleop/neo_teleop_node
+		/relayboard_v2/relayboard_v2_node
+		/robot_state_publisher
+		/rosout
+
+
+Run the robot arm:
+	Run the below command on the DELL computer
+		roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=192.168.0.104 kinematics_config:=$(rospack find ur_calibration)/etc/ur5_calibration.yaml
+		OK
+	Run the ROS.urp file on the robot teach pendant -OK
+	Run the below command on the DELL computer but wait for each to finish
+		roslaunch ur5_moveit_config ur5_moveit_planning_execution.launch limited:=true
+		OK
+	Run this command on the DELL computer to move the arm
+		rosrun robot_arm_sequence robot_arm_sequence.py
+			-> 	Traceback (most recent call last):
+				File "/home/ladak/git/nail108-2021/getting_started/src/robot_arm_sequence/src/robot_arm_sequence.py", line 7, in <module>
+    				import moveit_commander
+				ModuleNotFoundError: No module named 'moveit_commander'
+	
+	Fixed by:			
+		sudo apt install ros-noetic-moveit
+		
+------------------------------------------------------------------------------------
+2022-12-30:
+
+Notebook Acer (camera + ros packages for image processing):
+
+Installed:
+	Ubuntu 20.04
+	ROS Noetic
+	
+ORBBEC Astra:
+	
+	1. 	Copy Astra SDK
+	2. 	Copy ROS packages
+	3. 	Install libuvc and libsfml:
+				sudo apt install libuvc-dev	# libuvc not available for noetic
+	4.	TODO: 	Install OpenNI
+	5. 	Set ENV vars
+	
+	
+ROS_PACKAGE_PATH=/home/ladak/catkin_ws/src/ros_astra_camera:/home/ladak/catkin_ws/src/pcl_object_detection:/home/ladak/catkin_ws/src/pointing_gesture:/home/ladak/catkin_ws/src/task_control:/home/ladak/catkin_ws/src/urdf_rviz:/opt/ros/noetic/share
+ASTRA_ROOT=/home/ladak/Desktop/AstraSDK
+ASTRA_SDK=/home/ladak/Desktop/AstraSDK
+ASTRA_SDK_LIB=/home/ladak/Desktop/AstraSDK/lib
+ASTRA_INCLUDE_DIR=/home/ladak/Desktop/AstraSDK/include
+LD_LIBRARY_PATH=/home/ladak/catkin_ws/devel/lib:/opt/ros/noetic/lib:/home/ladak/Desktop/AstraSDK/lib
+ASTRA_SDK_INCLUDE=/home/ladak/Desktop/AstraSDK/include
+
+	6. 	Build packages using catkin_make:
+				sudo apt-get install ros-noetic-tf2-sensor-msgs 
+
+		TODO:	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
