@@ -38,6 +38,7 @@
 
 // ros
 #include "ros/console.h"
+#include <rate.h>
 
 // Orbbec Astra SDK
 #include <astra/capi/astra.h>
@@ -107,7 +108,7 @@ public:
 
   void output_bodies_with_gestures(astra_bodyframe_t bodyFrame)
   {
-	astra_body_list_t bodyList;
+	  astra_body_list_t bodyList;
     const astra_status_t rc = astra_bodyframe_body_list(bodyFrame, &bodyList);
     if (rc != ASTRA_STATUS_SUCCESS)
     {
@@ -157,6 +158,9 @@ public:
         geometry_msgs::Point32 intersectionMsg = pointingGesture.GetIntersectionMessage();
         ros::Publisher intersectionPub = nh_.advertise<geometry_msgs::Point32>("body_tracker/intersection", 1);
 
+        // publish for 5 seconds
+        ros::Rate r(1); // 1 hz
+        int repeatCounter = 5;
         do
         {
           rVizPublisher.PublishSkeleton(skeleton_data);
@@ -164,9 +168,10 @@ public:
               &pointingGesture);
           
           intersectionPub.publish(intersectionMsg);
-          
+          r.sleep();
           ros::spinOnce();
-        } while (shouldContinue);
+          repeatCounter = repeatCounter - 1;
+        } while (shouldContinue && (repeatCounter > 0));
       }
     }
   }
@@ -196,7 +201,8 @@ public:
 
   void runLoop()
   {
-	PrintRosInfo("runLoop");
+	  PrintRosInfo("runLoop");
+    // shouldContinue - false 
     set_key_handler();
     do
     {

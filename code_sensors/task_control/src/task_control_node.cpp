@@ -37,6 +37,9 @@ private:
 
     geometry_msgs::Point32 detectedObjectsCenters[detectedObjectsCount];
 
+    float selected_object_x;
+    float selected_object_y;
+
     /*void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
     {
         // TODO: set proper published msg and subscriber
@@ -69,14 +72,16 @@ private:
             {
                 pointingGestureDetected = true;
                 pointedObjectIndexMsg.data = GetPointedObjectIndex(msg);
+                selected_object_x = msg->x;
+                selected_object_y = msg->y;
                 pointedObjectSelected = true;
             }
-            else
+            // TODO - this is ugly!
+            else if ((selected_object_x != msg->x) && (selected_object_y != msg->y)) 
             {
                 targetLocationSelected = true;
                 SendResultFile(pointedObjectIndexMsg.data, msg);
             }
-
             
         }
     }
