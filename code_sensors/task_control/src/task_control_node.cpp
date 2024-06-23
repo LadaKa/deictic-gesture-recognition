@@ -153,7 +153,7 @@ private:
                 << " "
                 << detectedObjectsCenters[i].y
                 << " "
-                << detectedObjectsCenters[i].z
+                << detectedObjectsCenters[i].z // TODO: camera z-coord!
                 << "\n";
 
         };
