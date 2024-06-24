@@ -40,6 +40,9 @@ private:
     float selected_object_x;
     float selected_object_y;
 
+    float camera_x = 0;
+    float camera_y = 5;
+
     /*void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
     {
         // TODO: set proper published msg and subscriber
@@ -136,8 +139,13 @@ private:
         float target_y)
     {
         std::ofstream result_file;
-        // TODO: temp filename + folder as arg (config)
+        // TODO: temp filename + folder and cam coords as arg (config) 
         result_file.open("/home/robot/Desktop/result.txt"); 
+
+        result_file << camera_x
+                    << " "
+                    << camera_y
+                    << "\n";
 
         result_file << detectedObjectsCount << "\n";
         if (!result_file.is_open())
