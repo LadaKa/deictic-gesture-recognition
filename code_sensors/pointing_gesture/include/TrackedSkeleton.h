@@ -18,6 +18,10 @@ private:
 
     void SetJointPositions(astra_body_t *body);
 
+    void PrintJointPosition(
+        std::string joint_name,
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> joint_position);
+
 public:
     TrackedSkeleton(astra_body_t *body);
 
@@ -26,6 +30,8 @@ public:
     void GetGestureJointPosition(
         geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_elbow,
         geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_hand);
+
+    void PrintAllJointsPositions();
 };
 
 #endif

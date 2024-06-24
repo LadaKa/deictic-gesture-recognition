@@ -20,7 +20,7 @@
 #include "RVizMarkerBox.h"
 
 // detection frame [m]
-int min_center_x = 2;
+int min_center_x = 1.8;
 int max_center_x = 3;   // max depth for skeleton tracking is about 4 m
 int min_center_y = -1;
 int max_center_y = 1;
