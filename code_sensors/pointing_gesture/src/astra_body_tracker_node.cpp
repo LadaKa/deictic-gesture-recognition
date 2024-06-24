@@ -38,7 +38,6 @@
 
 // ros
 #include "ros/console.h"
-#include <rate.h>
 
 // Orbbec Astra SDK
 #include <astra/capi/astra.h>
@@ -141,7 +140,7 @@ public:
         (skeleton_data.joint_position_right_elbow.z > skeleton_data.joint_position_right_hand.z))
       {
 
-        trackedSkeleton.PrintAllJointsPositions();
+       // trackedSkeleton.PrintAllJointsPositions();
 
         PointingGesture pointingGesture(
             skeleton_data.joint_position_right_elbow,
@@ -159,7 +158,7 @@ public:
         ros::Publisher intersectionPub = nh_.advertise<geometry_msgs::Point32>("body_tracker/intersection", 1);
 
         // publish for 5 seconds
-        ros::Rate r(1); // 1 hz
+        // ros::Rate r(1); // 1 hz
         int repeatCounter = 5;
         do
         {
@@ -168,10 +167,13 @@ public:
               &pointingGesture);
           
           intersectionPub.publish(intersectionMsg);
-          r.sleep();
+         // r.sleep();
           ros::spinOnce();
           repeatCounter = repeatCounter - 1;
-        } while (shouldContinue && (repeatCounter > 0));
+          sleep(1);
+        } while (shouldContinue && (repeatCounter > 0)); 
+
+        
       }
     }
   }

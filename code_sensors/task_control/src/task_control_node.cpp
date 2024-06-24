@@ -64,26 +64,35 @@ private:
 
     void pointed_intersection_cb(const geometry_msgs::Point32::ConstPtr &msg)
     {
+       // ROS_INFO("Intersection cb *********************************");
         // objects and both pointing gestures already detected
         if (targetLocationSelected)
             return;
-
+       // ROS_INFO("Intersection cb 2*********************************");
         if (objectsDetected)
-        {
+        {   
+           // ROS_INFO("Intersection cb object detected *************************");
             // first pointing gesture
             if (!pointedObjectSelected)
             {
+                ROS_INFO("First gesture *********************************");
                 pointingGestureDetected = true;
                 pointedObjectIndexMsg.data = GetPointedObjectIndex(msg);
                 selected_object_x = msg->x;
                 selected_object_y = msg->y;
                 pointedObjectSelected = true;
+                
             }
             // TODO - this is ugly!
             else if ((selected_object_x != msg->x) && (selected_object_y != msg->y)) 
             {
+                ROS_INFO("Second gesture *********************************");
                 targetLocationSelected = true;
                 SendResultFile(pointedObjectIndexMsg.data, msg);
+            }
+            else
+            {
+                //ROS_INFO("Else *********************************");
             }
             
         }
@@ -145,9 +154,9 @@ private:
         result_file << camera_x
                     << " "
                     << camera_y
-                    << "\n";
+                    << std::endl;
 
-        result_file << detectedObjectsCount << "\n";
+        result_file << detectedObjectsCount << std::endl;
         if (!result_file.is_open())
         {
             ROS_INFO("Can't open result file.");
@@ -162,16 +171,16 @@ private:
                 << detectedObjectsCenters[i].y
                 << " "
                 << detectedObjectsCenters[i].z // TODO: camera z-coord!
-                << "\n";
+                << std::endl;
 
         };
 
-        result_file << selectedObjectIndex << "\n";
+        result_file << selectedObjectIndex << std::endl;
 
         result_file << target_x
                     << " "
                     << target_y
-                    << "\n";
+                    << std::endl;
 
         result_file.close();
 
@@ -185,7 +194,7 @@ private:
     {
         WriteResultToTempFile(
             pointedObjectIndex,
-            pointedFloorIntersection->x;
+            pointedFloorIntersection->x,
             pointedFloorIntersection->y);
 
         ROS_INFO("Launching bash script to send results via ssh.");
