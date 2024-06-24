@@ -16,12 +16,15 @@
 #include <fstream> 
 #include <iostream> 
 
+using std::vector;
+using std::string;
+
 //  TODO:
 //        - add camera position to result file
 //        - add filename as arg
 //        - try-catch for parsing
 
-class test_ssh_commands_node
+class remote_commands_node
 
 {
 public:
@@ -41,50 +44,64 @@ public:
   vector<string> getWords(string line){
     vector<string> words;
     int pos = 0;
-    while(pos < s.size()){
-        pos = s.find(" ");
-        words.push_back(s.substr(0,pos));
-        s.erase(0, pos+1); 
+    while(pos < line.size()){
+        pos = line.find(" ");
+        //std::cout << pos << "\n"; 
+        words.push_back(line.substr(0,pos));
+        line.erase(0, pos+1); 
     }
+   // std::cout << line << "\n"; 
+   // std::cout << "End" << "\n"; 
+    words.push_back(line.substr(0,pos));
     return words;
   }
 
 
   void ParseResultFile(string filename)
   { 
-    ifstream resultFile(filename); 
+    
+    std::ifstream resultFile(filename); 
   
     vector<DetectedObject> detected_objects;
     string line; 
     vector<string> words;
 
-    if (file.is_open()) { 
-        line = getline(resultFile, line);
+    if (resultFile.is_open()) { 
+        ROS_INFO("Start parsing!");
+        getline(resultFile, line);
+        std::cout << line << "\n"; 
         words = getWords(line);
+        std::cout << words[0] << "\n"; 
+        std::cout << words[1] << "\n"; 
         float camera_x = std::stof(words[0]);
         float camera_y = std::stof(words[1]);
+        std::cout << camera_x << "\n"; 
+        std::cout << camera_y << "\n"; 
+        getline(resultFile, line);
 
-        int objectsCount = stoi(getline(resultFile, line));
-
+        int objectsCount = std::stoi(line);
         for (int i = 0; i < objectsCount; i++)
         {
           DetectedObject detected_object;
-          line = getline(resultFile, line);
+          getline(resultFile, line);
           vector<string> words = getWords(line);
           detected_object.x = std::stof(words[0]) + camera_x;
           detected_object.y = std::stof(words[1]) + camera_y;
           detected_object.z = std::stof(words[2]);
+          std::cout << detected_object.x << " " << detected_object.y << " " << detected_object.z << "\n"; 
           detected_objects.push_back(detected_object);
         }
         //cout << line << endl; 
-        
-        selectedObjectIndex = = stoi(getline(resultFile, line));
+        getline(resultFile, line);
+        selectedObjectIndex = std::stoi(line);
 
-        line = getline(resultFile, line);
+        getline(resultFile, line);
         words = getWords(line);
         target_x = std::stof(words[0]);
         target_y = std::stof(words[1]);
-        file.close(); 
+        std::cout << target_x << "\n"; 
+        std::cout << target_y << "\n"; 
+        resultFile.close(); 
     } 
     else { 
         ROS_INFO("Can't open file!"); 
@@ -96,13 +113,14 @@ public:
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "test_ssh_commands_node");
+  
+  ros::init(argc, argv, "remote_commands_node");
 
   ros::NodeHandle nh;
   ROS_INFO("Command message received!");
 
-  test_ssh_commands_node *node = new test_ssh_commands_node();
-  node->ParseResultFile("/home/lada/Desktop/result.txt");
+  remote_commands_node *node = new remote_commands_node();
+  node->ParseResultFile("/home/ladak/Desktop/result.txt");
 
   // TODO:
 
