@@ -32,6 +32,7 @@
 #include "std_msgs/String.h"
 #include "std_msgs/Int32.h"
 #include <std_msgs/Empty.h>
+#include <std_msgs/Bool.h>
 
 #include <sstream>
 #include <string>
@@ -89,6 +90,17 @@ public:
         1,
         &astra_body_tracker_node::object_detection_done_cb, this);
 
+
+    sub_pointing_upper_joint = nh_.subscribe(
+        "gui/pointing_upper_joint",
+        1,
+        &astra_body_tracker_node::pointing_upper_joint_cb, this);
+
+    sub_visible_pointing_ray = nh_.subscribe(
+        "gui/visible_pointing_ray",
+        1,
+        &astra_body_tracker_node::visible_pointing_ray_cb, this);
+
     // PUBLISHERS
     // Publish tracked person in 2D and 3D
     // 2D: x,y in camera frame.   3D: x,y,z in world coordinates
@@ -137,25 +149,24 @@ public:
      
       geometry_msgs::Point32_<pointing_gesture::Skeleton> current_upper_joint_position = getPointingUpperJointPosition(skeleton_data);
 
-      // detected pointing gesture?
+      // confirmed pointing gesture?
       if (
         // left hand raised
         (skeleton_data.joint_position_left_hand.z > skeleton_data.joint_position_head.z) 
         && 
-        // rigth arm pointing
+        // rigth arm pointing downward
         (current_upper_joint_position.z > skeleton_data.joint_position_right_hand.z))
       {
 
        // trackedSkeleton.PrintAllJointsPositions();
 
-       // TODO: switch first joint
        // PointingGesture::current_upper_joint = PointingGesture::r_elbow;
         PointingGesture pointingGesture(
           current_upper_joint_position,
           skeleton_data.joint_position_right_hand,
           skeleton_data.joint_position_right_foot);
 
-        PrintRosInfo("Gesture detected");
+        PrintRosInfo("Gesture confirmed");
         pointingPerson = &person;
 
         pointingPerson->SetPointingGesture(pointingGesture);
@@ -182,6 +193,26 @@ public:
 
         
       }
+      else if (
+        show_pointing_ray
+        &&
+        // rigth arm pointing downward
+        (current_upper_joint_position.z > skeleton_data.joint_position_right_hand.z))
+      {
+        PointingGesture pointingGesture(
+          current_upper_joint_position,
+          skeleton_data.joint_position_right_hand,
+          skeleton_data.joint_position_right_foot);
+
+        pointingPerson = &person;
+
+        pointingPerson->SetPointingGesture(pointingGesture);
+        pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
+        rVizPublisher.PublishSkeleton(skeleton_data);
+        rVizPublisher.PublishPointingGesture(
+              &pointingGesture);
+      }
+      
     }
   }
 
@@ -236,6 +267,8 @@ private:
       head
   } current_upper_joint;
   
+  bool show_pointing_ray = true;
+
   geometry_msgs::Point32_<pointing_gesture::Skeleton> getPointingUpperJointPosition(
     pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton)
   {
@@ -249,6 +282,24 @@ private:
             return skeleton.joint_position_head;
         default:
             return skeleton.joint_position_right_elbow;
+    }
+  }
+
+  void setCurrentUpperJoint(int index)
+  {
+    switch (index)
+    {
+        case 0:
+            current_upper_joint = r_elbow;
+            return;
+        case 1:
+            current_upper_joint = r_shoulder;
+            return;
+        case 2:
+            current_upper_joint = head;
+            return;
+        default:
+            return;
     }
   }
 
@@ -293,6 +344,20 @@ private:
     PrintRosInfo(
         "Received object_detection_done MSG");
     objectsDetected = true;
+  }
+
+  void pointing_upper_joint_cb(const std_msgs::Int32 &msg)
+  {
+    PrintRosInfo(
+        "Received pointing_upper_joint MSG");
+    setCurrentUpperJoint(msg.data);
+  }
+
+  void visible_pointing_ray_cb(const std_msgs::Bool::ConstPtr& msg)
+  {
+    PrintRosInfo(
+        "Received visible_pointing_ray MSG");
+    show_pointing_ray = msg->data;
   }
 
   // starts after receiving 'object_detection_done' msg
@@ -404,6 +469,8 @@ private:
   ros::Publisher marker_pub_;
 
   ros::Subscriber sub_object_detection_done;
+  ros::Subscriber sub_pointing_upper_joint;
+  ros::Subscriber sub_visible_pointing_ray;
 };
 
 // The main entry point for this node.
