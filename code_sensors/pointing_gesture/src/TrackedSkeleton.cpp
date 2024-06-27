@@ -50,6 +50,9 @@ pointing_gesture::Skeleton_<pointing_gesture::Skeleton> TrackedSkeleton::GetSkel
   return TrackedSkeleton::skeleton_data;
 }
 
+
+
+/*
 void TrackedSkeleton::GetGestureJointPosition(
     geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_elbow,
     geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_hand)
@@ -57,7 +60,7 @@ void TrackedSkeleton::GetGestureJointPosition(
   right_elbow = skeleton_data.joint_position_right_elbow;
   right_hand = skeleton_data.joint_position_right_hand;
 
-}
+} */
 
 void TrackedSkeleton::PrintAllJointsPositions()
 {

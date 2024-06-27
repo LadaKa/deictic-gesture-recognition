@@ -72,6 +72,7 @@
 class astra_body_tracker_node
 {
 public:
+
   astra_body_tracker_node(std::string name) : _name(name)
   {
     PrintRosInfo("Initializing.");
@@ -98,6 +99,9 @@ public:
 
     // Publish markers to show where robot thinks person is in RViz
     marker_pub_ = nh_.advertise<visualization_msgs::Marker>("body_tracker/marker", 1);
+
+    // default pointing upper joint is rigth elbow
+    current_upper_joint = r_elbow;
   }
 
   ~astra_body_tracker_node()
@@ -131,21 +135,25 @@ public:
       RVizPublisher rVizPublisher(marker_pub_);
       rVizPublisher.PublishSkeleton(skeleton_data);
      
+      geometry_msgs::Point32_<pointing_gesture::Skeleton> current_upper_joint_position = getPointingUpperJointPosition(skeleton_data);
+
       // detected pointing gesture?
       if (
         // left hand raised
-        (skeleton_data.joint_position_left_hand.z > skeleton_data.joint_position_left_shoulder.z) 
+        (skeleton_data.joint_position_left_hand.z > skeleton_data.joint_position_head.z) 
         && 
         // rigth arm pointing
-        (skeleton_data.joint_position_right_elbow.z > skeleton_data.joint_position_right_hand.z))
+        (current_upper_joint_position.z > skeleton_data.joint_position_right_hand.z))
       {
 
        // trackedSkeleton.PrintAllJointsPositions();
 
+       // TODO: switch first joint
+       // PointingGesture::current_upper_joint = PointingGesture::r_elbow;
         PointingGesture pointingGesture(
-            skeleton_data.joint_position_right_elbow,
-            skeleton_data.joint_position_right_hand,
-            skeleton_data.joint_position_right_foot);
+          current_upper_joint_position,
+          skeleton_data.joint_position_right_hand,
+          skeleton_data.joint_position_right_foot);
 
         PrintRosInfo("Gesture detected");
         pointingPerson = &person;
@@ -157,8 +165,7 @@ public:
         geometry_msgs::Point32 intersectionMsg = pointingGesture.GetIntersectionMessage();
         ros::Publisher intersectionPub = nh_.advertise<geometry_msgs::Point32>("body_tracker/intersection", 1);
 
-        // publish for 5 seconds
-        // ros::Rate r(1); // 1 hz
+        // publish current gesture for 5 seconds        
         int repeatCounter = 5;
         do
         {
@@ -221,6 +228,31 @@ public:
   }
 
 private:
+
+  enum pointing_upper_joint
+  { 
+      r_elbow, 
+      r_shoulder, 
+      head
+  } current_upper_joint;
+  
+  geometry_msgs::Point32_<pointing_gesture::Skeleton> getPointingUpperJointPosition(
+    pointing_gesture::Skeleton_<pointing_gesture::Skeleton> skeleton)
+  {
+    switch (current_upper_joint)
+    {
+        case r_elbow:
+            return skeleton.joint_position_right_elbow;
+        case r_shoulder:
+            return skeleton.joint_position_right_shoulder;
+        case head:
+            return skeleton.joint_position_head;
+        default:
+            return skeleton.joint_position_right_elbow;
+    }
+  }
+
+
   // only for debugging
   // height over floor issue
   // https://3dclub.orbbec3d.com/t/calculating-height-over-floor/1225/6
@@ -269,6 +301,8 @@ private:
     astra_streamsetconnection_t sensor;
     astra_reader_t reader;
     astra_bodystream_t bodyStream;
+
+
 
     // handle delayed ROS Astra Device stream termination
     bool astra_stream_started = false;

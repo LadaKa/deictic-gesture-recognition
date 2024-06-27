@@ -16,7 +16,8 @@ private:
     geometry_msgs::Point32_<pointing_gesture::Skeleton> ComputeFloorIntersection();
 
 public:
-    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_position;
+
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> upper_joint_position;
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_position;
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_foot_position;
 
@@ -25,7 +26,7 @@ public:
     PointingGesture();
 
     PointingGesture(
-        geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_pos,
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> upper_joint_pos,
         geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_pos,
         geometry_msgs::Point32_<pointing_gesture::Skeleton> right_foot_pos);
 

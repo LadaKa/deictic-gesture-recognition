@@ -27,11 +27,18 @@ public:
 
     pointing_gesture::Skeleton_<pointing_gesture::Skeleton> GetSkeleton();
 
-    void GetGestureJointPosition(
-        geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_elbow,
+  /**   void GetGestureJointPosition(
+        geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_pointing_upper_joint,
         geometry_msgs::Point32_<pointing_gesture::Skeleton> &right_hand);
-
+*/
     void PrintAllJointsPositions();
+
+    enum pointing_upper_joint
+    { 
+        r_elbow, 
+        r_shoulder, 
+        head
+    } current_upper_joint;
 };
 
 #endif

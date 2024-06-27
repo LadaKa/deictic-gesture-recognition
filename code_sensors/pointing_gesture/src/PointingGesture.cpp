@@ -1,16 +1,17 @@
 #include "PointingGesture.h"
 
 PointingGesture::PointingGesture(
-    geometry_msgs::Point32_<pointing_gesture::Skeleton> right_elbow_pos,
+    geometry_msgs::Point32_<pointing_gesture::Skeleton> upper_joint_pos,
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_hand_pos,
     geometry_msgs::Point32_<pointing_gesture::Skeleton> right_foot_pos)
 {
-    right_elbow_position = right_elbow_pos;
+    upper_joint_position = upper_joint_pos;
     right_hand_position = right_hand_pos;
     right_foot_position = right_foot_pos;
 
     intersection = ComputeFloorIntersection();
 };
+
 
 geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::GetPointsDifference(
     geometry_msgs::Point32_<pointing_gesture::Skeleton> point_0,
@@ -29,17 +30,17 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::ComputeFloo
 {
     geometry_msgs::Point32_<pointing_gesture::Skeleton> difference = PointingGesture::GetPointsDifference(
         right_hand_position,
-        right_elbow_position
+        upper_joint_position
         );
 
     intersection.z =
         right_foot_position.z;
 
     intersection.x =
-        right_elbow_position.x + ((intersection.z - right_elbow_position.z) * difference.x) / difference.z;
+        upper_joint_position.x + ((intersection.z - upper_joint_position.z) * difference.x) / difference.z;
 
     intersection.y =
-        right_elbow_position.y + ((intersection.z - right_elbow_position.z) * difference.y) / difference.z;
+        upper_joint_position.y + ((intersection.z - upper_joint_position.z) * difference.y) / difference.z;
 
 
     // OutputPosition("difference", difference);
@@ -66,7 +67,7 @@ void PointingGesture::OutputGestureIntersection(
     geometry_msgs::Point32_<pointing_gesture::Skeleton> intersection)
 {
     printf("\t\tPointing gesture: \n");
-    OutputPosition("right elbow", right_elbow_position);
+    OutputPosition("right upper joint", upper_joint_position);
     OutputPosition("right hand", right_hand_position);
     OutputPosition("intersection", intersection);
 }

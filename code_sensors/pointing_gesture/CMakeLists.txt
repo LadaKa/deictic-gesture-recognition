@@ -68,7 +68,7 @@ add_message_files(
   DIRECTORY
     msg
   FILES
-    PointingArmJoints.msg
+    #PointingArmJoints.msg
 )
 
 ## Generate services in the 'srv' folder
