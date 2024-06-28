@@ -90,12 +90,14 @@ public:
         1,
         &astra_body_tracker_node::object_detection_done_cb, this);
 
-
+    // ui:
+    // rostopic pub /gui/pointing_upper_joint std_msgs/Int32 "data: 2" 
     sub_pointing_upper_joint = nh_.subscribe(
         "gui/pointing_upper_joint",
         1,
         &astra_body_tracker_node::pointing_upper_joint_cb, this);
 
+    // rostopic pub /gui/visible_pointing_ray std_msgs/Bool "data: False" 
     sub_visible_pointing_ray = nh_.subscribe(
         "gui/visible_pointing_ray",
         1,
@@ -171,7 +173,15 @@ public:
 
         pointingPerson->SetPointingGesture(pointingGesture);
         pointingPerson->SetPointingTrackedSkeleton(trackedSkeleton);
-        pointingGestureDetected = true;
+     //   pointingGestureDetected = true;
+        if (!firstPointingGestureDetected)
+        {
+          firstPointingGestureDetected = true;
+        }
+        else 
+        {
+          secondPointingGestureDetected = true;
+        }
 
         geometry_msgs::Point32 intersectionMsg = pointingGesture.GetIntersectionMessage();
         ros::Publisher intersectionPub = nh_.advertise<geometry_msgs::Point32>("body_tracker/intersection", 1);
@@ -185,12 +195,14 @@ public:
               &pointingGesture);
           
           intersectionPub.publish(intersectionMsg);
-         // r.sleep();
           ros::spinOnce();
           repeatCounter = repeatCounter - 1;
           sleep(1);
-        } while (shouldContinue && (repeatCounter > 0)); 
-
+        } while (shouldContinue && ((repeatCounter > 0))); 
+        if (secondPointingGestureDetected)
+        {
+            shouldContinue = false;
+        }
         
       }
       else if (
@@ -299,6 +311,7 @@ private:
             current_upper_joint = head;
             return;
         default:
+        ROS_INFO("Invalid upper joint value selected. Valid values: 0, 1, 2.");
             return;
     }
   }
@@ -455,7 +468,9 @@ private:
   bool objectsDetected = false;
   bool floorDetected = false;
 
-  bool pointingGestureDetected = false;
+  bool firstPointingGestureDetected = false;
+  bool secondPointingGestureDetected = false;
+
   TrackedPerson *pointingPerson;
 
   astra_plane_t floorPlane;

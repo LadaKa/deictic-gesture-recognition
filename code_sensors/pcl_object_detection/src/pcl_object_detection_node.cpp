@@ -219,7 +219,7 @@ void PclObjectDetection::pointed_object_index_cb(const std_msgs::Int32 &index_ms
   pointedObjectSelected = true;
   objectDetection.ChangeMarkerColor(
     index_msg.data,
-    0, 1, 0.2);
+    1, 0, 0.2);
 }
 
 void PclObjectDetection::PrintRosInfo(std::string info)

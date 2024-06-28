@@ -44,7 +44,7 @@ geometry_msgs::Point32_<pointing_gesture::Skeleton> PointingGesture::ComputeFloo
 
 
     // OutputPosition("difference", difference);
-    OutputGestureIntersection(intersection);
+    // OutputGestureIntersection(intersection);
 
     return intersection;
 };
