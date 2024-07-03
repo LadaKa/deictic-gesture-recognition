@@ -20,8 +20,9 @@ The arm computer controls both the arm and the gripper and is available via ROS 
 Hardware
 
 Neobotix MP-500
+
 The MP-500 mobile robot is a differential-wheeled robot with two large drive wheels and one small one at the rear. It is one of the most robust Neobotix mobile robots with a weight of 70 kg. 
-Its main components are a mobile platform, laser scanner, on-board computer, battery pack, manual charger and wireless joystick. Additional components can be mounted on the robot. 
+Its main components are a mobile platform, laser scanner, on-board computer, battery pack, manual charger and wireless joystick. Additional components can be attached to the mobile platform. 
 The robot can be used for material transport, with a load capacity of 80 kg. It is designed for indoor operation and has a speed of up to 1.5 m/s.
 
 A Sick S300 safety laser scanner with a maximum range of 30 meters is mounted in the front of the mobile platform. The scanner provides data that is used for localization, navigation and collision avoidance. 
@@ -29,8 +30,25 @@ A Sick S300 safety laser scanner with a maximum range of 30 meters is mounted in
 Detection of a person or obstacle in the safety field triggers an emergency stop and the robot stops immediately.
 
 
+https://neobotix-docs.de/hardware/en/MP-500.pdf
 
 
 
+Robotic Arm UR5
+
+The Universal Robots UR5 manipulator consists of a robotic arm, a control box with a teaching pendant and a battery. 
+The six-axis arm is composed of extruded aluminum tubes and rotational joints (Base, Arm, Elbow, Wrist 1, Wrist 2, Wrist 3). The Base is the first joint of the kinematic chain in which the arm is mounted to a fixed surface or a mobile platform. The last joint to which the tool is attached is Wrist 3. 
+All joints have a motion range of 360 degrees. The reach of the arm is 0,85 m from the center of the base, the area directly above and below the base is out of reach. The weight is 18.4 kg and the maximum payload is 5 kg.
+The teaching pendant provides a GUI for control of the arm, commands can also be sent remotely using dedicated ports.
+
+https://www.universal-robots.com/media/50588/ur5_en.pdf
+https://s3-eu-west-1.amazonaws.com/ur-support-site/16813/UR5_User_Manual_en_US.pdf
+
+Weiss Robotics GRIPKIT
+
+A two-finger gripper is connected to the UR5 arm using the Weiss Robotics GRIPKIT module. Its maximal opening stroke is ? TODO
 
 
+ORBBEC Astra Camera
+
+TODO – check type in lab
