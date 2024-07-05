@@ -1,0 +1,53 @@
+\chapter{Task Analysis}
+
+%An~example citation: \cite{Andel07}
+
+\section{Theoretical Background}
+
+\subsection{Basic Definitions}
+Definition of key words:
+gesture recognition, object manipulation, autonomous control
+
+\subsection{Human-Robot Interaction (HRI)}
+brief description of HRI; \\
+
+remote vs. proximate interactions; \\
+
+roles of humans and robots in interaction: Supervisor, Operator, Mechanic, Peer, Bystander, Information consumer, Mentor (taxonomy from paper: M. A. X. Goodrich and A. C. Schultz, “Human-Robot Interaction: A Survey,” Foundations and Trends R© in Human- Computer Interaction, vol. 1, no. 3, pp. 203–275, 2007.); \\
+
+areas of application: industrial, search and rescue, medical, social, ...\\
+
+\section{Task description}
+\subsection{Pick and Place Task}
+
+Performing 'Pick and Place' using pointing gestures:\\ \\
+Pick:\\
+\begin{itemize}
+\item {Determine a object that was selected with a pointing gesture}
+\item {Navigate close to the object}
+\item {Identify the object and compute its exact coordinates}
+\item {Pick the object}
+\end{itemize}
+
+
+Place:\\
+\begin{itemize}
+\item {Determine a target location from a pointing gesture}
+\item {Navigate close to the location}
+\item {Place the object to the location}
+\end{itemize}
+
+\subsection{Task Specification}
+Requirements and restrictions:\\
+gesture recognition based on image processing (available sensors - depth cameras), proximate robot control by single user, no interaction with other robots or humans, static indoor environment (robotic lab), safe manipulation with objects, safe navigation (obstacle avoidance without unnecessary emergency braking), ...
+
+\section{Goals}
+\subsection{Implementation of Mobile Manipulator}
+Design and implement a mobile manipulator that performs 'Pick and Place' tasks according to the given requirements;
+\subsection{Comparison of deictic gestures types}
+Metric: the distance between the correct coordinates (of the selected object or location) and the intersection of the pointing ray and the floor.\\ \\
+Experiment with different ways of using deictic gestures:\\
+- a pointing ray calculated from a pair of skeleton coordinates (head - hand, elbow - wrist, shoulder - wrist)\\
+- pointing with or without visual feedback (pointed ray shown in rViz)\\
+
+

@@ -1,0 +1,118 @@
+\chapter{Implementation}
+
+\section{Vision system}
+\subsection{ORBBEC Astra camera}
+
+\subsubsection{Installation}
+Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
+difficult installation of tools and libraries for a ROS Interface to the Kinect One (dependencies on ROS Hydro/Indigo distribution, no available packages for ROS Noetic).\\
+
+Installation of ORBBEC SDK for Linux and dependencies (OpenNI2, libsfml-dev, ...).\\
+
+ Package ros\_astra\_camera:\\
+ https://github.com/orbbec/ros\_astra\_camera\\
+ OpenNI2 ROS wrapper for Orbbec 3D cameras.\\
+
+\subsubsection{Separation from mobile robot manipulator system}
+
+Limited distance for body tracking and correct object detection with the ORBBEC Astra camera (details).\\
+
+Connection to mobile robot manipulator via SSH.\\
+
+\subsection{Object detection}
+Package pcl\_object\_detection:\\
+https://github.com/shinselrobots/pcl\_object\_detection\\
+ROS node for detecting objects on a flat surface, using Point Cloud Library (with the ros\_astra\_camera package).\\
+
+Modification of this package: \\
+added limitation of size and position of objects (detection frame) to avoid false detection;\\
+added custom messages, rViz markers, ...;\\
+
+Subscriber of ros\_astra\_camera topic (point clouds) and selected object topic.\\
+Publisher of detected objects topics (coordinates, ...) and point cloud topics (clusters, planes, ...) for rViz.\\
+
+\subsection{Gesture detection}
+Packages: 
+astra\_body\_tracker:\\
+https://github.com/shinselrobots/astra\_body\_tracker\\
+Publisher of ROS topic for body tracking information (from the ORBBEC SDK).\\
+
+pointing\_gesture:\\
+modified astra\_body\_tracker package to get skeleton data;\\
+added code to detect gestures, rViz markers, ....\\
+
+Publisher of pointing\_gesture topic (as geometry\_msgs).\\
+
+\subsection{Stream switching}
+Problem: skeleton data was not provided in the ORBBEC SDK (without license), I needed to switch between data streams (using custom ROS messages):\\
+launch ros\_astra\_camera driver and pcl\_object\_detection node, when the object detection is complete, stop the stream and run the ORBBEC SDK with pointing\_gesture package to get body tracking.
+
+\subsection{Object selection and target location}
+task\_control\_node (will be renamed):\\
+Subscriber to object detection and pointing gesture topics;\\
+provides calculations of pointing ray intersection and selection of object.\\
+Sends data to mobile manipulator PC over SSH (coordinates of objects and target location, info about selected object).\\
+
+
+\section{Navigation of Autonomous Vehicle}
+
+\subsection{Installation}
+Neobotix:
+
+Packages:
+https://github.com/neobotix/
+
+ros-noetic-amcl, ros-noetic-map-server, ros-noetic-move-base, ...
+
+\subsection{Map of Environment}
+Mapping procedure, selecting the map for navigation, visualization with RViz...\\
+
+\subsection{Navigation to Goal}
+Goal definition, movement (path, obstacle avoidance, ...).
+
+\section{Object Manipulation}
+
+
+\subsection{Installation}
+Universal Robots:\\
+
+Packages:\\
+Universal\_Robots\_ROS\_Driver
+https://github.com/UniversalRobots/Universal\_Robots\_ROS\_Driver\\
+
+Universal\_Robots\_Client\_Library\\
+https://github.com/UniversalRobots/Universal\_Robots\_Client\_Library\\
+
+ur5\_moveit\_config\\
+https://github.com/ros-industrial/universal\_robot/tree/noetic-devel/ur5\_moveit\_config\\
+
+
+
+\subsection{Mobile Manipulator URDF}
+URDF for Neobotix, UR5 and gripper.\\
+
+\subsection{MoveIt Setup Assistant}
+How to create config and set up arm positions.\\
+How to set up arm limits.\\
+Simulation in rViz.\\
+
+\subsection{Code}
+ur\_robot\_driver;\\
+ROS.urp;\\
+move\_it\_planning;\\
+trajectory commands;\\
+
+\subsection{Objects coordinates}
+approximate coordinates of objects obtained from the vision system; \\
+robot navigates to objects; \\
+exact objects coordinates from LIDAR (lidar\_scan topic subscriber).\\
+
+
+
+
+
+
+
+
+
+

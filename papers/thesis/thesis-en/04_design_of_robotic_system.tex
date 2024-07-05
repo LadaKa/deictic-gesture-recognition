@@ -1,0 +1,47 @@
+\chapter{Design of Robotic System}
+
+\section{Robot Model}
+
+\subsection{Mobile Robot Manipulator}
+Overview of main components: mobile base, robotic arm with gripper.\\
+
+\subsection{Sensors}
+Depth camera for body tracking and objects detection. \\
+LIDAR for navigation and objects detection.\\
+
+\subsection{Separated Vision System}
+I decided to use a vision system that is separate from the mobile robotic manipulator due to the limited distance for body tracking and object detection with the ORBBEC Astra camera;\\
+otherwise objects would only be detected at a small distance from the robot.
+
+\section{Hardware}
+
+\subsection{Mobile vehicle}
+
+\subsubsection{Neobotix MP-500}
+Basic description of HW...\\
+\subsubsection{Laser Scanner SICK}
+
+\subsection{Manipulator}
+
+\subsubsection{Robotic arm UR5}
+\subsubsection{Gripper}
+
+\subsection{Visual system}
+
+\subsubsection{ORBBEC Astra camera}
+
+\subsection{Computers and network}
+Lenovo (connected via Ethernet to Neobotix).\\
+ACER (connected to camera).\\
+
+WiFi connection between computers.\\
+
+
+\section{System Software}
+Ubuntu 20.04.\\
+Robot Operating System, Noetic.\\
+
+\section{Control by gestures}
+Pointing gestures to select the object and target location.\\
+Confirmation gesture, ...\\
+Brief overview of the whole 'Pick and Place' process .\\
