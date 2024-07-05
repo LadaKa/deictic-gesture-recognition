@@ -1,43 +1,54 @@
 \chapter{Design of Robotic System}
 
-\section{Robot Model}
+\section{Basic Structure}
+
+The proposed robotic system contains two main components: a vision system and a mobile robotic manipulator.
+The vision system is static, camera remains at the designated location during the task.\par
+The robot starts at the initial position where it waits for messages from the vision system. Once the object and target position are selected and a result message is received, the robot navigates to the object, moves it to the target position and returns to the initial position.\par
+
+\subsection{Vision System}
+
+The main purpose of the vision system is to interpret the environment: to detect objects and the skeleton of a person with its gestures. The position of the objects and the tracked person is limited - outside a given frame, the detection is unreliable.\par
+For the ORBBEC Astra, the distance must be less than 4 meters. Therefore, I decided to use a vision system separate from the mobile robotic manipulator. Otherwise, with a camera attached to the robot, only objects very close to it could be detected.\par
+The depth camera is connected to a laptop where the input data from the camera is processed. The resulting message is sent to the robot's desktop computer.\par
 
 \subsection{Mobile Robot Manipulator}
-Overview of main components: mobile base, robotic arm with gripper.\\
+The robot consists of a mobile vehicle with a robotic arm and a gripper.\par
+The vehicle is equipped with a laser scanner that enables localization and safe autonomous navigation in the environment. The on-board computer serves as the robot's ROS master and is connected to a desktop computer.\par
+The arm with gripper is attached to the vehicle. It needs to be set up so that there are no collisions with the robot or the floor during manipulation. The reach of the arm should also be limited so that it does not move within the field of view of the scanner, as this would trigger an emergency stop.\par
+The arm computer controls both the arm and the gripper and is available via ROS and Dashboard Server.\par
 
-\subsection{Sensors}
-Depth camera for body tracking and objects detection. \\
-LIDAR for navigation and objects detection.\\
-
-\subsection{Separated Vision System}
-I decided to use a vision system that is separate from the mobile robotic manipulator due to the limited distance for body tracking and object detection with the ORBBEC Astra camera;\\
-otherwise objects would only be detected at a small distance from the robot.
 
 \section{Hardware}
 
-\subsection{Mobile vehicle}
+\subsection{Neobotix MP-500}
+The MP-500 mobile robot is a differential-wheeled robot with two large drive wheels and one small one at the rear. It is one of the most robust Neobotix mobile robots with a weight of 70 kg.\par
+Its main components are a mobile platform, laser scanner, on-board computer, battery pack, manual charger and wireless joystick. Additional components can be attached to the mobile platform.\par
+The robot can be used for material transport, with a load capacity of 80 kg. It is designed for indoor operation and has a speed of up to 1.5 m/s.\par
+A Sick S300 safety laser scanner with a maximum range of 30 meters is mounted in the front of the mobile platform. The scanner provides data that is used for localization, navigation and collision avoidance.\par
+Detection of a person or obstacle in the safety field immediately triggers an emergency stop.\par
 
-\subsubsection{Neobotix MP-500}
-Basic description of HW...\\
-\subsubsection{Laser Scanner SICK}
 
-\subsection{Manipulator}
+\subsection{Robotic Arm UR5}
+The Universal Robots UR5 manipulator consists of a robotic arm, a control box with a teaching pendant and a battery.\par
+The six-axis arm is composed of extruded aluminum tubes and rotational joints (Base, Arm, Elbow, Wrist 1, Wrist 2, Wrist 3). The Base is the first joint of the kinematic chain in which the arm is mounted to a fixed surface or a mobile platform. The last joint to which the tool is attached is Wrist 3.\par
+All joints have a motion range of 360 degrees. The reach of the arm is 0,85 m from the center of the base, the area directly above and below the base is out of reach. The weight is 18.4 kg and the maximum payload is 5 kg.\par
+The teaching pendant provides a GUI for control of the arm, commands can also be sent remotely using dedicated ports.\par
 
-\subsubsection{Robotic arm UR5}
-\subsubsection{Gripper}
+\subsection{Weiss Robotics GRIPKIT}
 
-\subsection{Visual system}
+A two-finger gripper is connected to the UR5 arm using the Weiss Robotics GRIPKIT module. Its maximal opening stroke is ? TODO \par
 
-\subsubsection{ORBBEC Astra camera}
+\subsection{ORBBEC Astra camera}
+TODO \\
 
 \subsection{Computers and network}
-Lenovo (connected via Ethernet to Neobotix).\\
-ACER (connected to camera).\\
-
-WiFi connection between computers.\\
-
+For the vision system, an Acer TravelMate P214 notebook is used. The ORBBEC Astra camera is connected via USB.\par
+A Lenovo ThinkStation P330 desktop computer controls the mobile manipulator. It is connected to the Neobotix MP-500 mobile robot via an Ethernet cable.\par
+The connection between the computers is established via WiFi, messages are sent using SSH.\par
 
 \section{System Software}
+TODO\\
 Ubuntu 20.04.\\
 Robot Operating System, Noetic.\\
 
