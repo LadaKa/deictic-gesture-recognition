@@ -1,17 +1,28 @@
-\chapter{Gesture based robot control}
+\chapter{Gesture Based Robot Control}
+
+\section{Gesture based "Pick And Place"}
+Two gestures are needed to execute the "Pick And Place" task successfully: a pointing gesture to indicate the position and another gesture to confirm it.\par
+During the selection of the object and the target location, the user faces the camera, with all objects lying on the floor between him and the camera. The scene is displayed on the rViz screen. Once the objects are detected by the vision system, their images are marked in blue.\par
+The user can then initiate the selection of an object by pointing at it with his right hand. To confirm the gesture, the user raises his left hand while still pointing at the object.\par
+The object closest to the intersection of the pointing ray and the floor is selected. Its image is marked in red.
+The target location of the selected object can then be determined. The user determines the location in the same way as before: by pointing to the location and raising his hand.\par
+The target location is on the floor and must be selected inside the safety frame that is shown in the rViz. The frame represents the safety space for the robot to move, there are no obstacles inside it except for the detected objects. \par
+Once the target location is selected, it is marked in red in rViz, gesture detection is completed and the resulting data is sent to the robot.\par
 
 \section{Pointing gesture}
+The user can choose from three types of pointing gestures. Each type is represented by a pair of joints that determine the pointing ray. The first joint in the pair is the origin and the second determines the direction of the ray:\par
+\begin{itemize}
+	\item Shoulder, wrist (default option).
+    \item Elbow, wrist.
+    \item Head, hand.
+\end{itemize}
 
-\subsection{Types}
-Different types: \\
-a pointing ray calculated from a pair of skeleton coordinates (head - hand, elbow - wrist, shoulder - wrist, ...)\\
+The pointing gesture indicates the point where the pointing ray intersects the floor and allows selection of the object or target location.\par
+There is an option to show or hide the corresponding pointing ray. If the ray is visible, it is displayed from its origin to the intersection with the floor.\par
+The pointing gesture must be performed with the right hand and the first joint must be positioned higher than the second. These constraints help to reduce the number of falsely detected gestures.\par
 
-\subsection{Pointing ray}
-Calculation - intersection with the floor plane. \\
+\section{Raising hand gesture}
+The hand gesture consists of lifting the hand. It must be performed with the left arm and the hand must be raised above the head.\par
+When pointing with the right arm, the user confirms the pointing gesture by raising the left hand. If no pointing gesture is displayed, the raising gesture is ignored.\par
 
-\section{Confirming gesture}
-Some other gesture is required to confirm the pointing gesture. \\
-The 'Hand Grip' gesture is not well recognized by the Astra camera, so I choose 'Hand Raise'.\\
 
-\section{Algorithm overview}
-How to select the object and the target location.\\
