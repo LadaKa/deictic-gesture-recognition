@@ -1,12 +1,52 @@
 \chapter{Implementation}
 
 \section{Vision system}
-\subsection{ORBBEC Astra camera}
 
-\subsubsection{Installation}
+\subsection{Image Processing with ORBBEC Astra Camera}
+The image data is sent from the camera to the connected laptop for processing.\par
+There is the ROS Master and several other individual ROS nodes running on the notebook. Some ROS nodes are involved in image processing, while others provide tools such as geometric calculations or displaying detected objects and skeletons on the rViz screen.\par
+ROS nodes communicate with each other using ROS messages and share information about the progress of their subtasks.\par
+I used two main tools to process the camera data: the ROS Astra camera driver "ros\_astra\_camera" for object detection and the "ORBBEC Astra SDK" for skeleton detection.\par
+Both use OpenNI as an intermediate layer to access the camera data. I couldn't run them at the same time because it led to runtime errors, so I decided to split the process into two separate phases.
+First, the "ros\_astra\_camera" driver is started. Once all objects are detected, the driver stops.\par
+In the second phase, data is exposed using the "ORBBEC Astra SDK" until both pointing gestures are confirmed and the result is sent to the robot. Since gesture recognition is performed within the ROS system, additional ROS packages were needed to publish the body tracking data provided by the SDK as ROS messages.\par
+
+\subsection{Installation}
+
+\subsubsection{ROS Noetic}
+The notebook with Ubuntu 20.04 was used, for which the recommended version of the ROS distribution is ROS Noetic. I followed the instructions from http://wiki.ros.org/noetic/Installation/Ubuntu to download and install the ROS Noetic package.\par
+
+\subsubsection{Astra and OpenNI SDKs}
+For the ORBBEC Astra camera, I needed to install the Astra SDK and the OpenNI SDK for Linux. Both SDKs are available at https://www.orbbec.com/developers.\par
+Several environment variables have to be set to indicate the paths to the AstraSDK and OpenNI subfolders.\par
+For example, if "/home/user/AstraSDK" is the folder containing the Astra SDK and "/home/user/OpenNI-Linux-x64-2.3.0.66" is the folder containing the OpenNI SDK, the settings can be made by running these commands in the terminal: \par
+
+\begin{lstlisting}[language=bash]
+  $ export ASTRA_SDK=/home/user/AstraSDK
+  $ export ASTRA_ROOT=/home/user/AstraSDK
+  $ export ASTRA_SDK_INCLUDE=/home/user/AstraSDK/include
+  $ export ASTRA_SDK_LIB=/home/user/AstraSDK/lib
+  $ export OPENNI2_INCLUDE=/home/user/OpenNI-Linux-x64-2.3.0.66
+  $ export OPENNI2_REDIST=/home/user/OpenNI-Linux-x64-2.3.0.66/Redist
+\end{lstlisting}
+
+\subsubsection{ROS Driver for Astra camera}
+I downloaded the ROS driver package from https://github.com/orbbec/ros\_astra\_camera and installed the dependencies according to the instructions on http://wiki.ros.org/astra\_camera.\par
+The "ros\_astra\_camera" package supports the ROS distributions Kinetic and Melodic. I needed to find and test multiple versions of the "ros-*-libuvc-*" libraries, as they were not released specifically for ROS Noetic.\par
+This problem was already solved on the ORBBEC GitHub page, so I followed the advice and installed the missing dependencies using:\par
+
+\begin{lstlisting}[language=bash]
+  $ apt install ros-noetic-rgbd-launch libuvc-dev
+\end{lstlisting}
+
+
+I built the package with "catkin\_make" command and was able to run a few code samples that show the camera data on the screen.\par
+
+
+\subsubsection{TODO - some notes}
 Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
 difficult installation of tools and libraries for a ROS Interface to the Kinect One (dependencies on ROS Hydro/Indigo distribution, no available packages for ROS Noetic).\\
-
+new wrapper!!!!!!!!!
 Installation of ORBBEC SDK for Linux and dependencies (OpenNI2, libsfml-dev, ...).\\
 
  Package ros\_astra\_camera:\\
