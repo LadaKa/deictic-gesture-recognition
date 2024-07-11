@@ -17,7 +17,26 @@ In the second phase, data is exposed using the "ORBBEC Astra SDK" until both poi
 The notebook with Ubuntu 20.04 was used, for which the recommended version of the ROS distribution is ROS Noetic. I followed the instructions from http://wiki.ros.org/noetic/Installation/Ubuntu to download and install the ROS Noetic package.\par
 
 \subsubsection{Astra and OpenNI SDKs}
-For the ORBBEC Astra camera, I needed to install the Astra SDK and the OpenNI SDK for Linux. Both SDKs are available at https://www.orbbec.com/developers.\par
+For the ORBBEC Astra camera, I needed to install the Astra SDK and the OpenNI SDK for Linux.\par
+Both SDKs are available at https://www.orbbec.com/developers.\par
+
+\subsubsection{ROS Driver for Astra camera}
+I downloaded the ROS driver package\\
+from https://github.com/orbbec/ros\_astra\_camera and installed the dependencies according to the instructions on http://wiki.ros.org/astra\_camera.\par
+The "ros\_astra\_camera" package supports the ROS distributions Kinetic and Melodic. I needed to find and test multiple versions of the "ros-*-libuvc-*" libraries, as they were not released specifically for ROS Noetic.\par
+This problem was already solved on the ORBBEC GitHub page, so I followed the advice and installed the missing dependencies using:\par
+
+\begin{lstlisting}[language=bash]
+  $ apt install ros-noetic-rgbd-launch libuvc-dev
+\end{lstlisting}
+
+
+I built the package with "catkin\_make" command and was able to run a few code samples that show the camera data on the screen.\par
+
+\subsubsection{ROS Packages for Image Processing}
+I downloaded three ROS packages from the Shinsel Robots repository on https://github.com/shinselrobots.\par
+The "pcl\_object\_detection" package allows object detection in the camera data provided by the ROS Astra driver using the Point Cloud Library.\par
+The "astra\_body\_tracker" and "body\_tracker\_msgs" packages publish body tracking data from the Astra SDK as ROS messages.\par
 Several environment variables have to be set to indicate the paths to the AstraSDK and OpenNI subfolders.\par
 For example, if "/home/user/AstraSDK" is the folder containing the Astra SDK and "/home/user/OpenNI-Linux-x64-2.3.0.66" is the folder containing the OpenNI SDK, the settings can be made by running these commands in the terminal: \par
 
@@ -30,36 +49,32 @@ For example, if "/home/user/AstraSDK" is the folder containing the Astra SDK and
   $ export OPENNI2_REDIST=/home/user/OpenNI-Linux-x64-2.3.0.66/Redist
 \end{lstlisting}
 
-\subsubsection{ROS Driver for Astra camera}
-I downloaded the ROS driver package from https://github.com/orbbec/ros\_astra\_camera and installed the dependencies according to the instructions on http://wiki.ros.org/astra\_camera.\par
-The "ros\_astra\_camera" package supports the ROS distributions Kinetic and Melodic. I needed to find and test multiple versions of the "ros-*-libuvc-*" libraries, as they were not released specifically for ROS Noetic.\par
-This problem was already solved on the ORBBEC GitHub page, so I followed the advice and installed the missing dependencies using:\par
+\subsection{The Vision System Code}
 
-\begin{lstlisting}[language=bash]
-  $ apt install ros-noetic-rgbd-launch libuvc-dev
-\end{lstlisting}
+\subsubsection{Catkin Workspace} 
+Catkin is the official build system for ROS. Project packages that are placed in the same catkin workspace can be built all at once.\par
+My catkin workspace folder contains following ROS packages: \par
 
+\begin{itemize}
+	\item ros\_astra\_camera
+    \item task\_execution
+    \item rviz\_screen
+    \item pcl\_object\_detection
+    \item pointing\_gesture
+\end{itemize}
 
-I built the package with "catkin\_make" command and was able to run a few code samples that show the camera data on the screen.\par
+\subsubsection{Program Overview} 
+  
+The main launch file is task\_execution.launch. It starts the ROS Astra driver, rViz and other ROS nodes involved in the task: task\_execution\_node, pcl\_object\_detection\_node and pointing\_gesture\_node.\par
+The task\_execution\_node subscribes to ROS messages\\
+"pcl\_object\_detection/detected\_objects" and "body\_tracker/intersection".\\
+The "pcl\_object\_detection/detected\_objects" message contains an array of coordinates of the detected objects, the "body\_tracker/intersection" message contains the coordinates of the intersection of the pointing ray and the floor.\par
+When the intersection message is received for the first time, the nearest object is calculated. The object is represented by its index in the detected object array, which is then published in the "task\_execution/pointed\_object\_index" message.\par
+The second received intersection message indicates the target location.
+Once received, the node creates a result file and writes the coordinates of all detected objects, the coordinates of the target location and the index of the selected object.\par
+Then the node connects to the robot's computer using SSH, transfers the file there and remotely starts the robot's main program.\par
 
-
-\subsubsection{TODO - some notes}
-Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
-difficult installation of tools and libraries for a ROS Interface to the Kinect One (dependencies on ROS Hydro/Indigo distribution, no available packages for ROS Noetic).\\
-new wrapper!!!!!!!!!
-Installation of ORBBEC SDK for Linux and dependencies (OpenNI2, libsfml-dev, ...).\\
-
- Package ros\_astra\_camera:\\
- https://github.com/orbbec/ros\_astra\_camera\\
- OpenNI2 ROS wrapper for Orbbec 3D cameras.\\
-
-\subsubsection{Separation from mobile robot manipulator system}
-
-Limited distance for body tracking and correct object detection with the ORBBEC Astra camera (details).\\
-
-Connection to mobile robot manipulator via SSH.\\
-
-\subsection{Object detection}
+\subsubsection{Object Detection}
 Package pcl\_object\_detection:\\
 https://github.com/shinselrobots/pcl\_object\_detection\\
 ROS node for detecting objects on a flat surface, using Point Cloud Library (with the ros\_astra\_camera package).\\
@@ -92,6 +107,17 @@ task\_control\_node (will be renamed):\\
 Subscriber to object detection and pointing gesture topics;\\
 provides calculations of pointing ray intersection and selection of object.\\
 Sends data to mobile manipulator PC over SSH (coordinates of objects and target location, info about selected object).\\
+
+\subsubsection{TODO - some notes}
+Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
+difficult installation of tools and libraries for a ROS Interface to the Kinect One (dependencies on ROS Hydro/Indigo distribution, no available packages for ROS Noetic).\\
+new wrapper!!!!!!!!!
+Installation of ORBBEC SDK for Linux and dependencies (OpenNI2, libsfml-dev, ...).\\
+
+ Package ros\_astra\_camera:\\
+ https://github.com/orbbec/ros\_astra\_camera\\
+ OpenNI2 ROS wrapper for Orbbec 3D cameras.\\
+
 
 
 \section{Navigation of Autonomous Vehicle}
