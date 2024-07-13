@@ -5,20 +5,44 @@
 \section{Theoretical Background}
 
 \subsection{Basic Definitions}
-Definition of key words:
+TODO: Definition of key words:
 gesture recognition, object manipulation, autonomous control
 
+\subsubsection{Gesture Recognition}
+Gesture recognition technology uses a computer and a sensor to interpret human body movements. It allows direct control of machines without mechanical devices such as a keyboard or joystick.\par
+Body movements are captured by a sensor. A static gesture can be identified in a single frame of raw sensor data, dynamic has to be tracked in consecutive frames during the movement.\par
+The gesture is assigned to one of the predefined gesture types and the corresponding gesture type is translated into machine commands.\par
+The gesture recognition process can be divided into the following parts:\par
+\begin{itemize}
+	\item sensor data collection
+    \item gesture identification
+    \item gesture tracking
+    \item gesture classification
+    \item gesture mapping
+\end{itemize}
+
+TODO: ref \\
+Hongyi Liu, Lihui Wang (2017). Gesture recognition for human-robot collaboration: A review.\\
+International Journal of Industrial Ergonomics, Volume 68, November 2018 (355-367).
+https://doi.org/10.1016/j.ergon.2017.02.004\\
+
 \subsubsection{Deictic Gesture}
-A deictic gesture is a gesture that indicates direction or location from the perspective of the person performing the gesture. It refers to a real or virtual environment and its meaning depends on the context.
-It can be used to specify direction and location or to identify a person or object from the environment. It could often be expressed by adverbs such as "here" and "there" or by demonstrative pronouns such as "this" and "that".\par
-The pointing gesture is the most common deictic gesture. Other examples are gestures based on head movements or eye gaze.\par
+A deictic gesture is a gesture that indicates direction or location from the perspective of the person performing the gesture.\par
+The meaning of the deictic gesture depends on the context, it can refer to a real or a virtual environment. It could often be expressed by adverbs such as "here" and "there" or by demonstrative pronouns such as "this" and "that". We use it to specify direction and location or to identify a person or an object in the environment.\par
+The most common deictic gesture is the pointing gesture. Other examples are
+gestures based on head movements or eye gaze.\par
 
 \subsubsection{Pointing Gesture}
-A pointing gesture is performed by extending the arm in the appropriate direction, usually using the index finger or hand to indicate the direction.\par
-Pointing with the index finger is a cross-cultural behavior that can be explained by human development. Infants most commonly use their index fingers for tactile exploration of their environment and they often use the gesture of the extended index finger for a variety of purposes before they acquire its social meaning.\par
-This gesture may represent the pointing of a ray, which is given by, for example, the eyes (as the origin) and the index finger, or it may have a more symbolic meaning, such as when a person points outside their field of vision.\par
-
+A pointing gesture is performed by extending the arm in the appropriate
+direction, usually using the index finger or hand to indicate the direction.\par
+It may represent the pointing ray, which is given by, for example,
+the eyes (as the origin) and the index finger, or it may have a more symbolic
+meaning, such as when a person is pointing outside his field of vision or in a virtual environment.\par
+Pointing with the index finger is a cross-cultural behavior. Infants most commonly use their index fingers for tactile exploration of their environment and they often use the gesture of the extended
+index finger for a variety of purposes before they acquire its social meaning.\par
+ 
 \subsection{Human-Robot Interaction (HRI)}
+TODO:\par
 brief description of HRI; \\
 
 remote vs. proximate interactions; \\
@@ -28,6 +52,7 @@ roles of humans and robots in interaction: Supervisor, Operator, Mechanic, Peer,
 areas of application: industrial, search and rescue, medical, social, ...\\
 
 \section{Task description}
+TODO:\par
 \subsection{Pick and Place Task}
 
 Performing 'Pick and Place' using pointing gestures:\\ \\
@@ -48,10 +73,12 @@ Place:\\
 \end{itemize}
 
 \subsection{Task Specification}
+
 Requirements and restrictions:\\
 gesture recognition based on image processing (available sensors - depth cameras), proximate robot control by single user, no interaction with other robots or humans, static indoor environment (robotic lab), safe manipulation with objects, safe navigation (obstacle avoidance without unnecessary emergency braking), ...
 
 \section{Goals}
+TODO:\par
 \subsection{Implementation of Mobile Manipulator}
 Design and implement a mobile manipulator that performs 'Pick and Place' tasks according to the given requirements;
 \subsection{Comparison of deictic gestures types}

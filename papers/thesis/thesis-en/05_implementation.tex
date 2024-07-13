@@ -3,13 +3,14 @@
 \section{Vision system}
 
 \subsection{Image Processing with ORBBEC Astra Camera}
-The image data is sent from the camera to the connected laptop for processing.\par
+The image data is sent from the camera to the connected notebook for processing.\par
 There is the ROS Master and several other individual ROS nodes running on the notebook. Some ROS nodes are involved in image processing, while others provide tools such as geometric calculations or displaying detected objects and skeletons on the rViz screen.\par
 ROS nodes communicate with each other using ROS messages and share information about the progress of their subtasks.\par
 I used two main tools to process the camera data: the ROS Astra camera driver "ros\_astra\_camera" for object detection and the "ORBBEC Astra SDK" for skeleton detection.\par
-Both tools use OpenNI as an intermediate layer to access the camera data. I couldn't run them at the same time because it led to runtime errors, so I decided to split the process into two separate phases.
+Both tools use OpenNI as an intermediate layer to access the camera data. I couldn't run them at the same time because it led to runtime errors, so I decided to split the process into two separate phases.\par
 First, the "ros\_astra\_camera" driver is started. Once all objects are detected, the driver stops.\par
-In the second phase, data is exposed using the "ORBBEC Astra SDK" until both pointing gestures are confirmed and the result is sent to the robot. Since gesture recognition is performed within the ROS system, additional ROS packages were needed to publish the body tracking data provided by the SDK as ROS messages.\par
+In the second phase, data is exposed using the "ORBBEC Astra SDK" until both pointing gestures are confirmed and the result is sent to the robot. \par
+Since gesture recognition is performed within the ROS system, additional ROS packages were needed to publish the body tracking data provided by the SDK as ROS messages.\par
 
 \subsection{Installation}
 
@@ -23,7 +24,7 @@ Both SDKs are available at https://www.orbbec.com/developers.\par
 \subsubsection{ROS Driver for Astra camera}
 I downloaded the ROS driver package\\
 from https://github.com/orbbec/ros\_astra\_camera and installed the dependencies according to the instructions on http://wiki.ros.org/astra\_camera.\par
-The "ros\_astra\_camera" package supports the ROS distributions Kinetic and Melodic. I needed to find and test multiple versions of the "ros-*-libuvc-*" libraries, as they were not released specifically for ROS Noetic.\par
+The ros\_astra\_camera package supports the ROS distributions Kinetic and Melodic. I needed to find and test multiple versions of the "ros-*-libuvc-*" libraries, as they were not released specifically for ROS Noetic.\par
 This problem was already solved on the ORBBEC GitHub page, so I followed the advice and installed the missing dependencies using:\par
 
 \begin{lstlisting}[language=bash]
@@ -49,11 +50,11 @@ For example, if "/home/user/AstraSDK" is the folder containing the Astra SDK and
   $ export OPENNI2_REDIST=/home/user/OpenNI-Linux-x64-2.3.0.66/Redist
 \end{lstlisting}
 
-\subsection{The Vision System Code}
+\subsection{Source Code}
 
 \subsubsection{Catkin Workspace} 
 Catkin is the official build system for ROS. Project packages that are placed in the same catkin workspace can be built all at once.\par
-My catkin workspace folder contains following ROS packages: \par
+My catkin workspace folder contains following ROS packages, all with source code written in C++: \par
 
 \begin{itemize}
 	\item ros\_astra\_camera
@@ -80,23 +81,25 @@ The pcl\_object\_detection package allows the detection of objects on a flat sur
 The pcl\_ros package bridges ROS systems and 3D applications that work with point clouds. It extends the ROS C++ Client Library to support messages with native PCL data types.\par
 Conversions between PCL data types and ROS message types are provided by the pcl\_conversions package.\par
 The pcl\_object\_detection\_node subscribes to the topic \\"/astra\_camera/depth/points", which is published by the ROS Astra camera driver. The received messages represent a point cloud with no color information.\par
-The point cloud is processed using PCL: the data is filtered with VoxelGrid and used for plane segmentation. The remaining data, which is out-of-plane, is divided into clusters.
+The point cloud is processed using PCL: the data is filtered with VoxelGrid and used for plane segmentation. The remaining points, which are outside the plane, are divided into clusters.
 Each cluster can eventually be considered as a detected object. We can specify parameters that limit the height and width of the detected objects.\par
 All clusters that meet the given conditions correspond to detected objects and their properties are published in the "pcl\_object\_detection/detected\_objects" message.\par
 
 \subsubsection{Code Adaptation to Experimental Environment}
 Even if the scene with the objects was static, different objects were detected in consecutive depth clouds. The detection reliability decreased with the person moving in the scene.\par
-I modified the original pcl\_object\_detection package from Shinsel Robots to improve the quality of object detection in my experimental environment. I also needed to implement a mechanism for switching between the ROS Astra driver and the Astra SDK to avoid problems with camera data accessibility.\par
+I modified the original pcl\_object\_detection package from Shinsel Robots to improve the quality of object detection in my experimental environment. I also needed to implement a mechanism for switching between the ROS Astra driver and the Astra SDK to avoid issues with camera data accessibility.\par
 The object size is limited to 20 cm and the object can be detected only when lying on the floor. Furthermore, a detection frame has been specified as a constraint for the object's location on the floor. An object outside the detection frame is ignored.\par
 To ensure that the same objects are detected when the experiment is repeated in the same scene, the total number of objects is fixed and the program is modified:\par
 The received point clouds are processed one by one, with some objects detected in each cloud. \par
 If the number of detected objects does not equal the total number, the result is ignored and processing continues with the next cloud.\par
 Otherwise, the number of detected objects is correct, which usually means that the correct objects have been detected. Their data is published in the "pcl\_object\_detection/detected\_objects" message. In addition, the message "object\_detection\_done" is published, which indicates that the ROS Astra driver is no longer needed.\par 
 I added a subscriber to the ROS Astra driver to the "object\_detection\_done" message. Once the message is received, the driver is shut down.\par
-The package has also been extended with code to display detected objects in rViz, mark them with a color, and change the color of the object that was selected by the pointing gesture.\par
+
+The package was extended by code for displaying detected objects in rViz, marking them in blue and changing the color to red if the object was selected by the  pointing gesture.\par
 
 \subsection{Gesture detection}
-Packages: 
+TODO:\\
+Packages: \\
 astra\_body\_tracker:\\
 https://github.com/shinselrobots/astra\_body\_tracker\\
 Publisher of ROS topic for body tracking information (from the ORBBEC SDK).\\
@@ -117,17 +120,10 @@ Sends data to mobile manipulator PC over SSH (coordinates of objects and target 
 \subsubsection{TODO - some notes}
 Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
 difficult installation of tools and libraries for a ROS Interface to the Kinect One (dependencies on ROS Hydro/Indigo distribution, no available packages for ROS Noetic).\\
-new wrapper!!!!!!!!!
-Installation of ORBBEC SDK for Linux and dependencies (OpenNI2, libsfml-dev, ...).\\
-
- Package ros\_astra\_camera:\\
- https://github.com/orbbec/ros\_astra\_camera\\
- OpenNI2 ROS wrapper for Orbbec 3D cameras.\\
-
-
+New ORBBEC Astra ROS SDK.\\
 
 \section{Navigation of Autonomous Vehicle}
-
+TODO:\\
 \subsection{Installation}
 Neobotix:
 
@@ -143,7 +139,7 @@ Mapping procedure, selecting the map for navigation, visualization with RViz...\
 Goal definition, movement (path, obstacle avoidance, ...).
 
 \section{Object Manipulation}
-
+TODO:\\
 
 \subsection{Installation}
 Universal Robots:\\
