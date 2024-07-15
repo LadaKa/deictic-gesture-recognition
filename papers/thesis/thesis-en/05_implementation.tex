@@ -85,7 +85,7 @@ The point cloud is processed using PCL: the data is filtered with VoxelGrid and 
 Each cluster can eventually be considered as a detected object. We can specify parameters that limit the height and width of the detected objects.\par
 All clusters that meet the given conditions correspond to detected objects and their properties are published in the "pcl\_object\_detection/detected\_objects" message.\par
 
-\subsubsection{Code Adaptation to Experimental Environment}
+\subsubsection{Detection in Experimental Environment}
 Even if the scene with the objects was static, different objects were detected in consecutive depth clouds. The detection reliability decreased with the person moving in the scene.\par
 I modified the original pcl\_object\_detection package from Shinsel Robots to improve the quality of object detection in my experimental environment. I also needed to implement a mechanism for switching between the ROS Astra driver and the Astra SDK to avoid issues with camera data accessibility.\par
 The object size is limited to 20 cm and the object can be detected only when lying on the floor. Furthermore, a detection frame has been specified as a constraint for the object's location on the floor. An object outside the detection frame is ignored.\par
@@ -95,27 +95,31 @@ If the number of detected objects does not equal the total number, the result is
 Otherwise, the number of detected objects is correct, which usually means that the correct objects have been detected. Their data is published in the "pcl\_object\_detection/detected\_objects" message. In addition, the message "object\_detection\_done" is published, which indicates that the ROS Astra driver is no longer needed.\par 
 I added a subscriber to the ROS Astra driver to the "object\_detection\_done" message. Once the message is received, the driver is shut down.\par
 
-The package was extended by code for displaying detected objects in rViz, marking them in blue and changing the color to red if the object was selected by the  pointing gesture.\par
+The package was also extended by code for displaying detected objects in rViz, marking them in blue and changing the color to red if the object was selected by the  pointing gesture.\par
 
-\subsection{Gesture detection}
-TODO:\\
-Packages: \\
-astra\_body\_tracker:\\
-https://github.com/shinselrobots/astra\_body\_tracker\\
-Publisher of ROS topic for body tracking information (from the ORBBEC SDK).\\
+\subsubsection{Gesture recognition}
+The pointing\_gesture package implements methods for gesture recognition. It uses the Astra SDK to obtain body tracking information and allows several types of gesture recognition.\par
+I modified the code from the astra\_body\_tracker package from Shinsels Robots. The package publishes body tracking information from the Astra SDK in the ROS topic, using messages from the body\_tracker\_msgs package.\par
+The Astra SDK provides tools for skeleton recognition and body tracking. The tracked person is represented by a list of nineteen joints.\par
+Corresponding body data includes the position and status of each joint, where status indicates the confidence level of the tracking with possible values of "NotTracked", "LowConfidence" and "Tracked".
+The data also contains the current body tracking status, body orientation and hand pose.\par
+The pointing\_gesture node is inactive during object detection. 
+The "object\_detection\_done" message triggers the shutting down of the ROS Astra driver.\par
+I added a subscriber for the "object\_detection\_done" topic to the pointing gesture node as well. Once the message is received, the node attempts to open the Astra data stream using the Astra SDK and repeats this until the ROS Astra device stream is completely terminated.\par
+Then the data stream is available to the SDK and we can start gesture recognition.\par 
+The SDK provides a list of tracked persons for each frame of the image data stream. For each tracked person, a check is made to see if he performs the confirmation and pointing gestures.\par
+The confirmation gesture is performed by raising the left hand. It is detected when the left hand joint is raised above the head joint.\par
+I tried using the shoulder joint instead of the head joint. However, body tracking is not completely reliable and I observed many cases of false gesture detection. The shoulder joint has been often misidentified, while the head joint is usually identified correctly.\par
+If a confirmation gesture is detected in a given frame, the right arm is checked for the pointing gesture, otherwise processing continues with the next frame.\par
+The pointing gesture is recognized by the position of the pair of joints corresponding to the selected pointing gesture type. The first joint of the pair determines the origin of the pointing ray. It is the upper joint considering the standard anatomical position.\par
+The pointing gesture is detected when the first joint is positioned higher than the second.\par
+The coordinates of the pointing ray intersection with the floor plane are computed and published in a ROS message.\par
+The default option for the pointing gesture is the head-wrist type. The user may select a different option using a ROS message (TODO: command, head).\par
 
-pointing\_gesture:\\
-modified astra\_body\_tracker package to get skeleton data;\\
-added code to detect gestures, rViz markers, ....\\
+I have added rViz markers to display the skeleton of the person being tracked and the pointing ray. When the first confirmed pointing gesture is detected and the intersection coordinates are published, the object closest to the intersection is selected and marked in red in rViz. The distance between the intersection point and the object is logged.\par
+The second detected pointing gesture specifies the target location. The coordinates of the corresponding intersection are also published and marked in rViz.\par
+Once the second confirmed pointing gesture is detected, the data stream is closed.\par
 
-Publisher of pointing\_gesture topic (as geometry\_msgs).\\
-
-
-\subsection{Object selection and target location}
-task\_control\_node (will be renamed):\\
-Subscriber to object detection and pointing gesture topics;\\
-provides calculations of pointing ray intersection and selection of object.\\
-Sends data to mobile manipulator PC over SSH (coordinates of objects and target location, info about selected object).\\
 
 \subsubsection{TODO - some notes}
 Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
