@@ -53,6 +53,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
+
 \fi
 
 %% Further useful packages (included in most LaTeX distributions)
@@ -84,7 +85,7 @@
 \usepackage{algorithm}
 \usepackage{fancyvrb}       % improved verbatim environment
 \usepackage{listings}       % pretty-printer of source code
-
+\usepackage{dirtytalk}
 % You might want to use cleveref for references
 % \usepackage{cleveref}
 
@@ -126,10 +127,14 @@
 
 %%% Each chapter is kept in a separate file
 \include{preface}
-\include{chap01}
-\include{chap02}
-
+\include{01_task_analysis}
+\include{02_state_of_the_art}
+\include{03_gesture_based_control}
+\include{04_design_of_robotic_system}
+\include{05_implementation}
+\include{06_experiments}
 \include{epilog}
+\include{appendix}
 
 %%% Bibliography
 \include{bibliography}

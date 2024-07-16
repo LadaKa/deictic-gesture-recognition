@@ -1,0 +1,103 @@
+\chapter{Task Analysis}
+
+%An~example citation: \cite{Andel07}
+
+\section{Basic Terminology}
+
+\subsection{Gesture Recognition}
+Gesture recognition technology uses a computer and a sensor to interpret human body movements. It allows direct control of machines without mechanical devices such as a keyboard or joystick.\par
+Body movements are captured by a sensor. A static gesture can be identified in a single frame of raw sensor data, dynamic has to be tracked in consecutive frames during the movement.\par
+The gesture is assigned to one of the predefined gesture types and the corresponding gesture type is translated into machine commands.\par
+The gesture recognition process can be divided into the following parts:\par
+\begin{itemize}
+	\item sensor data collection
+    \item gesture identification
+    \item gesture tracking
+    \item gesture classification
+    \item gesture mapping
+\end{itemize}
+
+TODO: ref \\
+Hongyi Liu, Lihui Wang (2017). Gesture recognition for human-robot collaboration: A review.\\
+International Journal of Industrial Ergonomics, Volume 68, November 2018 (355-367).
+https://doi.org/10.1016/j.ergon.2017.02.004\\
+
+\subsection{Deictic Gesture}
+A deictic gesture is a gesture that indicates direction or location from the perspective of the person performing the gesture.\par
+The meaning of the deictic gesture depends on the context, it can refer to a real or a virtual environment. It could often be expressed by adverbs such as "here" and "there" or by demonstrative pronouns such as "this" and "that". We use it to specify direction and location or to identify a person or an object in the environment.\par
+The most common deictic gesture is the pointing gesture. Other examples are
+gestures based on head movements or eye gaze.\par
+
+\subsection{Pointing Gesture}
+A pointing gesture is performed by extending the arm in the appropriate
+direction, usually using the index finger or hand to indicate the direction.\par
+It may represent the pointing ray, which is given by, for example,
+the eyes (as the origin) and the index finger, or it may have a more symbolic
+meaning, such as when a person is pointing outside his field of vision or in a virtual environment.\par
+Pointing with the index finger is a cross-cultural behavior. Infants most commonly use their index fingers for tactile exploration of their environment and they often use the gesture of the extended
+index finger for a variety of purposes before they acquire its social meaning.\par
+
+\subsection{Object Manipulation}
+Object manipulation in robotics refers to robot's interaction with its environment that involves physical contact with an object and causes a change in the position, orientation, or shape of the object.\par
+There are various ways a robot can move or modify an object. Industrial material handling robots typically grasp objects using a robotic arm with an arm or other end effector. Robotic lawn mowers use rotating blades to cut and generate an air flow to collect grass. In Robot Sumo, robots use a blade to push their opponents out of the arena. Humanoid robots perform actions that are more similar to human actions: they can kick a ball with their legs or use a golf club to hit the ball.\par
+
+Simple manipulation activities can be performed using a predefined set of commands, but more complex tasks require the robot to plan and control the motion.\par
+
+\subsection{Autonomous Control}
+Autonomous control is the ability of a machine to perform tasks independently, without direct human intervention. There are different degrees of autonomy.\par
+An automated machine has no autonomy, it strictly follows human instructions by executing predefined commands and making all decisions according to predefined logic. Operates within a known framework and needs human intervention in the case of an unexpected event.\par
+A fully autonomous machine could theoretically accomplish all its tasks without human intervention. It would use artificial intelligence for planning and control, 
+all unexpected events could be handled by the machine itself.\par
+In the real world, machines that are considered fully autonomous are designed to operate only in a simple, predictable environment. They still require some kind of human supervision and the supervisor can take control in an emergency.\par
+The semi-autonomous machine lies between these two extremes. Most of the time it preforms the task independently, but in some parts of the process a supervisor is involved in decision making or direct control of the machine.\par
+
+
+\subsection{Human-Robot Interaction}
+Human-robot interaction (HRI) is an interdisciplinary field of research that studies the ways of communication between human and robots.\par
+HRI integrates knowledge of robotics, artificial intelligence, natural language processing, psychology and engineering, among other areas.\par
+The main goal is to develop robots that behave in natural way and are able to effectively communicate with users.\par
+This field is related to human-computer interaction (HCI), but HCI focuses primarily on software and interfaces. Interaction with robots is more physical than with computers. Robots can move around, sensors allow them to explore the environment or to learn while interacting with humans.\par
+The HRI system is not only designed to be convenient for the user, but is also considered from the robots' point of view.\par
+It is important to avoid robot's collisions with users as they can lead to injuries or material damage. Safety should be always ensured for both humans and robots during the interaction.\par
+
+remote vs. proximate interactions; \\
+
+roles of humans and robots in interaction: Supervisor, Operator, Mechanic, Peer, Bystander, Information consumer, Mentor (taxonomy from paper: M. A. X. Goodrich and A. C. Schultz, “Human-Robot Interaction: A Survey,” Foundations and Trends R© in Human- Computer Interaction, vol. 1, no. 3, pp. 203–275, 2007.); \\
+
+areas of application: industrial, search and rescue, medical, social, ...\\
+
+\section{Gesture Based Control for “Pick and Place”}
+"Pick and Place" is one of the basic tasks of object manipulation: the robot's goal is to move a selected object to a given target location.\par
+The robot has to be able to move around the environment, find its way to the desired locations and manipulate the object, for example, by grasping and releasing it. Object detection is necessary unless the environment is very simple and the objects have a predictable location.\par
+In order to accomplish the task using gesture-based control, we need to execute the following steps:\par
+
+Pick:\\
+\begin{itemize}
+\item {User performs gestures to select an object.}
+\item {Robot navigates close to the selected object.}
+\item {Robot identifies the object and its exact coordinates.}
+\item {Robot picks up the object.}
+\end{itemize}
+
+
+Place:\\
+\begin{itemize}
+\item {User performs gestures to specify the target location.}
+\item {Robot navigates close to the target location.}
+\item {Robot places the object to the target location.}
+\end{itemize}
+
+
+\section{Task Specification}
+I designed a gesture based control for the Pick And Place task and implemented it in C++ and Python using the Robot Operating System (ROS).\par
+The implementation was tested with a mobile robotic manipulator available in the robotics lab. The image data for object detection and gesture recognition was captured by a depth camera.\par
+The experiments were conducted indoors. The environment was static, with only the person performing the gestures and the robot moving in the scene.\par
+The distance from the camera in which the person could be detected was limited. I also restricted the area in front of the camera where objects could be initially located. Otherwise, objects not related to the experiment would have been detected.\par
+A similar restriction applied to the area where the robot could work. No obstacles were placed there except for the detected objects. The target position of the selected object had to be chosen within this area.\par
+The mobile robotic manipulator was required to safely navigate, avoid collisions and manipulate objects without unnecessary emergency braking.\par
+
+\section{Goals}
+The main goal was to implement gesture control using the devices available in the robotics lab.\par
+The implementation should provide several different types of gestures that would be compared for accuracy. The metric for comparison is the average distance between the correct coordinates (of the selected object or location) and the coordinate determined by the gesture.\par
+The user should be able to select the gesture type.\par
+I aimed also to demonstrate control using a real mobile robotic manipulator. This objective includes designing the robotic system and the implementation of the interfaces necessary to control the movements of the mobile robot, the robotic arm and the gripper.\par

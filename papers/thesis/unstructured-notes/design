@@ -1,0 +1,54 @@
+The proposed robotic system contains two main components: a vision system and a mobile robotic manipulator.
+The vision system is static, the camera remains at the designated location during the task.
+The robot starts at the initial position where it waits for messages from the vision system. Once the object and target position are selected and a result message is received, the robot navigates to the object, moves it to the target position and returns to the initial position.
+
+Vision System
+
+The main purpose of the vision system is to interpret the environment: to detect objects and the skeleton of a person with its gestures. The position of the objects and the tracked person is limited - outside a given frame, the detection is unreliable. 
+For the ORBBEC Astra, the distance must be less than 4 meters. Therefore, I decided to use a vision system separate from the mobile robotic manipulator. Otherwise, with a camera attached to the robot, only objects very close to it could be detected.
+The depth camera is connected to a laptop where the input data from the camera is processed. The resulting message is sent to the robot's desktop computer.
+
+Mobile Robot Manipulator
+
+The robot consists of a mobile vehicle with a robotic arm and a gripper.
+The vehicle is equipped with a laser scanner that enables localization and safe autonomous navigation in the environment. The on-board computer serves as the robot's ROS master and is connected to a desktop computer.
+The arm with gripper is attached to the vehicle. It needs to be set up so that there are no collisions with the robot or the floor during manipulation. The reach of the arm should also be limited so that it does not move within the field of view of the scanner, as this would trigger an emergency stop. 
+The arm computer controls both the arm and the gripper and is available via ROS and Dashboard Server.
+
+-------------------------------------------------------------------------------------------------------
+
+Hardware
+
+Neobotix MP-500
+
+The MP-500 mobile robot is a differential-wheeled robot with two large drive wheels and one small one at the rear. It is one of the most robust Neobotix mobile robots with a weight of 70 kg. 
+Its main components are a mobile platform, laser scanner, on-board computer, battery pack, manual charger and wireless joystick. Additional components can be attached to the mobile platform. 
+The robot can be used for material transport, with a load capacity of 80 kg. It is designed for indoor operation and has a speed of up to 1.5 m/s.
+
+A Sick S300 safety laser scanner with a maximum range of 30 meters is mounted in the front of the mobile platform. The scanner provides data that is used for localization, navigation and collision avoidance. 
+
+Detection of a person or obstacle in the safety field triggers an emergency stop and the robot stops immediately.
+
+
+https://neobotix-docs.de/hardware/en/MP-500.pdf
+
+
+
+Robotic Arm UR5
+
+The Universal Robots UR5 manipulator consists of a robotic arm, a control box with a teaching pendant and a battery. 
+The six-axis arm is composed of extruded aluminum tubes and rotational joints (Base, Arm, Elbow, Wrist 1, Wrist 2, Wrist 3). The Base is the first joint of the kinematic chain in which the arm is mounted to a fixed surface or a mobile platform. The last joint to which the tool is attached is Wrist 3. 
+All joints have a motion range of 360 degrees. The reach of the arm is 0,85 m from the center of the base, the area directly above and below the base is out of reach. The weight is 18.4 kg and the maximum payload is 5 kg.
+The teaching pendant provides a GUI for control of the arm, commands can also be sent remotely using dedicated ports.
+
+https://www.universal-robots.com/media/50588/ur5_en.pdf
+https://s3-eu-west-1.amazonaws.com/ur-support-site/16813/UR5_User_Manual_en_US.pdf
+
+Weiss Robotics GRIPKIT
+
+A two-finger gripper is connected to the UR5 arm using the Weiss Robotics GRIPKIT module. Its maximal opening stroke is ? TODO
+
+
+ORBBEC Astra Camera
+
+TODO – check type in lab
