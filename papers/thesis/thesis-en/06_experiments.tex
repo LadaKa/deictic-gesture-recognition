@@ -1,12 +1,34 @@
 \chapter{Experiments}
-TODO:\\
-Experiments descriptions:
 
-Experiments with different ways of using deictic gestures:\\
-- a pointing ray calculated from a pair of skeleton coordinates (head - hand, elbow - wrist, shoulder - wrist)\\
-- pointing with or without visual feedback (pointed ray shown in rViz)\\
+\section{Overview}
+Three types of pointing gestures were compared using the average distance between the correct coordinates (of the selected object or target location) and the coordinates determined by the gesture, which correspond to the intersection of the pointing ray and the floor.\par
+The distance from the person to the object ranged between 1 and 2 meters and from the person to the target location ranged between 2 and 4 meters.\par
+The pointing ray was hidden during the experiments.\par
+I conducted a series of experiments to investigate the accuracy of the gestures. When the experiments were repeated, the accuracy increased significantly.\par
 
-Experiments measurements:\\
-...\\
+\section{Trials}
+One object was placed in front of the camera and one target location was selected and marked on the floor.\par
+Standing in the same place, I pointed to the object and to the location, using each type of gesture with a confirming gesture, and calculated the resulting distances for each type.\par
+I then moved to a different location and repeated the process.\par
+Each trial involved ten to twenty different positions from which I pointed.\par
 
-result evaluation; what went wrong; future work, possible improvements 
+\section{Results}
+\subsection{Head-Wrist Gesture Type}
+As expected, the average accuracy was highest for the head-wrist gesture.\par
+In general, the pointing gestures with the highest accuracy are those that involve eye position, because when looking at an object, the line of sight corresponds to the exact pointing ray.\par
+The average distance from the target location was less than 1 meter even during the first trials, and accuracy increased rapidly as trials were repeated, with some later trials having an average distance of less than 0.3 meters.\par
+
+\subsection{Shoulder-Wrist and Elbow-Wrist Gesture Types}
+The shoulder-wrist and elbow-wrist gesture types had very low accuracy in the first few trials, with average distances exceeding 2,5 meters in some trials. Accuracy increased over the course of testing.\par
+I used visual feedback for training. A pointing gesture can be performed with accuracy when the pointing ray is visible, and the feedback helps to calibrate the execution of the gesture.\par
+Accuracy increased (temporarily) on trials performed immediately after training, with the best average distance being less than 0.5 meters.\par
+I get better results using the shoulder-wrist type, especially when aiming at distant targets. This preference is subjective. I've done short experiments with two other persons and they both prefer using the elbow-wrist type.\par
+
+\section{Possible Improvements}
+\subsection{Accuracy of Pointing Gestures}
+Only small objects were used for the experiments. For larger objects, the accuracy can be improved by interpreting the pointing gesture differently: we should not count the intersection with the floor, but the first intersection with the object.\par
+It would also help to use an additional button device to confirm the gesture, as raising the left hand slightly reduces accuracy.\par
+
+\subsection{Gesture Based Control}
+The execution of the Pick And Place task could be improved with interactive control where the user could correct the robot during the task performance.\par 
+Multiple gestures would be required to interrupt the robot's movement or revert a previous gesture.\par

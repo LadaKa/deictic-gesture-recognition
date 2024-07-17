@@ -1,7 +1,6 @@
 \chapter{The state of the art}
 
-\section{History of Gesture Based Control}
-\subsection{Computer Vision}
+\section{History of Computer Vision}
 The first digital image scanner was built in 1957 by Russell A. Kirsch. The device optically scanned a scene and converted the scan into an image, which was represented by pixels.\par
 In the 1960s, David Hubel and Torsten Wiesel conducted experiments with cats that provided insight into image processing in the brain. They showed cats various simple visual stimuli while recording the electrical activity of cells in the visual cortex.\par
 This revealed how the brain builds complex visual representations from simple elements and how individual neurons are involved in image processing, e.g. neurons responsible for edge detection were discovered.\par
@@ -9,22 +8,24 @@ In 1966 was founded the Summer Vision Project on MIT, which focused on machine v
 Edge detection was implemented in 1987 using the gradient calculation.\par
 The "Eigenfaces" face recognition algorithm was developed in 1991, the Scale-Invariant Feature Transform (SIFT) algorithm for local features detection in 1999, and the Viola-Jones face detection algorithm in 2001.\par
 In 2005, the Histogram of Oriented Gradients (HOG) algorithm was introduced that enabled efficient body recognition and object detection.\par
-Deep learning has become the dominant computer vision method in the following years, especially after the success of the ImageNet Challenge in 2012.\par
+Deep learning has become the dominant computer vision method in the following years, especially after the success in the ImageNet Challenge in 2012.\par
 
-\subsection{Gesture Recognition}
-In the 1960s, the first touch screens and pointing devices were developed. In 1963, Sketchpad was written, a computer program that allowed interaction with objects on the screen using a light pen to capture motion.\par
-In 1977, Sayre's Glove was introduced, which used a light sensor and a flexible light source tube to determine the position of the fingers. Later, various sensors such as accelerometers or magnetic sensors were used for gesture recognition using gloves.\par
-Image processing tools enabled vision-based hand gesture recognition using images of gestures performed with a color marked glove.\par
+\section{Gesture Based Control}
+In the 1960s, the first touch screens and pointing devices were developed. In 1963 was written Sketchpad, a computer program that allowed interaction with objects on the screen using a light pen to capture motion.\par
+In 1977, Sayre's Glove was introduced, which used a light sensor and a flexible tube with light source to determine the position of the fingers. Later, various sensors such as accelerometers or magnetic sensors were used for gesture recognition using gloves.\par
+Image processing tools enabled vision-based hand gesture recognition using images of gestures that were performed with a color marked glove.\par
 Body recognition methods included wearable sensors such as electromyographic (EMG) sensors attached to the arm or suit with an IMU and barometer.\par
 Sensors such as radar enabled body recognition at a distance.\par
 
 Significant was the development of depth cameras that use time-of-flight or structured light-based technologies, such as the Microsoft Kinect device launched in 2010, which enabled real-time body and gesture recognition.\par
 
-\section{Localization and navigation with deictic gestures}
-
-These are some (not all) examples of what I want to mention here:\\
+\section{Deictic Gestures}
+After the introduction of body recognition methods, various gesture control systems have been developed that were based on deictic gestures.\par
+In 2018, the paper “Robot Identification and Localization with Pointing Gestures” was published. It describes a mobile robot control system that uses a smartwatch with IMU sensor to control the trajectory of drones.\par
+In 2020, pointing-based trajectory control was introduced for 2D plane and 3D space, where methods for localization using pointing gestures were implemented.\par
+The approach uses the concept of virtual workspace surfaces to determine coordinates in 3D. The coordinate is given as the intersection of the virtual geometric object's surface with the pointing ray. Simple button device was used for workspace switching.\par
  
-Deictic gestures for multi-robot systems \\
+TODO: ref + last note\\
 
 Paper: \\
 B. Gromov, L. M. Gambardella and G. A. Di Caro, "Wearable multi-modal interface for human multi-robot interaction," 2016 IEEE International Symposium on Safety, Security, and Rescue Robotics (SSRR), Lausanne, Switzerland, 2016, pp. 240-245, doi: 10.1109/SSRR.2016.7784305.\\
