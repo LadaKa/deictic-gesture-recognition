@@ -29,12 +29,19 @@ private:
     bool objectsDetected = false;
     bool pointingGestureDetected = false;
     bool pointedObjectSelected = false;
+    bool targetLocationSelected = false;
 
     std_msgs::Int32 pointedObjectIndexMsg;
 
     static const int detectedObjectsCount = 3; // !!
 
     geometry_msgs::Point32 detectedObjectsCenters[detectedObjectsCount];
+
+    float selected_object_x;
+    float selected_object_y;
+
+    float camera_x = 0;
+    float camera_y = 5;
 
     /*void object_detection_done_cb(const std_msgs::Empty::ConstPtr &msg)
     {
@@ -57,48 +64,32 @@ private:
 
     void pointed_intersection_cb(const geometry_msgs::Point32::ConstPtr &msg)
     {
-        if (pointingGestureDetected)
+        // objects and both pointing gestures already detected
+        if (targetLocationSelected)
             return;
 
         if (objectsDetected)
         {
-            pointingGestureDetected = true;
-            pointedObjectIndexMsg.data = GetPointedObjectIndex(msg);
-            pointedObjectSelected = true;
+            // first pointing gesture
+            if (!pointedObjectSelected)
+            {
+                pointingGestureDetected = true;
+                pointedObjectIndexMsg.data = GetPointedObjectIndex(msg);
+                selected_object_x = msg->x;
+                selected_object_y = msg->y;
+                pointedObjectSelected = true;
+            }
+            // TODO - this is ugly!
+            else if ((selected_object_x != msg->x) && (selected_object_y != msg->y)) 
+            {
+                targetLocationSelected = true;
+                SendResultFile(pointedObjectIndexMsg.data, msg);
+            }
+            
         }
     }
 
-    void WriteResultToTempFile(int selectedObjectIndex)
-    {
-        std::ofstream result_file;
-       // result_filename = "~/Desktop/result.txt";
-        result_file.open("/home/robot/Desktop/result.txt"); // TODO: temp
 
-        result_file << detectedObjectsCount << "\n";
-        if (!result_file.is_open())
-        {
-            ROS_INFO("Can't open result file.");
-            return;
-        }
-
-        for (int i = 0; i < detectedObjectsCount; i++)
-        {
-            result_file 
-                << detectedObjectsCenters[i].x
-                << " "
-                << detectedObjectsCenters[i].y
-                << " "
-                << detectedObjectsCenters[i].z
-                << "\n";
-
-        };
-
-        result_file << selectedObjectIndex << "\n";
-
-        result_file.close();
-
-        ROS_INFO("Result was written to result file.");
-    }
 
     // returns index of object that is nearest to pointed floor intersection)
     int GetPointedObjectIndex(const geometry_msgs::Point32::ConstPtr &pointedFloorIntersection)
@@ -138,14 +129,69 @@ private:
 
         };
 
-        WriteResultToTempFile(minDistanceIndex);
-
-        // TODO: refactor
-        system("/bin/bash -c /home/robot/hello.sh");
-
         return minDistanceIndex;
     }
 
+    
+    void WriteResultToTempFile(
+        int selectedObjectIndex,
+        float target_x,
+        float target_y)
+    {
+        std::ofstream result_file;
+        // TODO: temp filename + folder and cam coords as arg (config) 
+        result_file.open("/home/robot/Desktop/result.txt"); 
+
+        result_file << camera_x
+                    << " "
+                    << camera_y
+                    << "\n";
+
+        result_file << detectedObjectsCount << "\n";
+        if (!result_file.is_open())
+        {
+            ROS_INFO("Can't open result file.");
+            return;
+        }
+
+        for (int i = 0; i < detectedObjectsCount; i++)
+        {
+            result_file 
+                << detectedObjectsCenters[i].x
+                << " "
+                << detectedObjectsCenters[i].y
+                << " "
+                << detectedObjectsCenters[i].z // TODO: camera z-coord!
+                << "\n";
+
+        };
+
+        result_file << selectedObjectIndex << "\n";
+
+        result_file << target_x
+                    << " "
+                    << target_y
+                    << "\n";
+
+        result_file.close();
+
+        ROS_INFO("Result was written to result file.");
+    }
+   
+
+    void SendResultFile(
+        int pointedObjectIndex,
+        const geometry_msgs::Point32::ConstPtr &pointedFloorIntersection)
+    {
+        WriteResultToTempFile(
+            pointedObjectIndex,
+            pointedFloorIntersection->x;
+            pointedFloorIntersection->y);
+
+        ROS_INFO("Launching bash script to send results via ssh.");
+        // TODO: refactor
+        system("/bin/bash -c /home/robot/hello.sh");
+    }
 
 public:
     task_control_node(std::string name) : _name(name)
