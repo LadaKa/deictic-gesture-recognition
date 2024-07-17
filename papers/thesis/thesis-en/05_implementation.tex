@@ -5,11 +5,11 @@
 \subsection{Image Processing with ORBBEC Astra Camera}
 The image data is sent from the camera to the connected notebook for processing.\par
 There is the ROS Master and several other individual ROS nodes running on the notebook. Some ROS nodes are involved in image processing, while others provide tools such as geometric calculations or displaying detected objects and skeletons on the rViz screen.\par
-ROS nodes communicate with each other using ROS messages and share information about the progress of their subtasks.\par
-I used two main tools to process the camera data: the ROS Astra camera driver "ros\_astra\_camera" for object detection and the "ORBBEC Astra SDK" for skeleton detection.\par
+ROS nodes communicate with each other using ROS messages.\par
+I used two main tools to process the camera data: the ROS Astra camera driver ros\_astra\_camera for object detection and the ORBBEC Astra SDK for skeleton detection.\par
 Both tools use OpenNI as an intermediate layer to access the camera data. I couldn't run them at the same time because it led to runtime errors, so I decided to split the process into two separate phases.\par
-First, the "ros\_astra\_camera" driver is started. Once all objects are detected, the driver stops.\par
-In the second phase, data is exposed using the "ORBBEC Astra SDK" until both pointing gestures are confirmed and the result is sent to the robot. \par
+First, the ros\_astra\_camera driver is started. Once all objects are detected, the driver stops.\par
+In the second phase, data is exposed by the ORBBEC Astra SDK until both pointing gestures are confirmed and the result is sent to the robot. \par
 Since gesture recognition is performed within the ROS system, additional ROS packages were needed to publish the body tracking data provided by the SDK as ROS messages.\par
 
 \subsection{Installation}
@@ -39,7 +39,7 @@ I downloaded three ROS packages from the Shinsel Robots repository on https://gi
 The "pcl\_object\_detection" package allows object detection in the camera data provided by the ROS Astra driver using the Point Cloud Library.\par
 The "astra\_body\_tracker" and "body\_tracker\_msgs" packages publish body tracking data from the Astra SDK as ROS messages.\par
 Several environment variables have to be set to indicate the paths to the AstraSDK and OpenNI subfolders.\par
-For example, if "/home/user/AstraSDK" is the folder containing the Astra SDK and "/home/user/OpenNI-Linux-x64-2.3.0.66" is the folder containing the OpenNI SDK, the settings can be made by running these commands in the terminal: \par
+For example, if "/home/user/AstraSDK" is the folder containing the Astra SDK and "/home/user/OpenNI-Linux-x64-2.3.0.66" is the folder containing the OpenNI SDK, the setting can be made by running these commands in the terminal: \par
 
 \begin{lstlisting}[language=bash]
   $ export ASTRA_SDK=/home/user/AstraSDK
@@ -82,18 +82,18 @@ The pcl\_ros package bridges ROS systems and 3D applications that work with poin
 Conversions between PCL data types and ROS message types are provided by the pcl\_conversions package.\par
 The pcl\_object\_detection\_node subscribes to the topic \\"/astra\_camera/depth/points", which is published by the ROS Astra camera driver. The received messages represent a point cloud with no color information.\par
 The point cloud is processed using PCL: the data is filtered with VoxelGrid and used for plane segmentation. The remaining points, which are outside the plane, are divided into clusters.
-Each cluster can eventually be considered as a detected object. We can specify parameters that limit the height and width of the detected objects.\par
+Each cluster can eventually be considered as a detected object. We can specify parameters that limit the height and width to detect only a specific type of objects.\par
 All clusters that meet the given conditions correspond to detected objects and their properties are published in the "pcl\_object\_detection/detected\_objects" message.\par
 
 \subsubsection{Detection in Experimental Environment}
 Even if the scene with the objects was static, different objects were detected in consecutive depth clouds. The detection reliability decreased with the person moving in the scene.\par
 I modified the original pcl\_object\_detection package from Shinsel Robots to improve the quality of object detection in my experimental environment. I also needed to implement a mechanism for switching between the ROS Astra driver and the Astra SDK to avoid issues with camera data accessibility.\par
 The object size is limited to 20 cm and the object can be detected only when lying on the floor. Furthermore, a detection frame has been specified as a constraint for the object's location on the floor. An object outside the detection frame is ignored.\par
-To ensure that the same objects are detected when the experiment is repeated in the same scene, the total number of objects is fixed and the program is modified:\par
+To ensure that the same objects are detected when the experiment is repeated in the same scene, I fixed the total number of objects and modified the program:\par
 The received point clouds are processed one by one, with some objects detected in each cloud. \par
 If the number of detected objects does not equal the total number, the result is ignored and processing continues with the next cloud.\par
-Otherwise, the number of detected objects is correct, which usually means that the correct objects have been detected. Their data is published in the "pcl\_object\_detection/detected\_objects" message. In addition, the message "object\_detection\_done" is published, which indicates that the ROS Astra driver is no longer needed.\par 
-I added a subscriber to the ROS Astra driver to the "object\_detection\_done" message. Once the message is received, the driver is shut down.\par
+Otherwise, the number of detected objects is correct, which usually means that only the correct objects have been detected. Their data is exposed in the "pcl\_object\_detection/detected\_objects" message. In addition, the message "object\_detection\_done" is published, which indicates that the ROS Astra driver is no longer needed.\par 
+I added the "object\_detection\_done" subscriber to the ROS Astra driver. Once the message is received, the driver is shut down.\par
 
 The package was also extended by code for displaying detected objects in rViz, marking them in blue and changing the color to red if the object was selected by the  pointing gesture.\par
 
@@ -106,47 +106,61 @@ The data also contains the current body tracking status, body orientation and ha
 The pointing\_gesture node is inactive during object detection. 
 The "object\_detection\_done" message triggers the shutting down of the ROS Astra driver.\par
 I added a subscriber for the "object\_detection\_done" topic to the pointing gesture node as well. Once the message is received, the node attempts to open the Astra data stream using the Astra SDK and repeats this until the ROS Astra device stream is completely terminated.\par
-Then the data stream is available to the SDK and we can start gesture recognition.\par 
-The SDK provides a list of tracked persons for each frame of the image data stream. For each tracked person, a check is made to see if he performs the confirmation and pointing gestures.\par
+Then the data stream is available for the Astra SDK and we can start gesture recognition.\par 
+The Astra SDK provides a list of tracked persons for each frame of the image data stream. For each tracked person, a check is made to evaluate whether he is performing the confirmation and pointing gestures.\par
 The confirmation gesture is performed by raising the left hand. It is detected when the left hand joint is raised above the head joint.\par
 I tried using the shoulder joint instead of the head joint. However, body tracking is not completely reliable and I observed many cases of false gesture detection. The shoulder joint has been often misidentified, while the head joint is usually identified correctly.\par
 If a confirmation gesture is detected in a given frame, the right arm is checked for the pointing gesture, otherwise processing continues with the next frame.\par
-The pointing gesture is recognized by the position of the pair of joints corresponding to the selected pointing gesture type. The first joint of the pair determines the origin of the pointing ray. It is the upper joint considering the standard anatomical position.\par
+The pointing gesture is recognized by the position of the pair of joints corresponding to the selected pointing gesture type. The first joint of the pair determines the origin of the pointing ray. It is the upper joint when we consider the standard anatomical position.\par
 The pointing gesture is detected when the first joint is positioned higher than the second.\par
 The coordinates of the pointing ray intersection with the floor plane are computed and published in a ROS message.\par
-The default option for the pointing gesture is the head-wrist type. The user may select a different option using a ROS message (TODO: command, head).\par
+The default option for the pointing gesture is the head-wrist type. The user may select a different option using a ROS message (TODO: add command example.\par
 
-I have added rViz markers to display the skeleton of the person being tracked and the pointing ray. When the first confirmed pointing gesture is detected and the intersection coordinates are published, the object closest to the intersection is selected and marked in red in rViz. The distance between the intersection point and the object is logged.\par
-The second detected pointing gesture specifies the target location. The coordinates of the corresponding intersection are also published and marked in rViz.\par
-Once the second confirmed pointing gesture is detected, the data stream is closed.\par
+I have added rViz markers to display the skeleton of the tracked person and the pointing ray. When the first confirmed pointing gesture is detected and the intersection coordinates are published, the object closest to the intersection is selected and marked red in rViz. The distance between the intersection point and the object is logged.\par
+The second detected pointing gesture specifies the target location. The coordinates of the corresponding intersection are also published and marked red in rViz.\par
+Once the second confirmed pointing gesture is detected and the intersection is published, the data stream is closed.\par
 
 
-\subsubsection{TODO - some notes}
-Why I choose ORBBEC Astra camera over Kinect ONE (v2):\\
-difficult installation of tools and libraries for a ROS Interface to the Kinect One (dependencies on ROS Hydro/Indigo distribution, no available packages for ROS Noetic).\\
-New ORBBEC Astra ROS SDK.\\
+\section{Mobile Robot Manipulator}
 
-\section{Navigation of Autonomous Vehicle}
+\subsection{Execution of Pick And Place Task}
+I aimed to implement a Pick And Place task to test gesture based control with a real robot system and decided to use a mobile robotic manipulator for experiments.\par
+Not all features for autonomous execution were fully implemented. I simplified the task because both navigation and object detection require detailed analysis and testing.\par
+There is a restricted area in the robotics lab for the robot, with no obstacles except a few small objects on the floor. The surface is flat and even.\par
+The robot knows its initial position and the coordinates of the camera. Once it receives the coordinates of the selected object and its target location, it navigates to the selected object and extends the robotic arm forward.\par
+Since I have not completed the autonomous control of the robot arm, the gripper is not placed in the correct position and the robot needs help to pick up the object.\par
+After five seconds, it closes the jaws of the gripper and navigates to approximate target location where it releases the object.\par
+The robot cannot handle unexpected events and will stop in a case of emergency.\par
+
+\subsection{Autonomous Navigation}
+
+\subsubsection{The Neobotix Mobile Robot}
+The ROS Kinetic and Neobotix ROS packages have already been installed on the Neobotix mobile robot computer, as well as the ROS packages for navigation and motion control (ros-noetic-amcl, ros-noetic-map-server, ros-noetic-move-base).\par
+I installed the ROS Noetic and packages from the Neobotix GitHub repository on my notebook. \par
+The move\_base framework provides access to the ROS navigation stack and moves the robot to its goal destination. I implemented a SimpleActionClient that sends the goal state to move\_base.\par
+The goal state includes the position and orientation of the robot. I needed to tune the parameters of the local Neobotix planner: the tolerance for the target orientation had to be increased because it was too strict for the robot.\par
+I also modified robot's behaviour when unknown obstacles are detected. \par 
+When the laser scanner detects an unknown obstacle in front of the robot, the robot creates a new motion plan and turns sideways to avoid a collision. This may lead to the detection of other new obstacles.\par
+By default, the robot will start to perform a recovery rotation when it cannot find any way out of its current position. I disabled this setting and increased the threshold for obstacle distance to enable the robot to approach the objects without unnecessary turning.\par
+
+\subsubsection{Map of Environment}
+The environment map can be created using the neo\_mp\_500 package, which provides tools for autonomous navigation. Simultaneous localization and mapping (SLAM) is performed using the gmapping algorithm.\par
+I moved the robot around the lab using the remote control, checked the mapping process using rViz, and saved the map when it adequately represented the scene.\par
+
+
+
+TODO: 
+ref https://github.com/neobotix/,
+add image of map and rViz screenshot\par
+
+
+\subsection{Object Manipulation}
+
+
+\subsubsection{Universal Robots UR5 Manipulator}
 TODO:\\
-\subsection{Installation}
-Neobotix:
-
-Packages:
-https://github.com/neobotix/
-
-ros-noetic-amcl, ros-noetic-map-server, ros-noetic-move-base, ...
-
-\subsection{Map of Environment}
-Mapping procedure, selecting the map for navigation, visualization with RViz...\\
-
-\subsection{Navigation to Goal}
-Goal definition, movement (path, obstacle avoidance, ...).
-
-\section{Object Manipulation}
-TODO:\\
-
-\subsection{Installation}
 Universal Robots:\\
+DashBoardServer, Polyscope, URP, ...\\
 
 Packages:\\
 Universal\_Robots\_ROS\_Driver
@@ -160,26 +174,14 @@ https://github.com/ros-industrial/universal\_robot/tree/noetic-devel/ur5\_moveit
 
 
 
-\subsection{Mobile Manipulator URDF}
+\subsubsection{Mobile Manipulator URDF}
+TODO:\\
 URDF for Neobotix, UR5 and gripper.\\
 
-\subsection{MoveIt Setup Assistant}
+\subsubsection{MoveIt Setup Assistant}
 How to create config and set up arm positions.\\
 How to set up arm limits.\\
 Simulation in rViz.\\
-
-\subsection{Code}
-ur\_robot\_driver;\\
-ROS.urp;\\
-move\_it\_planning;\\
-trajectory commands;\\
-
-\subsection{Objects coordinates}
-approximate coordinates of objects obtained from the vision system; \\
-robot navigates to objects; \\
-exact objects coordinates from LIDAR (lidar\_scan topic subscriber).\\
-
-
 
 
 

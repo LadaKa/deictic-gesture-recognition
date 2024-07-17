@@ -12,8 +12,32 @@
 % We let bibliography items stick out of the right margin a little
 \def\bibfont{\hfuzz=2pt}
 
-\printbibliography[heading=bibintoc]
+%\printbibliography[heading=bibintoc]
 
+
+%%%%
+
+%\begin{document}
+
+%\maketitle
+
+\section{First section}
+
+
+Let's cite! The Einstein's journal paper \cite{Student08}
+
+\medskip
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{SelfCollisionsMatrix.png}
+    \caption{Enter Caption}
+    \label{fig:enter-label}
+\end{figure}
+
+\printbibliography
+
+%%%%
 %%% If case you prefer to write the bibliography manually (without biblatex),
 %%% you can use the following. Please follow the ISO 690 standard and
 %%% citation conventions of your field of research.

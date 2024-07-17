@@ -39,7 +39,8 @@ index finger for a variety of purposes before they acquire its social meaning.\p
 
 \subsection{Object Manipulation}
 Object manipulation in robotics refers to robot's interaction with its environment that involves physical contact with an object and causes a change in the position, orientation, or shape of the object.\par
-There are various ways a robot can move or modify an object. Industrial material handling robots typically grasp objects using a robotic arm with an arm or other end effector. Robotic lawn mowers use rotating blades to cut and generate an air flow to collect grass. In Robot Sumo, robots use a blade to push their opponents out of the arena. Humanoid robots perform actions that are more similar to human actions: they can kick a ball with their legs or use a golf club to hit the ball.\par
+There are various ways a robot can move or modify an object. Industrial robots typically grasp objects using a robotic arm with a gripper or other end effector. Robotic lawn mowers use rotating blades to cut and generate an air flow to collect grass.\par
+In Robot Sumo, robots use a blade to push their opponents out of the arena. Humanoid robots perform actions that are more similar to human actions: they can kick a ball with their legs or use a golf club to hit the ball.\par
 
 Simple manipulation activities can be performed using a predefined set of commands, but more complex tasks require the robot to plan and control the motion.\par
 
@@ -54,22 +55,17 @@ The semi-autonomous machine lies between these two extremes. Most of the time it
 
 \subsection{Human-Robot Interaction}
 Human-robot interaction (HRI) is an interdisciplinary field of research that studies the ways of communication between human and robots.\par
-HRI integrates knowledge of robotics, artificial intelligence, natural language processing, psychology and engineering, among other areas.\par
+HRI integrates knowledge of robotics, artificial intelligence, natural language processing, engineering and psychology.\par
 The main goal is to develop robots that behave in natural way and are able to effectively communicate with users.\par
 This field is related to human-computer interaction (HCI), but HCI focuses primarily on software and interfaces. Interaction with robots is more physical than with computers. Robots can move around, sensors allow them to explore the environment or to learn while interacting with humans.\par
-The HRI system is not only designed to be convenient for the user, but is also considered from the robots' point of view.\par
-It is important to avoid robot's collisions with users as they can lead to injuries or material damage. Safety should be always ensured for both humans and robots during the interaction.\par
+The HRI system is designed not only to be convenient for the user, but is also considered from the robots' point of view.\par
+It is important to avoid robot's collisions with users as they can lead to injuries or material damage. Safety should be always ensured for both humans and robots during the whole interaction.\par
 
-remote vs. proximate interactions; \\
-
-roles of humans and robots in interaction: Supervisor, Operator, Mechanic, Peer, Bystander, Information consumer, Mentor (taxonomy from paper: M. A. X. Goodrich and A. C. Schultz, “Human-Robot Interaction: A Survey,” Foundations and Trends R© in Human- Computer Interaction, vol. 1, no. 3, pp. 203–275, 2007.); \\
-
-areas of application: industrial, search and rescue, medical, social, ...\\
-
-\section{Gesture Based Control for “Pick and Place”}
-"Pick and Place" is one of the basic tasks of object manipulation: the robot's goal is to move a selected object to a given target location.\par
+\section{Gesture Based Control for Pick and Place Task}
+"Pick and Place" is one of the basic tasks of object manipulation: the robot's goal is to move an object to a given target location.\par
 The robot has to be able to move around the environment, find its way to the desired locations and manipulate the object, for example, by grasping and releasing it. Object detection is necessary unless the environment is very simple and the objects have a predictable location.\par
-In order to accomplish the task using gesture-based control, we need to execute the following steps:\par
+In order to accomplish the task using gesture-based control, we need to execute the following steps:\\
+
 
 Pick:\\
 \begin{itemize}
@@ -90,14 +86,14 @@ Place:\\
 
 \section{Task Specification}
 I designed a gesture based control for the Pick And Place task and implemented it in C++ and Python using the Robot Operating System (ROS).\par
-The implementation was tested with a mobile robotic manipulator available in the robotics lab. The image data for object detection and gesture recognition was captured by a depth camera.\par
+Image data for object detection and gesture recognition was captured by a depth camera. The implementation was tested with a mobile robotic manipulator available in the robotics lab.\par
 The experiments were conducted indoors. The environment was static, with only the person performing the gestures and the robot moving in the scene.\par
 The distance from the camera in which the person could be detected was limited. I also restricted the area in front of the camera where objects could be initially located. Otherwise, objects not related to the experiment would have been detected.\par
-A similar restriction applied to the area where the robot could work. No obstacles were placed there except for the detected objects. The target position of the selected object had to be chosen within this area.\par
-The mobile robotic manipulator was required to safely navigate, avoid collisions and manipulate objects without unnecessary emergency braking.\par
+A similar restriction applied to the area where the robot could work. No obstacles were placed there except for the detected objects. The target position of the selected object has to be chosen within this area.\par
+
 
 \section{Goals}
 The main goal was to implement gesture control using the devices available in the robotics lab.\par
-The implementation should provide several different types of gestures that would be compared for accuracy. The metric for comparison is the average distance between the correct coordinates (of the selected object or location) and the coordinate determined by the gesture.\par
-The user should be able to select the gesture type.\par
-I aimed also to demonstrate control using a real mobile robotic manipulator. This objective includes designing the robotic system and the implementation of the interfaces necessary to control the movements of the mobile robot, the robotic arm and the gripper.\par
+The implementation should provide several different types of gestures that would be compared for accuracy. The metric for comparison is the average distance between the correct coordinates (of the selected object or location) and the coordinates determined by the gesture. The user should be able to select the gesture type.\par
+I aimed also to demonstrate the designed control with a real mobile robotic manipulator. This objective includes designing the robotic system and the implementation of the interfaces necessary to control the movements of the mobile robot, the robotic arm and the gripper. 
+The robot should move safely, avoid collisions and manipulate objects without unnecessary emergency braking.\par
