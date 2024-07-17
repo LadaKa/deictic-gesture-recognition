@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot name="robot_0">
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.75" radius="0.02"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!--link name="astra_camera_link"-->
+  <link name="camera_link">
+    <visual>
+      <geometry>
+        <box size="0.2 0.1 0.2"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="base_to_astra_camera_link" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+  </joint>
+
+</robot>
