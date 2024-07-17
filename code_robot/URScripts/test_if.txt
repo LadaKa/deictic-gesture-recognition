@@ -1,0 +1,12 @@
+def testIf():
+textmsg("Hello robot!")
+if True:
+	textmsg("true")
+else:
+	textmsg("false")
+	end
+end
+
+testIf()
+
+

@@ -1,0 +1,10 @@
+def testInverseKinematics():
+textmsg("Hello robot!")
+textmsg("Actual TCP pose: ", get_actual_tcp_pose())
+textmsg("IK has solution 1: ", get_inverse_kin_has_solution(p[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]))
+textmsg("IK has solution 2: ", get_inverse_kin_has_solution(p[0.5, 0.0, 0.0, 0.0, 0.0, 0.0]))
+global myX = get_inverse_kin(p[0.5, 0.0, 0.0, 0.0, 0.0, 0.0])
+end
+
+testInverseKinematics()
+
