@@ -4,7 +4,7 @@
 
 \subsection{Image Processing with ORBBEC Astra Camera}
 The image data is sent from the camera to the connected notebook for processing.\par
-There is the ROS Master and several other individual ROS nodes running on the notebook. Some ROS nodes are involved in image processing, while others provide tools such as geometric calculations or displaying detected objects and skeletons on the rViz screen.\par
+There is the ROS Master and several other individual ROS nodes running on the notebook. Some ROS nodes are involved in image processing, while others provide tools such as geometric calculations or displaying detected objects and skeletons on the RViz screen.\par
 ROS nodes communicate with each other using ROS messages.\par
 I used two main tools to process the camera data: the ROS Astra camera driver ros\_astra\_camera for object detection and the ORBBEC Astra SDK for skeleton detection.\par
 Both tools use OpenNI as an intermediate layer to access the camera data. I couldn't run them at the same time because it led to runtime errors, so I decided to split the process into two separate phases.\par
@@ -66,7 +66,7 @@ My catkin workspace folder contains following ROS packages, all with source code
 
 \subsubsection{Program Overview} 
   
-The main launch file is task\_execution.launch. It starts the ROS Astra driver, rViz and other ROS nodes involved in the task: task\_execution\_node, pcl\_object\_detection\_node and pointing\_gesture\_node.\par
+The main launch file is task\_execution.launch. It starts the ROS Astra driver, RViz and other ROS nodes involved in the task: task\_execution\_node, pcl\_object\_detection\_node and pointing\_gesture\_node.\par
 The task\_execution\_node subscribes to ROS messages\\
 "pcl\_object\_detection/detected\_objects" and "body\_tracker/intersection".\\
 The "pcl\_object\_detection/detected\_objects" message contains an array of coordinates of the detected objects, the "body\_tracker/intersection" message contains the coordinates of the intersection of the pointing ray and the floor.\par
@@ -75,15 +75,32 @@ The second received intersection message indicates the target location.
 Once received, the node creates a result file and writes the coordinates of all detected objects, the coordinates of the target location and the index of the selected object.\par
 Then the node connects to the robot's computer using SSH, transfers the file there and remotely starts the robot's main program.\par
 
+
 \subsubsection{Object Detection with Point Cloud Library}
 Point Cloud Library (PCL) was used as a tool for processing the image data.\par
 The pcl\_object\_detection package allows the detection of objects on a flat surface and depends on two PCL packages: pcl\_ros and pcl\_conversions.\par
 The pcl\_ros package bridges ROS systems and 3D applications that work with point clouds. It extends the ROS C++ Client Library to support messages with native PCL data types.\par
 Conversions between PCL data types and ROS message types are provided by the pcl\_conversions package.\par
 The pcl\_object\_detection\_node subscribes to the topic \\"/astra\_camera/depth/points", which is published by the ROS Astra camera driver. The received messages represent a point cloud with no color information.\par
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rViz_1.png}
+    \caption{Camera model and initial point cloud displayed in RViz}
+    \label{fig:enter-label}
+\end{figure}
+
 The point cloud is processed using PCL: the data is filtered with VoxelGrid and used for plane segmentation. The remaining points, which are outside the plane, are divided into clusters.
 Each cluster can eventually be considered as a detected object. We can specify parameters that limit the height and width to detect only a specific type of objects.\par
 All clusters that meet the given conditions correspond to detected objects and their properties are published in the "pcl\_object\_detection/detected\_objects" message.\par
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rViz_2.png}
+    \caption{Detected objects marked in blue}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsubsection{Detection in Experimental Environment}
 Even if the scene with the objects was static, different objects were detected in consecutive depth clouds. The detection reliability decreased with the person moving in the scene.\par
@@ -95,7 +112,7 @@ If the number of detected objects does not equal the total number, the result is
 Otherwise, the number of detected objects is correct, which usually means that only the correct objects have been detected. Their data is exposed in the "pcl\_object\_detection/detected\_objects" message. In addition, the message "object\_detection\_done" is published, which indicates that the ROS Astra driver is no longer needed.\par 
 I added the "object\_detection\_done" subscriber to the ROS Astra driver. Once the message is received, the driver is shut down.\par
 
-The package was also extended by code for displaying detected objects in rViz, marking them in blue and changing the color to red if the object was selected by the  pointing gesture.\par
+The package was also extended by code for displaying detected objects in RViz, marking them in blue and changing the color to red if the object was selected by the  pointing gesture.\par
 
 \subsubsection{Gesture recognition}
 The pointing\_gesture package implements methods for gesture recognition. It uses the Astra SDK to obtain body tracking information and allows several types of gesture recognition.\par
@@ -111,13 +128,30 @@ The Astra SDK provides a list of tracked persons for each frame of the image dat
 The confirmation gesture is performed by raising the left hand. It is detected when the left hand joint is raised above the head joint.\par
 I tried using the shoulder joint instead of the head joint. However, body tracking is not completely reliable and I observed many cases of false gesture detection. The shoulder joint has been often misidentified, while the head joint is usually identified correctly.\par
 If a confirmation gesture is detected in a given frame, the right arm is checked for the pointing gesture, otherwise processing continues with the next frame.\par
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rViz_3.png}
+    \caption{Skeleton and pointing ray}
+    \label{fig:enter-label}
+\end{figure}
+
 The pointing gesture is recognized by the position of the pair of joints corresponding to the selected pointing gesture type. The first joint of the pair determines the origin of the pointing ray. It is the upper joint when we consider the standard anatomical position.\par
 The pointing gesture is detected when the first joint is positioned higher than the second.\par
 The coordinates of the pointing ray intersection with the floor plane are computed and published in a ROS message.\par
-The default option for the pointing gesture is the head-wrist type. The user may select a different option using a ROS message (TODO: add command example.\par
+The default option for the pointing gesture is the head-wrist type. The user may select a different option using a ROS message.\par
 
-I have added rViz markers to display the skeleton of the tracked person and the pointing ray. When the first confirmed pointing gesture is detected and the intersection coordinates are published, the object closest to the intersection is selected and marked red in rViz. The distance between the intersection point and the object is logged.\par
-The second detected pointing gesture specifies the target location. The coordinates of the corresponding intersection are also published and marked red in rViz.\par
+
+I have added RViz markers to display the skeleton of the tracked person and the pointing ray. When the first confirmed pointing gesture is detected and the intersection coordinates are published, the object closest to the intersection is selected and marked red in RViz. The distance between the intersection point and the object is logged.\par
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rViz_4.png}
+    \caption{Selected object marked in red}
+    \label{fig:enter-label}
+\end{figure}
+
+The second detected pointing gesture specifies the target location.\par
 Once the second confirmed pointing gesture is detected and the intersection is published, the data stream is closed.\par
 
 
@@ -141,18 +175,26 @@ The move\_base framework provides access to the ROS navigation stack and moves t
 The goal state includes the position and orientation of the robot. I needed to tune the parameters of the local Neobotix planner: the tolerance for the target orientation had to be increased because it was too strict for the robot.\par
 I also modified robot's behaviour when unknown obstacles are detected. \par 
 When the laser scanner detects an unknown obstacle in front of the robot, the robot creates a new motion plan and turns sideways to avoid a collision. This may lead to the detection of other new obstacles.\par
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{rViz_navigation.png}
+    \caption{Mobile robot manipulator in RViz}
+    \label{fig:enter-label}
+\end{figure}
+
 By default, the robot will start to perform a recovery rotation when it cannot find any way out of its current position. I disabled this setting and increased the threshold for obstacle distance to enable the robot to approach the objects without unnecessary turning.\par
 
 \subsubsection{Map of Environment}
 The environment map can be created using the neo\_mp\_500 package, which provides tools for autonomous navigation. Simultaneous localization and mapping (SLAM) is performed using the gmapping algorithm.\par
 I moved the robot around the lab using the remote control, checked the mapping process using rViz, and saved the map when it adequately represented the scene.\par
 
-
-
-TODO: 
-ref https://github.com/neobotix/,
-add image of map and rViz screenshot\par
-
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\linewidth]{map.png}
+    \caption{Created map of environment}
+    \label{fig:enter-label}
+\end{figure}
 
 \subsection{Object Manipulation}
 
