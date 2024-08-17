@@ -1,0 +1,42 @@
+
+<launch>
+
+  <!-- urdf + rViz  -->
+  <arg name="model" default="$(find urdf_rviz)/urdf/robot_0.urdf"/>
+  <arg name="gui" default="true" />
+  <arg name="rvizconfig" default="$(find urdf_rviz)/rviz/urdf.rviz" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+  <node if="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+  <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+
+  <!-- pcl_object_detection_node -->
+  <node pkg="pcl_object_detection" type="pcl_object_detection_node" name="pcl_object_detection_node" output="screen">
+
+    <param name="target_frame" value="base_link"/>
+    <param name="transform_tolerance" value="0.01"/>
+
+    <!-- PICK WHICH CAMERA TO USE:
+    ASTRA CAMERA:
+    <param name="depth_topic" value="/astra_camera/depth/points"/>
+    REALSENSE CAMERA IN HEAD:
+    <param name="depth_topic" value="/camera/depth_cloud"/>
+    -->
+    <param name="depth_topic" value="/camera/depth/points"/>
+  </node>
+
+
+  <!-- launch astra camera (topics: camera/...) -->
+  <include file="$(find astra_camera)/launch/astra.launch" />
+  
+  <!-- pointing_gesture_node -->
+  <node pkg="pointing_gesture" type="pointing_gesture_node" name="pointing_gesture_node" output="screen"/>
+  
+  <!-- task_control_node -->
+  <node pkg="task_control" type="task_control_node" name="task_control_node" output="screen"/>
+
+</launch>
