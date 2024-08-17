@@ -1,0 +1,1 @@
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/share/remote_commands/cmake/remote_commandsConfig.cmake

@@ -1,0 +1,4 @@
+[35m[1mScanning dependencies of target remote_commands_node[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/remote_commands_node.dir/src/remote_commands.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/lib/remote_commands/remote_commands_node[0m
+[100%] Built target remote_commands_node

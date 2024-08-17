@@ -1,0 +1,1 @@
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/catkin_tools_prebuild/setup.bash

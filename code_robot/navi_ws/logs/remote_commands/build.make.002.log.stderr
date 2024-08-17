@@ -1,0 +1,7 @@
+[01m[K/home/lada/Desktop/catkin_2024/navi_ws/src/remote_commands/src/remote_commands.cpp:[m[K In member function ‘[01m[Kvoid remote_commands_node::NavigateToObjects()[m[K’:
+[01m[K/home/lada/Desktop/catkin_2024/navi_ws/src/remote_commands/src/remote_commands.cpp:119:3:[m[K [01;31m[Kerror: [m[Kexpected initializer before ‘[01m[K}[m[K’ token
+  119 |   [01;31m[K}[m[K
+      |   [01;31m[K^[m[K
+make[2]: *** [CMakeFiles/remote_commands_node.dir/build.make:63: CMakeFiles/remote_commands_node.dir/src/remote_commands.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:781: CMakeFiles/remote_commands_node.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

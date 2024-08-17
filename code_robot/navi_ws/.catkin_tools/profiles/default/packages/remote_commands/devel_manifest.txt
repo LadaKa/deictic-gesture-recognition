@@ -1,0 +1,6 @@
+remote_commands
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/cmake.lock /home/lada/Desktop/catkin_2024/navi_ws/devel/./cmake.lock
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/lib/pkgconfig/remote_commands.pc /home/lada/Desktop/catkin_2024/navi_ws/devel/lib/pkgconfig/remote_commands.pc
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/lib/remote_commands/remote_commands_node /home/lada/Desktop/catkin_2024/navi_ws/devel/lib/remote_commands/remote_commands_node
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/share/remote_commands/cmake/remote_commandsConfig.cmake /home/lada/Desktop/catkin_2024/navi_ws/devel/share/remote_commands/cmake/remote_commandsConfig.cmake
+/home/lada/Desktop/catkin_2024/navi_ws/devel/.private/remote_commands/share/remote_commands/cmake/remote_commandsConfig-version.cmake /home/lada/Desktop/catkin_2024/navi_ws/devel/share/remote_commands/cmake/remote_commandsConfig-version.cmake
