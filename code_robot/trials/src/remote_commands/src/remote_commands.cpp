@@ -16,6 +16,8 @@
 #include <fstream> 
 #include <iostream> 
 
+#include "simple_navigation_goal.cpp"
+
 using std::vector;
 using std::string;
 
@@ -36,7 +38,11 @@ public:
     float z;
   };
 
-  int selectedObjectIndex;
+  float camera_x;
+  float camera_y;
+
+  float selected_object_x;
+  float selected_object_y;
 
   float target_x;
   float target_y;
@@ -73,8 +79,8 @@ public:
         words = getWords(line);
         std::cout << words[0] << "\n"; 
         std::cout << words[1] << "\n"; 
-        float camera_x = std::stof(words[0]);
-        float camera_y = std::stof(words[1]);
+        camera_x = std::stof(words[0]);
+        camera_y = std::stof(words[1]);
         std::cout << camera_x << "\n"; 
         std::cout << camera_y << "\n"; 
         getline(resultFile, line);
@@ -93,7 +99,10 @@ public:
         }
         //cout << line << endl; 
         getline(resultFile, line);
-        selectedObjectIndex = std::stoi(line);
+        int selected_object_index = std::stoi(line);
+
+        selected_object_x = detected_objects[selected_object_index].x;
+        selected_object_y = detected_objects[selected_object_index].y;
 
         getline(resultFile, line);
         words = getWords(line);
@@ -108,23 +117,56 @@ public:
     } 
   }
 
-  
+  bool NavigateToObjects(float x_distance_from_object){
+    // convert to robot coordinates, use offset distance
+    float robot_goal_x = camera_x - selected_object_x - x_distance_from_object;
+    float robot_goal_y = selected_object_y;
+    // send robot to goal position
+    simple_navigation_goal navigation_goal;
+    return navigation_goal.navigate_to_goal(robot_goal_x, robot_goal_y);
+  }
+
+  bool NavigateToTargetPosition(){
+    // convert to robot coordinates (robot stops on target position)
+    float robot_goal_x = camera_x - target_x;
+    float robot_goal_y = target_y;
+    // send robot to goal position
+    simple_navigation_goal navigation_goal;
+    return navigation_goal.navigate_to_goal(robot_goal_x, robot_goal_y);
+  }
+
 };
 
 int main(int argc, char **argv)
 {
-  
+  float distance_from_object = 1.0;
   ros::init(argc, argv, "remote_commands_node");
-
+ 
   ros::NodeHandle nh;
   ROS_INFO("Command message received!");
 
   remote_commands_node *node = new remote_commands_node();
   node->ParseResultFile("/home/ladak/Desktop/result.txt");
+  sleep(5);
 
-  // TODO:
+  bool reached_object_position = node->NavigateToObjects(distance_from_object);
+  if (!reached_object_position){
+    ROS_INFO("Robot couldn't reach object position.");
+    return -1;
+  }
 
-  // Navigate to selected object (modify coords!)
-  // http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals
+  sleep(5);
+  system ("python /home/ladak/Desktop/WS_2024/src/remote_commands/scripts_python/reach_for_object.py");
+
+  sleep(5);
+  bool reached_target_position = node->NavigateToTargetPosition();
+  if (!reached_target_position){
+    ROS_INFO("Robot couldn't reach target position.");
+    return -1;
+  }
+  
+  sleep(5);
+  system ("python /home/ladak/Desktop/WS_2024/src/remote_commands/scripts_python/release_object.py");
+
   return 0;
 }
