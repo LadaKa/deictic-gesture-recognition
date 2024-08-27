@@ -1,0 +1,8 @@
+prefix=/home/robot/catkin_ws/devel
+
+Name: task_control
+Description: Description of task_control
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

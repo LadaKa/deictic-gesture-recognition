@@ -1,0 +1,8 @@
+prefix=/home/robot/catkin_ws/devel
+
+Name: task_execution
+Description: Description of task_execution
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
